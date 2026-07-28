@@ -1,0 +1,449 @@
+<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Host Tracker Static Snapshot",
+  "schemaVersion": 1,
+  "description": "Static daily snapshot of the Community Host Tracker (real Circle data: city sessions, huddles, 2025 vs 2026 host counts) for the public Netlify site - a static counterpart to the live 'host-tracker-dashboard' artifact since the live one requires window.cowork and can't run outside Claude."
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Community Host Tracker</title>
+<style>
+  :root {
+    color-scheme: light;
+    --nude: #FCF3ED; --sandstone: #E2CEC3; --ink: #1a1a1a;
+    --plum: #3F0213; --moss: #4A4F16; --violet: #EAB8E9; --gold: #D58E32;
+    --lav-tint: #F5DAF3; --moss-tint: #E7ECD6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px; background: var(--nude); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+  }
+  .hero { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-wrap: wrap; gap: 10px; }
+  h1 { font-size: 21px; margin: 0; letter-spacing: -0.01em; color: var(--plum); }
+  .badge { background: var(--lav-tint); color: var(--plum); padding: 5px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+  .sub { color: var(--moss); opacity: 0.85; font-size: 12.5px; margin: 4px 0 18px; max-width: 640px; line-height: 1.5; }
+
+  .tabs { display: inline-flex; gap: 4px; margin-bottom: 20px; background: var(--sandstone); border-radius: 999px; padding: 4px; flex-wrap: wrap; }
+  .tab-btn { padding: 8px 18px; cursor: pointer; border: none; background: none; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--plum); opacity: 0.6; }
+  .tab-btn.active { opacity: 1; color: #fff; background: linear-gradient(135deg, var(--violet), var(--gold)); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .cards { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .card { background: #fff; border: 1px solid var(--sandstone); border-top: 3px solid var(--moss); border-radius: 12px; padding: 12px 16px; min-width: 130px; }
+  .card:nth-child(2n) { border-top-color: var(--violet); }
+  .card .num { font-size: 22px; font-weight: 800; color: var(--plum); }
+  .card .lbl { font-size: 11px; color: var(--moss); opacity: 0.85; margin-top: 2px; font-weight: 600; }
+
+  .section-title { font-size: 13.5px; font-weight: 800; margin: 24px 0 3px; color: var(--plum); display: flex; align-items: center; gap: 8px; }
+  .section-title::before { content: ''; width: 4px; height: 13px; border-radius: 2px; background: var(--violet); display: inline-block; }
+  .section-hint { font-size: 11px; color: var(--moss); opacity: 0.75; margin-bottom: 10px; }
+
+  .schedule-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+  .schedule-row { display: flex; align-items: center; gap: 14px; background: #fff; border: 1px solid var(--sandstone); border-radius: 12px; padding: 10px 16px; }
+  .schedule-date-chip { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 10px; background: linear-gradient(135deg, var(--moss), var(--violet)); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .schedule-date-chip .mon { font-size: 9.5px; font-weight: 800; text-transform: uppercase; }
+  .schedule-date-chip .day { font-size: 18px; font-weight: 800; }
+  .schedule-city { font-size: 13.5px; font-weight: 800; }
+  .schedule-host { font-size: 11.5px; color: var(--moss); opacity: 0.85; margin-top: 2px; }
+
+  .rank-wrap { background: #fff; border: 1px solid var(--sandstone); border-radius: 14px; padding: 14px 18px; margin-bottom: 6px; overflow-x: auto; }
+  .rank-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; min-width: 320px; }
+  .rank-num { width: 18px; height: 18px; border-radius: 50%; background: var(--moss-tint); color: var(--moss); font-weight: 800; font-size: 10.5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .rank-row:nth-child(odd) .rank-num { background: var(--lav-tint); color: var(--plum); }
+  .rank-name { width: 190px; flex-shrink: 0; font-weight: 700; font-size: 12.5px; }
+  .rank-bar-track { flex: 1; background: var(--nude); border-radius: 6px; height: 9px; overflow: hidden; min-width: 60px; }
+  .rank-bar { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--moss), var(--violet)); }
+  .rank-count { width: 22px; text-align: right; font-weight: 800; font-size: 12px; color: var(--plum); flex-shrink: 0; }
+
+  .table-wrap { background: #fff; border: 1px solid var(--sandstone); border-radius: 14px; padding: 4px; overflow-x: auto; margin-bottom: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 480px; }
+  th { text-align: left; background: var(--moss-tint); color: var(--moss); font-weight: 800; padding: 8px 12px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--nude); }
+  tr:nth-child(even) td { background: #fffdfb; }
+  .yn { display: inline-block; padding: 2px 9px; border-radius: 8px; font-size: 10.5px; font-weight: 700; }
+  .yn.yes { background: var(--moss-tint); color: var(--moss); }
+  .yn.no { background: var(--sandstone); color: var(--plum); opacity: 0.7; }
+
+  .note { background: var(--lav-tint); border: 1px solid var(--sandstone); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--plum); margin-bottom: 14px; line-height: 1.5; }
+
+  @media (max-width: 600px) {
+    body { padding: 14px; }
+    .tabs { width: 100%; }
+    .tab-btn { flex: 1; padding: 8px 10px; font-size: 12px; }
+    .card { padding: 10px 12px; min-width: 100px; }
+    .rank-name { width: 120px; }
+  }
+</style>
+</head>
+<body>
+<div id="ffc-gate" style="position:fixed;inset:0;background:#fcf3ed;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <div style="background:#fff;border:1px solid #e2cec3;border-radius:14px;padding:32px 36px;max-width:340px;width:90%;box-shadow:0 4px 18px rgba(63,2,19,0.12);text-align:center;">
+    <div style="font-size:15px;font-weight:800;color:#3f0213;margin-bottom:6px;">FFC Team Access</div>
+    <div style="font-size:12.5px;color:#6b573a;margin-bottom:16px;">This dashboard is for internal team use. Enter the password to continue.</div>
+    <input id="ffc-gate-input" type="password" placeholder="Password" style="width:100%;padding:9px 12px;border:1px solid #e2cec3;border-radius:8px;font-size:14px;margin-bottom:10px;box-sizing:border-box;">
+    <button id="ffc-gate-btn" style="width:100%;background:linear-gradient(135deg,#eab8e9,#d58e32);border:none;color:#3f0213;font-weight:700;font-size:13.5px;padding:10px;border-radius:8px;cursor:pointer;">Enter</button>
+    <div id="ffc-gate-err" style="color:#9c4a22;font-size:12px;margin-top:8px;display:none;">Incorrect password, try again.</div>
+  </div>
+</div>
+<script>
+(function(){
+  var PASS = "10thhouse2026";
+  if (localStorage.getItem('ffc_gate_ok') === '1') {
+    var g = document.getElementById('ffc-gate'); if (g) g.remove();
+  } else {
+    document.documentElement.style.overflow = 'hidden';
+    function tryUnlock(){
+      var val = document.getElementById('ffc-gate-input').value;
+      if (val === PASS) {
+        localStorage.setItem('ffc_gate_ok','1');
+        document.getElementById('ffc-gate').remove();
+        document.documentElement.style.overflow = '';
+      } else {
+        document.getElementById('ffc-gate-err').style.display = 'block';
+      }
+    }
+    document.getElementById('ffc-gate-btn').addEventListener('click', tryUnlock);
+    document.getElementById('ffc-gate-input').addEventListener('keydown', function(e){ if(e.key==='Enter') tryUnlock(); });
+  }
+})();
+</script>
+
+<div class="hero">
+  <h1>Community Host Tracker</h1>
+  <div class="badge">Updated Jul 26, 2026</div>
+</div>
+<div class="sub">City Sessions + Huddles hosted by 10th House members, snapshot refreshed daily from Circle. Company/industry enrichment and RSVP leaderboards are added in a follow-up refresh — for the full live view (with real-time RSVP counts and industry breakdown), open "Community Host Tracker" in Claude/Cowork.</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="cities">City Sessions</button>
+  <button class="tab-btn" data-tab="huddles">Huddles</button>
+  <button class="tab-btn" data-tab="compare">2025 vs 2026</button>
+</div>
+
+<div id="panel-cities" class="panel active">
+  <div class="cards">
+    <div class="card"><div class="num">20</div><div class="lbl">Active hosts (2026)</div></div>
+    <div class="card"><div class="num">27</div><div class="lbl">Total sessions (2026)</div></div>
+    <div class="card"><div class="num">0</div><div class="lbl">Earned free membership (4+)</div></div>
+  </div>
+
+  <div class="section-title">Upcoming city session schedule</div>
+  <div class="section-hint">Every city session posted on Circle that hasn't happened yet, soonest first.</div>
+  <div class="schedule-list">
+    <div class="schedule-row"><div class="schedule-date-chip"><div class="mon">Jul</div><div class="day">30</div></div><div><div class="schedule-city">Chicago, IL</div><div class="schedule-host">Hosted by Ari Krzyzek</div></div></div>
+    <div class="schedule-row"><div class="schedule-date-chip"><div class="mon">Aug</div><div class="day">12</div></div><div><div class="schedule-city">Phoenix, AZ</div><div class="schedule-host">Hosted by Jessie Sanchez</div></div></div>
+    <div class="schedule-row"><div class="schedule-date-chip"><div class="mon">Aug</div><div class="day">13</div></div><div><div class="schedule-city">New York, NY</div><div class="schedule-host">Hosted by Yvonne Liao</div></div></div>
+  </div>
+
+  <div class="section-title">Top cities in 2026</div>
+  <div class="section-hint">Ranked by number of sessions hosted so far this year.</div>
+  <div class="rank-wrap">
+    <div class="rank-row"><div class="rank-num">1</div><div class="rank-name">New York, NY</div><div class="rank-bar-track"><div class="rank-bar" style="width:100%"></div></div><div class="rank-count">5</div></div>
+    <div class="rank-row"><div class="rank-num">2</div><div class="rank-name">Chicago, IL</div><div class="rank-bar-track"><div class="rank-bar" style="width:60%"></div></div><div class="rank-count">3</div></div>
+    <div class="rank-row"><div class="rank-num">3</div><div class="rank-name">San Diego, CA</div><div class="rank-bar-track"><div class="rank-bar" style="width:40%"></div></div><div class="rank-count">2</div></div>
+    <div class="rank-row"><div class="rank-num">4</div><div class="rank-name">Santa Monica, CA</div><div class="rank-bar-track"><div class="rank-bar" style="width:40%"></div></div><div class="rank-count">2</div></div>
+    <div class="rank-row"><div class="rank-num">5</div><div class="rank-name">Tampa, FL</div><div class="rank-bar-track"><div class="rank-bar" style="width:40%"></div></div><div class="rank-count">2</div></div>
+    <div class="rank-row"><div class="rank-num">6</div><div class="rank-name">Culver City, CA</div><div class="rank-bar-track"><div class="rank-bar" style="width:20%"></div></div><div class="rank-count">1</div></div>
+    <div class="rank-row"><div class="rank-num">7</div><div class="rank-name">Palo Alto, CA</div><div class="rank-bar-track"><div class="rank-bar" style="width:20%"></div></div><div class="rank-count">1</div></div>
+    <div class="rank-row"><div class="rank-num">8</div><div class="rank-name">Las Vegas, NV</div><div class="rank-bar-track"><div class="rank-bar" style="width:20%"></div></div><div class="rank-count">1</div></div>
+  </div>
+
+  <div class="section-title">Hosts</div>
+  <div class="section-hint">All 2026 city-session hosts, alphabetical. Free membership is earned by hosting 4+ sessions in 2026.</div>
+  <div class="table-wrap"><table id="cityHostTable"></table></div>
+</div>
+
+<div id="panel-huddles" class="panel">
+  <div class="cards">
+    <div class="card"><div class="num">23</div><div class="lbl">Active hosts (2026-27)</div></div>
+    <div class="card"><div class="num">98</div><div class="lbl">Total huddles hosted</div></div>
+    <div class="card"><div class="num">16</div><div class="lbl">Completed sessions</div></div>
+    <div class="card"><div class="num">82</div><div class="lbl">Upcoming sessions</div></div>
+  </div>
+
+  <div class="section-title">Top huddle industries</div>
+  <div class="section-hint">Ranked by number of huddle sessions in that category (2026-27). RSVP-based ranking is added in a future refresh.</div>
+  <div class="rank-wrap" id="huddleTypeRank"></div>
+
+  <div class="section-title">Hosts</div>
+  <div class="section-hint">All huddle hosts (2026-27), alphabetical.</div>
+  <div class="table-wrap"><table id="huddleHostTable"></table></div>
+</div>
+
+<div id="panel-compare" class="panel">
+  <div class="cards">
+    <div class="card"><div class="num">34</div><div class="lbl">Unique hosts (2025)</div></div>
+    <div class="card"><div class="num">42</div><div class="lbl">Unique hosts (2026)</div></div>
+    <div class="card"><div class="num">+8</div><div class="lbl">Change year over year</div></div>
+  </div>
+  <div class="note">Industry-by-industry comparison needs each host's Circle profile (company/industry fields) — that enrichment step is added in the next scheduled refresh. For now this tab shows the real unique-host counts and YoY change.</div>
+</div>
+
+<script>
+const cityHosts = [
+  {
+    "name": "AmishaMulji",
+    "email": "ami@muljicreative.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "AngelaCalisti",
+    "email": "angcalisti@yahoo.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "Ari Krzyzek",
+    "email": "ari@chykalophia.com",
+    "hosted_2026": 2
+  },
+  {
+    "name": "Ashley Ansuini",
+    "email": "ashley@thegoodplacelv.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "BraelinnFrank",
+    "email": "braelinn@ravenailz.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "Chanda Daly",
+    "email": "chandadaly@hotmail.com",
+    "hosted_2026": 2
+  },
+  {
+    "name": "Cheryl Walpole Tiku",
+    "email": "cheryl.walpole@gmail.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "CK Harmon",
+    "email": "ckrh@venuswalks.com",
+    "hosted_2026": 2
+  },
+  {
+    "name": "Jessie Minor",
+    "email": "minorkjessie@gmail.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "Jessie Sanchez",
+    "email": "hello@happybrandcompany.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "Kayli Mylius",
+    "email": "hello@kaylimylius.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "Mari Milenkovic",
+    "email": "mari@marimilenkovic.com",
+    "hosted_2026": 3
+  },
+  {
+    "name": "MikaMooney",
+    "email": "mika@mikamooneylaw.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "Molly Godfrey",
+    "email": "molly@mollygodfrey.com",
+    "hosted_2026": 2
+  },
+  {
+    "name": "Nicole Bruno",
+    "email": "nicole@brunoprandsocial.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "PoorviMehta",
+    "email": "info@mikloset.net",
+    "hosted_2026": 1
+  },
+  {
+    "name": "Saadia Khan",
+    "email": "saadia@industhreads.com",
+    "hosted_2026": 2
+  },
+  {
+    "name": "Susana Colina",
+    "email": "us@thesumedit.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "Tze Chun",
+    "email": "tze@goodside-studios.com",
+    "hosted_2026": 1
+  },
+  {
+    "name": "Yvonne Liao",
+    "email": "yvonne@yvonneliaonyc.com",
+    "hosted_2026": 1
+  }
+];
+const huddleHosts = [
+  {
+    "name": "Alenka Kyslik",
+    "email": "alenka@sahacollective.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "Amodhi Weeresinghe",
+    "email": "amodhi@hcldesigns.com",
+    "huddles_hosted": 4
+  },
+  {
+    "name": "AmorePhilip",
+    "email": "amore@aoprllc.com",
+    "huddles_hosted": 3
+  },
+  {
+    "name": "Amy Bartko",
+    "email": "amy@chatterboxbrands.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "Andrea Goulet",
+    "email": "andrea@andreagoulet.com",
+    "huddles_hosted": 2
+  },
+  {
+    "name": "Angela Acosta",
+    "email": "info@angelaatelier.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "Annette Furio",
+    "email": "annette@seasonjournals.com",
+    "huddles_hosted": 5
+  },
+  {
+    "name": "Bianca Paggi",
+    "email": "hello@itsbrandingwithb.com",
+    "huddles_hosted": 1
+  },
+  {
+    "name": "Dr.Sarah Khan",
+    "email": "sarahfuncnutritionist@gmail.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "Elizabeth Welborn",
+    "email": "elizabeth@stickandball.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "Glynis Tao",
+    "email": "hello@glynistao.com",
+    "huddles_hosted": 1
+  },
+  {
+    "name": "JenniferSmiga",
+    "email": "jen@ultravioletagency.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "Jess Peters",
+    "email": "jess@eithio.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "Jessie Sanchez",
+    "email": "hello@happybrandcompany.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "jyotibharadwaj",
+    "email": "jyoti@accountifyllc.com",
+    "huddles_hosted": 5
+  },
+  {
+    "name": "Laura Foster",
+    "email": "laurafostercoaching@gmail.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "Michelle Hsiao",
+    "email": "michelleh@therevgrowthadvisors.com",
+    "huddles_hosted": 4
+  },
+  {
+    "name": "Michelle Nagy",
+    "email": "michelle@lawsoflux.com",
+    "huddles_hosted": 6
+  },
+  {
+    "name": "Patricia Perez",
+    "email": "talaya@talayaguides.com",
+    "huddles_hosted": 1
+  },
+  {
+    "name": "Samantha Fackler",
+    "email": "hi@samanthafackler.com",
+    "huddles_hosted": 2
+  },
+  {
+    "name": "Sarah Ghabbour",
+    "email": "sarah@lovedtwicebridal.com",
+    "huddles_hosted": 1
+  },
+  {
+    "name": "Tangela Johnson",
+    "email": "leadershipease@gmail.com",
+    "huddles_hosted": 3
+  },
+  {
+    "name": "Vix Reitano",
+    "email": "vix@agency6b.com",
+    "huddles_hosted": 6
+  }
+];
+const huddleTypes = [["Technology", 19], ["Health & Wellness", 15], ["Fashion", 12], ["Marketing & Communications", 8], ["Beauty + Personal Care", 6], ["PR/Media", 6], ["Home + Interiors", 6], ["Community Builder", 6], ["Accounting + Financial Management", 5], ["Home + Design", 4]];
+
+function renderTable(id, rows, cols){
+  const table = document.getElementById(id);
+  table.innerHTML = '<tr>' + cols.map(c=>`<th>${c.label}</th>`).join('') + '</tr>' +
+    rows.map(r => '<tr>' + cols.map(c => `<td>${c.render ? c.render(r) : r[c.key]}</td>`).join('') + '</tr>').join('');
+}
+
+renderTable('cityHostTable', cityHosts, [
+  {key:'name', label:'Name'},
+  {key:'email', label:'Email'},
+  {key:'hosted_2026', label:'Hosted 2026'},
+  {key:'free', label:'Free membership (4+)', render: r => r.hosted_2026 >= 4 ? '<span class="yn yes">Yes</span>' : '<span class="yn no">No</span>'},
+]);
+
+renderTable('huddleHostTable', huddleHosts, [
+  {key:'name', label:'Name'},
+  {key:'email', label:'Email'},
+  {key:'huddles_hosted', label:'Huddles hosted'},
+]);
+
+const maxType = Math.max(...huddleTypes.map(t=>t[1]));
+document.getElementById('huddleTypeRank').innerHTML = huddleTypes.map((t,i) => `
+  <div class="rank-row">
+    <div class="rank-num">${i+1}</div>
+    <div class="rank-name">${t[0]}</div>
+    <div class="rank-bar-track"><div class="rank-bar" style="width:${Math.max(8,(t[1]/maxType)*100)}%"></div></div>
+    <div class="rank-count">${t[1]}</div>
+  </div>`).join('');
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

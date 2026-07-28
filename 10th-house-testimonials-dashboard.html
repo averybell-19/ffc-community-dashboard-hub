@@ -1,0 +1,1399 @@
+<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "10th House Testimonials Dashboard",
+  "schemaVersion": 1,
+  "description": "Live dashboard of 10th House member testimonials for LP/social/newsletter use. Combines curated email/survey testimonials with Circle-sourced quotes from verified active members (amazing community / helped scale / would recommend themes). Each reopen re-checks Circle for new matching comments via get_advanced_search, uses askClaude to judge genuine testimonials, and lets Avery approve/add them. Approval status and added rows persist in localStorage.",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FFC Member Insights Hub</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #fcf3ed;
+    color: #1a1a1a;
+    padding: 20px 24px 60px;
+  }
+  h1 {
+    font-size: 22px; margin: 0 0 6px; font-weight: 800; letter-spacing: -0.01em;
+    color: #3f0213;
+  }
+  .subtitle { color: #6b573a; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
+  .stats-row {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .stat-card {
+    background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px;
+    padding: 14px 18px; min-width: 140px;
+    box-shadow: 0 1px 3px rgba(85, 61, 1, 0.06);
+    border-top: 3px solid #3f0213;
+  }
+  .stat-card .num { color: #3f0213; }
+  .stat-card .num { font-size: 25px; font-weight: 800; letter-spacing: -0.02em; }
+  .stat-card .label { font-size: 11.5px; color: #7a6a4a; margin-top: 3px; }
+  .controls {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; align-items: center;
+  }
+  input[type="text"], select {
+    border: 1px solid #e8dcae; border-radius: 8px; padding: 8px 12px;
+    font-size: 13px; background: #fffef7; color: #2a2a2e;
+  }
+  input[type="text"]:focus, select:focus {
+    outline: none; border-color: #eab8e9; box-shadow: 0 0 0 3px rgba(183, 170, 243, 0.3);
+  }
+  input[type="text"] { flex: 1; min-width: 180px; }
+  .table-wrap {
+    background: #fffef7; border: 1px solid #e2cec3; border-radius: 14px;
+    overflow-x: auto; overflow-y: hidden; margin-bottom: 24px;
+    box-shadow: 0 1px 4px rgba(85, 61, 1, 0.06);
+  }
+  .table-wrap table { min-width: 720px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: left; background: #fff3ae;
+    padding: 12px 14px;
+    font-weight: 700; color: #4a4f16; border-bottom: 1px solid #e8dcae;
+    cursor: pointer; user-select: none; white-space: nowrap;
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  thead th:hover { background: #ffec80; }
+  tbody td {
+    padding: 13px 14px; border-bottom: 1px solid #f5efd5; vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: #fffdf0; }
+  tbody tr:hover { background: #fdf6dc; }
+  .quote { max-width: 320px; border-left: 3px solid #4a4f16; }
+  @media (max-width: 600px) {
+    .tab-nav { flex-wrap: wrap; }
+    .stats-row, .fb-columns, .goto-leaders { flex-direction: column; }
+    .fb-columns { display: flex; }
+  }
+  .quote-text {
+    color: #1a1a1a; line-height: 1.55; font-style: italic;
+    font-family: Georgia, "Times New Roman", serif; font-size: 13.5px;
+    padding-left: 4px;
+  }
+  .quote-text::before { content: "\201C"; color: #a33920; font-style: normal; font-weight: 700; }
+  .quote-text::after { content: "\201D"; color: #a33920; font-style: normal; font-weight: 700; }
+  .quote-toggle { color: #3f0213; font-size: 11.5px; cursor: pointer; margin-top: 5px; display: inline-block; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-style: normal; font-weight: 600; }
+  .quote-toggle:hover { text-decoration: underline; }
+  a.profile-link { color: #a33920; text-decoration: none; font-size: 12px; font-weight: 600; }
+  a.profile-link:hover { text-decoration: underline; }
+  .theme-pill {
+    display: inline-block; font-size: 11px;
+    font-weight: 700; padding: 3px 10px; border-radius: 20px;
+    background: #eab8e9; color: #3f0213;
+  }
+  .empty-msg { color: #8a7a5c; font-size: 13px; padding: 8px 2px; }
+  .source-tag {
+    display: inline-block; font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.03em;
+    padding: 3px 9px; border-radius: 6px;
+    background: rgba(244, 72, 1, 0.13); color: #a33920;
+  }
+  .footer-note { font-size: 11px; color: #8a7a5c; margin-top: 10px; line-height: 1.5; }
+  .tab-nav { display: flex; gap: 6px; margin-bottom: 18px; border-bottom: 1px solid #e2cec3; }
+  .tab-btn {
+    appearance: none; border: none; background: none; cursor: pointer;
+    font-size: 13.5px; font-weight: 700; padding: 9px 16px; color: #8a7a5c;
+    border-bottom: 3px solid transparent; margin-bottom: -1px;
+    font-family: inherit;
+  }
+  .tab-btn.active { color: #3f0213; border-bottom-color: #4a4f16; }
+  .tab-btn:hover:not(.active) { color: #4a4f16; }
+  .quick-take {
+    background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 22px; box-shadow: 0 1px 3px rgba(85, 61, 1, 0.05);
+  }
+  .quick-take h2 { font-size: 13px; margin: 0 0 10px; color: #3f0213; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+  .quick-take ul { margin: 0; padding-left: 18px; }
+  .quick-take li { font-size: 12.5px; color: #2a2a2e; line-height: 1.6; margin-bottom: 3px; }
+  .quick-take li strong { color: #3f0213; }
+  .fb-section { margin-bottom: 30px; }
+  .fb-section-head { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+  .fb-section h2 { font-size: 15px; margin: 0; color: #3f0213; font-weight: 800; }
+  .fb-count-badge { font-size: 10.5px; font-weight: 700; background: #ececf1; color: #4a4a52; padding: 2px 8px; border-radius: 10px; }
+  .fb-section .fb-sub { font-size: 12px; color: #8a7a5c; margin-bottom: 12px; line-height: 1.5; }
+  .fb-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .fb-col-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .fb-col-head.pos { color: #3f5a1f; }
+  .fb-col-head.neg { color: #a33920; }
+  .fb-col-head .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .fb-col-head.pos .dot { background: #6a9c1f; }
+  .fb-col-head.neg .dot { background: #a33920; }
+  .fb-stack { display: flex; flex-direction: column; gap: 9px; }
+  .fb-card {
+    background: #fffef7; border: 1px solid #e2cec3; border-radius: 10px;
+    padding: 11px 13px; box-shadow: 0 1px 3px rgba(85, 61, 1, 0.05);
+  }
+  .fb-card.positive { border-left: 4px solid #6a9c1f; }
+  .fb-card.negative { border-left: 4px solid #a33920; }
+  .fb-card .fb-quote { font-style: italic; font-family: Georgia, "Times New Roman", serif; font-size: 12.5px; color: #1a1a1a; line-height: 1.5; margin-bottom: 6px; }
+  .fb-card .fb-meta { font-size: 10.5px; color: #8a7a5c; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .fb-card .fb-source { font-weight: 700; color: #4a4f16; }
+  .fb-card .fb-score { font-weight: 700; color: #a33920; }
+  .fb-card .fb-theme { font-weight: 800; color: #1a1a1a; font-size: 13px; margin-bottom: 4px; }
+  .fb-card .fb-detail { font-size: 12px; color: #4a4a52; line-height: 1.5; margin-bottom: 0; }
+  .fb-card .fb-mentions { font-size: 10.5px; color: #8a7a5c; margin-top: 6px; }
+  .fb-fix { margin-top: 8px; font-size: 12px; color: #3f5a1f; background: rgba(106, 156, 31, 0.1); border-radius: 7px; padding: 7px 10px; line-height: 1.5; }
+  .fb-fix strong { color: #3f5a1f; text-transform: uppercase; font-size: 10px; letter-spacing: 0.03em; display: block; margin-bottom: 2px; }
+  .fb-fix-done { margin-top: 8px; font-size: 12px; color: #2f4a15; background: rgba(106, 156, 31, 0.18); border-left: 3px solid #6a9c1f; border-radius: 7px; padding: 7px 10px; line-height: 1.5; }
+  .fb-fix-done strong { color: #2f4a15; text-transform: uppercase; font-size: 10px; letter-spacing: 0.03em; display: block; margin-bottom: 2px; }
+  @media (max-width: 720px) { .fb-columns { grid-template-columns: 1fr; } }
+  .churn-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .churn-row { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+  .churn-label { width: 200px; flex-shrink: 0; color: #2a2a2e; }
+  .churn-bar-track { flex: 1; background: #f5efd5; border-radius: 6px; height: 16px; overflow: hidden; }
+  .churn-bar-fill { background: #4a4f16; height: 100%; border-radius: 6px; }
+  .churn-count { width: 34px; text-align: right; font-weight: 700; color: #4a4f16; flex-shrink: 0; }
+  .churn-note-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .churn-note-list li { font-size: 12px; color: #2a2a2e; background: #fffef7; border: 1px solid #e2cec3; border-radius: 8px; padding: 8px 12px; }
+  .churn-note-list .cn-who { font-weight: 700; color: #4a4f16; }
+  .join-tally { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .join-row { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+  .join-label { width: 200px; flex-shrink: 0; color: #2a2a2e; font-weight: 600; }
+  .join-bar-track { flex: 1; background: #f5efd5; border-radius: 6px; height: 16px; overflow: hidden; }
+  .join-bar-fill { background: #6a9c1f; height: 100%; border-radius: 6px; }
+  .join-count { width: 60px; text-align: right; font-weight: 700; color: #3f5a1f; flex-shrink: 0; font-size: 11.5px; }
+  .join-quotes { display: flex; flex-direction: column; gap: 9px; }
+  .flag-box { background: rgba(244, 72, 1, 0.08); border: 1px solid rgba(244, 72, 1, 0.25); border-radius: 10px; padding: 12px 14px; font-size: 12.5px; color: #4a4f16; line-height: 1.5; }
+  .flag-box strong { color: #a33920; }
+  .top-card {
+    background: #fffef7; border: 1px solid #e2cec3; border-radius: 10px;
+    padding: 12px 14px; box-shadow: 0 1px 3px rgba(85, 61, 1, 0.05);
+    display: flex; gap: 12px; align-items: flex-start;
+    border-left: 4px solid #4a4f16;
+  }
+  .top-card .top-rank {
+    flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+    background: #3f0213; color: #fcf3ed; font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .top-card .top-body { flex: 1; min-width: 0; }
+  .top-card .fb-quote { font-style: italic; font-family: Georgia, "Times New Roman", serif; font-size: 12.5px; color: #1a1a1a; line-height: 1.5; margin-bottom: 6px; }
+  .top-card .top-meta { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 10.5px; color: #8a7a5c; }
+  .top-card .top-who { font-weight: 700; color: #4a4f16; }
+  .top-card .top-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .top-tag { background: #ececf1; color: #4a4a52; font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .am-section { margin-bottom: 26px; }
+  .am-section-head { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; flex-wrap: wrap; }
+  .am-section h2 { font-size: 15px; margin: 0; color: #3f0213; font-weight: 800; }
+  .am-sub { font-size: 12px; color: #8a7a5c; margin-bottom: 10px; line-height: 1.5; }
+  .am-table-wrap { background: #fffef7; border: 1px solid #e2cec3; border-radius: 14px; overflow-x: auto; overflow-y: hidden; box-shadow: 0 1px 4px rgba(85, 61, 1, 0.06); }
+  table.am-table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 12.5px; }
+  table.am-table thead th { text-align: left; background: #fff3ae; padding: 9px 12px; font-weight: 700; color: #4a4f16; border-bottom: 1px solid #e8dcae; white-space: nowrap; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  table.am-table tbody td { padding: 9px 12px; border-bottom: 1px solid #f5efd5; }
+  table.am-table tbody tr:nth-child(even) { background: #fffdf0; }
+  table.am-table tbody tr:hover { background: #fdf6dc; }
+  table.am-table .am-rank { font-weight: 800; color: #3f0213; width: 30px; }
+  table.am-table .am-email { color: #8a7a5c; font-size: 11.5px; }
+  .am-superfan-row { background: rgba(183, 170, 243, 0.18) !important; }
+  .am-superfan-row .am-rank { color: #a33920; }
+  .am-star { color: #a33920; font-weight: 700; }
+  .am-show-more { display: block; text-align: center; padding: 10px; font-size: 12px; font-weight: 700; color: #3f0213; cursor: pointer; background: #fffdf0; border-top: 1px solid #e2cec3; }
+  .am-show-more:hover { background: #fdf6dc; text-decoration: underline; }
+  .am-badge { display: inline-block; font-size: 10.5px; font-weight: 700; background: #eab8e9; color: #3f0213; padding: 2px 9px; border-radius: 10px; }
+  .am-superfan-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .am-superfan-chip { background: #3f0213; color: #fcf3ed; font-size: 11.5px; font-weight: 700; padding: 4px 11px; border-radius: 20px; }
+  .goto-grid { display: flex; flex-direction: column; gap: 14px; }
+  .goto-card { background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(85, 61, 1, 0.05); }
+  .goto-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .goto-card-head h3 { margin: 0; font-size: 14.5px; color: #3f0213; font-weight: 800; }
+  .goto-leaders { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .goto-leader { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; padding: 6px 8px; border-radius: 8px; background: #fffdf0; }
+  .goto-leader:first-child { background: rgba(183, 170, 243, 0.18); }
+  .goto-rank { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: #3f0213; color: #fcf3ed; font-size: 10.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .goto-name { font-weight: 700; color: #4a4f16; }
+  .goto-business { color: #8a7a5c; font-size: 11.5px; }
+  .goto-metrics { color: #8a7a5c; font-size: 11px; margin-left: auto; text-align: right; white-space: nowrap; }
+  .goto-quote-box { border-left: 3px solid #4a4f16; background: rgba(199, 94, 42, 0.08); border-radius: 8px; padding: 10px 12px; }
+  .goto-quote-box .fb-quote { margin-bottom: 5px; }
+  .goto-quote-box .fb-meta { font-size: 10.5px; }
+  .goto-no-quote { font-size: 11.5px; color: #8a7a5c; font-style: italic; padding: 4px 2px; }
+</style>
+</head>
+<body>
+<div id="ffc-gate" style="position:fixed;inset:0;background:#fcf3ed;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <div style="background:#fff;border:1px solid #e2cec3;border-radius:14px;padding:32px 36px;max-width:340px;width:90%;box-shadow:0 4px 18px rgba(63,2,19,0.12);text-align:center;">
+    <div style="font-size:15px;font-weight:800;color:#3f0213;margin-bottom:6px;">FFC Team Access</div>
+    <div style="font-size:12.5px;color:#6b573a;margin-bottom:16px;">This dashboard is for internal team use. Enter the password to continue.</div>
+    <input id="ffc-gate-input" type="password" placeholder="Password" style="width:100%;padding:9px 12px;border:1px solid #e2cec3;border-radius:8px;font-size:14px;margin-bottom:10px;box-sizing:border-box;">
+    <button id="ffc-gate-btn" style="width:100%;background:linear-gradient(135deg,#eab8e9,#d58e32);border:none;color:#3f0213;font-weight:700;font-size:13.5px;padding:10px;border-radius:8px;cursor:pointer;">Enter</button>
+    <div id="ffc-gate-err" style="color:#9c4a22;font-size:12px;margin-top:8px;display:none;">Incorrect password, try again.</div>
+  </div>
+</div>
+<script>
+(function(){
+  var PASS = "10thhouse2026";
+  if (localStorage.getItem('ffc_gate_ok') === '1') {
+    var g = document.getElementById('ffc-gate'); if (g) g.remove();
+  } else {
+    document.documentElement.style.overflow = 'hidden';
+    function tryUnlock(){
+      var val = document.getElementById('ffc-gate-input').value;
+      if (val === PASS) {
+        localStorage.setItem('ffc_gate_ok','1');
+        document.getElementById('ffc-gate').remove();
+        document.documentElement.style.overflow = '';
+      } else {
+        document.getElementById('ffc-gate-err').style.display = 'block';
+      }
+    }
+    document.getElementById('ffc-gate-btn').addEventListener('click', tryUnlock);
+    document.getElementById('ffc-gate-input').addEventListener('keydown', function(e){ if(e.key==='Enter') tryUnlock(); });
+  }
+})();
+</script>
+
+<h1>FFC Member Insights Hub</h1>
+<div class="subtitle">Curated testimonials for LPs, social, and newsletters; a cross-channel read on member sentiment; and a leaderboard of the most engaged members. Testimonials update automatically each day via a scheduled check of Circle, Granola, and HubSpot.<br><strong style="color:#3f0213;">Last updated: July 23, 2026</strong></div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" id="tabBtnTestimonials" onclick="switchTab('testimonials')">Testimonials</button>
+  <button class="tab-btn" id="tabBtnFeedback" onclick="switchTab('feedback')">Member Feedback</button>
+  <button class="tab-btn" id="tabBtnActive" onclick="switchTab('active')">Event Member Activity</button>
+  <button class="tab-btn" id="tabBtnGotos" onclick="switchTab('gotos')">Industry Go-Tos</button>
+  <button class="tab-btn" id="tabBtnGranola" onclick="switchTab('granola')">Granola Calls</button>
+</div>
+
+<div id="viewTestimonials">
+
+<div class="quick-take" id="topTestimonialsBox">
+  <h2>Top testimonials</h2>
+  <div class="fb-sub" style="margin-bottom:10px;">Auto-ranked by approval status, Circle profile verification, and concrete business impact (ROI, revenue, recommend, partnerships) — the strongest picks for LP decks and social.</div>
+  <div class="fb-stack" id="topTestimonialsList"></div>
+</div>
+
+<div class="stats-row" id="statsRow"></div>
+
+<div class="controls">
+  <input type="text" id="searchBox" placeholder="Search member, business, or quote...">
+  <select id="themeFilter"><option value="">All themes</option></select>
+</div>
+
+<div class="table-wrap">
+  <table id="mainTable">
+    <thead>
+      <tr>
+        <th data-key="date">Date</th>
+        <th data-key="name">Member</th>
+        <th data-key="business">Business</th>
+        <th data-key="industry">Industry</th>
+        <th data-key="theme">Theme</th>
+        <th data-key="source">Source</th>
+        <th>Quote</th>
+        <th>Profile</th>
+      </tr>
+    </thead>
+    <tbody id="mainTbody"></tbody>
+  </table>
+</div>
+
+<div class="footer-note">Built from Circle comments, Granola meeting transcripts, and HubSpot feedback (verified active members); testimonials collected via email and the Fashion Cohort survey; archival testimonials from the team's Testimonials Drive folder (marketing PDFs, the 2021 FFC testimonials survey, chapter-lead outreach emails, and The North mentorship program); and 21 event-feedback quotes from the Community Testimonials doc (3,438 post-event submissions, 4.64/5 avg rating, 77% five-star). A daily scheduled task checks live sources and adds new qualifying testimonials automatically.</div>
+</div>
+
+<div id="viewFeedback" style="display:none;">
+  <div class="stats-row" id="fbStatsRow"></div>
+
+  <div class="quick-take">
+    <h2>Quick take — 2026 only</h2>
+    <ul>
+      <li><strong>Members join for connections</strong> — half of Spring '26 survey respondents named "connections & network" as the single most valuable thing they got out of membership.</li>
+      <li><strong>Biggest recurring complaint:</strong> a quiet, self-promotional feed with low peer engagement (staff replying more than members) — shows up across multiple low-score responses.</li>
+      <li><strong>Biggest churn driver:</strong> no time/capacity, followed by no reason given and budget — not dissatisfaction with content.</li>
+      <li><strong>Operational gap:</strong> billing/auto-renew confusion is costing refunds and goodwill — see flag below.</li>
+    </ul>
+  </div>
+
+  <div class="fb-section">
+    <div class="fb-section-head"><h2>Positive vs. negative feedback — themes</h2><span class="fb-count-badge" id="posNegBadge"></span></div>
+    <div class="fb-sub">High-level themes rolled up from the Member Survey (Spring 2026), with strategy suggestions for what's not working.</div>
+    <div class="fb-columns">
+      <div>
+        <div class="fb-col-head pos"><span class="dot"></span>What's working</div>
+        <div class="fb-stack" id="positiveGrid"></div>
+      </div>
+      <div>
+        <div class="fb-col-head neg"><span class="dot"></span>What's not — with suggested fixes</div>
+        <div class="fb-stack" id="negativeGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fb-section">
+    <div class="fb-section-head"><h2>Why they join / stay</h2></div>
+    <div class="fb-sub">"What was the single most valuable thing you got out of it?" — tallied across 20 Spring 2026 survey respondents.</div>
+    <div class="join-tally" id="joinTally"></div>
+    <div class="join-quotes" id="joinQuotes"></div>
+  </div>
+
+  <div class="fb-section">
+    <div class="fb-section-head"><h2>Why they don't join or don't renew</h2></div>
+    <div class="fb-sub">Reason codes from the Cancellation/Refund Request Tracker — 38 requests logged Jan–Jul 2026.</div>
+    <div class="churn-bars" id="churnBars"></div>
+    <ul class="churn-note-list" id="churnNotes"></ul>
+  </div>
+
+  <div class="fb-section">
+    <div class="fb-section-head"><h2>Operational flag</h2></div>
+    <div class="flag-box"><strong>Billing/comms gap, not a content problem:</strong> multiple 2026 cancellation requests show members surprised by auto-renewal or billed after they believed they'd cancelled (e.g. Kelly Groehle — "didn't know plan was recurring," cancelled but not refunded; several accounts terminated after missed-payment gaps with no response to outreach). Worth fixing the cancellation flow and renewal-reminder timing since it's actively costing refunds and goodwill.</div>
+  </div>
+
+  <div class="footer-note">Synthesized from the Member Survey Spring 2026 (HubSpot) and the Cancellation/Refund Request Tracker in the shared Drive, scoped to 2026 activity only. Not on a live refresh schedule yet — re-run manually when you want an updated read.</div>
+</div>
+
+<div id="viewActive" style="display:none;">
+  <div class="stats-row" id="amStatsRow"></div>
+
+  <div class="quick-take">
+    <h2>Quick take — superfans</h2>
+    <div class="fb-sub" style="margin-bottom:0;">5 members show up on every independent measure of engagement — top-50 event attendance, top feedback-submission volume, and multi-year (2021–22 join, still active in 2024–2026) loyalty. They're your strongest candidates for case studies, an ambassador program, or a personal thank-you outreach.</div>
+    <div class="am-superfan-list" id="superfanList"></div>
+  </div>
+
+  <div class="am-section">
+    <div class="am-section-head"><h2>Most active by event attendance</h2><span class="am-badge">Top 50 · Luma RSVPs</span></div>
+    <div class="am-sub">Total event RSVPs logged in Luma, all-time. In-person check-ins called out separately since most members attend virtually.</div>
+    <div class="am-table-wrap">
+      <table class="am-table">
+        <thead><tr><th>Rank</th><th>Name</th><th>Email</th><th>Sessions RSVP'd</th><th>In-person check-ins</th><th>Member since</th></tr></thead>
+        <tbody id="sessionsTbody"></tbody>
+      </table>
+      <div class="am-show-more" id="sessionsShowMore"></div>
+    </div>
+  </div>
+
+  <div class="am-section">
+    <div class="am-section-head"><h2>Most participatory by feedback volume</h2><span class="am-badge" id="participatoryBadge"></span></div>
+    <div class="am-sub">Total post-event feedback submissions — the clearest proxy for how engaged a member is with programming, not just how often they show up.</div>
+    <div class="am-table-wrap">
+      <table class="am-table">
+        <thead><tr><th>Rank</th><th>Name</th><th>Email</th><th>Feedback submissions</th><th>Avg rating</th></tr></thead>
+        <tbody id="participatoryTbody"></tbody>
+      </table>
+      <div class="am-show-more" id="participatoryShowMore"></div>
+    </div>
+  </div>
+
+  <div class="am-section">
+    <div class="am-section-head"><h2>High feedback scorers</h2><span class="am-badge" id="highscorerBadge"></span></div>
+    <div class="am-sub">Members with 3+ feedback submissions averaging 4.8★ or higher — a filtered view of the participatory list above, not a separate population. These are your most consistently satisfied, vocal members.</div>
+    <div class="am-table-wrap">
+      <table class="am-table">
+        <thead><tr><th>Rank</th><th>Name</th><th>Email</th><th># ratings</th><th>Avg rating</th></tr></thead>
+        <tbody id="highscorerTbody"></tbody>
+      </table>
+      <div class="am-show-more" id="highscorerShowMore"></div>
+    </div>
+  </div>
+
+  <div class="am-section">
+    <div class="am-section-head"><h2>Long-term loyal members</h2><span class="am-badge" id="longtermBadge"></span></div>
+    <div class="am-sub">Joined 2021–2022 and still submitting event feedback in 2024–2026 — your most tenured, still-engaged members.</div>
+    <div class="am-table-wrap">
+      <table class="am-table">
+        <thead><tr><th>Rank</th><th>Name</th><th>Email</th><th>First event</th><th>Most recent event</th><th>Events attended</th></tr></thead>
+        <tbody id="longtermTbody"></tbody>
+      </table>
+      <div class="am-show-more" id="longtermShowMore"></div>
+    </div>
+  </div>
+
+  <div class="am-section">
+    <div class="am-section-head"><h2>Top industries</h2><span class="am-badge" id="industryBadge"></span></div>
+    <div class="am-sub">Industries of the most recently joined active members (HubSpot CRM, most recent 400 active-member records with an industry on file) — a read on who's joining right now, not the full historical base.</div>
+    <div class="churn-bars" id="industryBars"></div>
+  </div>
+
+  <div class="am-section">
+    <div class="am-section-head"><h2>Top feedback we've received</h2><span class="am-badge">3,438 submissions</span></div>
+    <div class="am-sub">Headline stats and every featured 5★ testimonial from the Community Testimonials doc — 5 years of post-event feedback, 2021–2026, grouped by program category.</div>
+    <div class="stats-row" id="topFeedbackStatsRow" style="margin-bottom:14px;"></div>
+    <div id="feedbackHighlightsContainer"></div>
+  </div>
+
+  <div class="footer-note">Attendance/feedback leaderboards sourced from the FFC_Founder_Lists spreadsheet. Industry breakdown sourced from HubSpot CRM (active members, industry property). Feedback stats sourced from the Community Testimonials doc. Static snapshot, not on a live refresh — re-pull sources when you want updated numbers.</div>
+</div>
+
+<div id="viewGotos" style="display:none;">
+  <div class="quick-take">
+    <h2>How this is built</h2>
+    <div class="fb-sub" style="margin-bottom:0;">For each of the top 9 tracked industries, the members with the highest combined engagement score (event attendance + feedback volume + rating + tenure, pulled from the Event Member Activity leaderboards) are surfaced as that industry's "go-tos" — plus, where we have one on file, a direct quote from a member in that industry about the community. Think of this as the people a prospective member in that industry could be pointed to. Hospitality & Event Planning isn't shown — none of its members currently rank on an engagement leaderboard.</div>
+  </div>
+
+  <div class="goto-grid" id="gotosContainer"></div>
+
+  <div class="footer-note">Industry field pulled directly from HubSpot CRM contact records (not inferred from testimonial text). Engagement leaderboards from the FFC_Founder_Lists spreadsheet. Quotes matched by name from the Testimonials and Community Testimonials sources — not every top-ranked member has a quote on file yet, so some cards show a runner-up's quote instead. Static snapshot; re-pull HubSpot + leaderboard data when you want an updated read.</div>
+</div>
+
+<div id="viewGranola" style="display:none;">
+  <div class="quick-take">
+    <h2>Granola call insights</h2>
+    <div class="fb-sub" style="margin-bottom:0;">Starts with Avery's dedicated "1:1 Member Calls" Granola folder (10 recorded/transcribed calls), then expanded to a review of all 113 meetings in Avery's full Granola account to surface additional member feedback outside that folder, weighted toward 2026 calls. Most of the wider 113 are internal team syncs or brand-partner calls with no community feedback content — those are excluded. Five additional genuine member calls turned up in that wider pass (Jennifer Smiga, Sarah Ghabbour, Christina, Ana Maria Moreno, Poorvi Mehta) and are folded in below; two other names that came up (Glynis Tao, Alyson Iarrusso) were already captured as existing testimonials on the Testimonials tab, so they're not duplicated here. One call (Charlotte Bell, Dec 15) was excluded — its recording covered unrelated personal/property topics, not community feedback. Wherever a call surfaced a concern, we've added a note on how Avery addressed it during that same call.</div>
+  </div>
+
+  <div class="fb-section">
+    <div class="fb-section-head"><h2>Top quotes from calls</h2><span class="fb-count-badge">4 highlighted</span></div>
+    <div class="fb-sub">The most direct, quotable moments about the community's value (or lack thereof) surfaced across all reviewed transcripts.</div>
+    <div class="fb-columns">
+      <div>
+        <div class="fb-col-head pos"><span class="dot"></span>What's working</div>
+        <div class="fb-stack">
+          <div class="fb-card positive">
+            <div class="fb-quote">"I found that the live events are really where the value in the Female Founders Collective is."</div>
+            <div class="fb-meta"><span class="fb-source">Nkosi Harvey — Rympok</span><span>Dec 22, 2025</span></div>
+          </div>
+          <div class="fb-card positive">
+            <div class="fb-quote">"The women that I met were honestly so incredible, and I'm so grateful. I really enjoyed hosting the community conversations. I felt like I got a lot of value from it, and I also really enjoyed just sharing what I know and what I've learned through my career."</div>
+            <div class="fb-meta"><span class="fb-source">Ana Maria Moreno — The Copal</span><span>Feb 13, 2026</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="fb-col-head neg"><span class="dot"></span>What's not — direct from the call</div>
+        <div class="fb-stack">
+          <div class="fb-card negative">
+            <div class="fb-quote">"Some of my difficulty has come from not really knowing how to navigate the platform... more often than not, there isn't anything that is relevant to the work that I do... I signed up for [a wedding huddle] and then when I went to join, I wasn't able to get on. I never saw another wedding huddle ad again on the platform."</div>
+            <div class="fb-meta"><span class="fb-source">Keanna O'Quinn — Sonic Sommelier</span><span>Dec 22, 2025</span></div>
+            <div class="fb-fix"><strong>How Avery responded</strong>Proposed reviving a wedding-industry huddle with Keanna as co-host (rather than just an attendee), offered a broader events-industry huddle per Keanna's own suggestion, promised the huddle-host form same day with an early-Feb kickoff date, and separately followed up on Keanna's Female Founders Day sponsorship idea by asking for her deck to pass to the production team.</div>
+          </div>
+          <div class="fb-card negative">
+            <div class="fb-quote">"It's more just getting access to people... maybe they help you, maybe they don't, maybe they charge you, maybe they don't... we thought a 4-week growth program would be one-on-one on our KPIs, our finances, our pitch deck. When we got in, it was group mastermind sessions, and for real 1:1 help we'd have to pay $150/hour on top of membership."</div>
+            <div class="fb-meta"><span class="fb-source">Poorvi Mehta — fashion tech founder</span><span>Jan 30, 2026</span></div>
+            <div class="fb-fix"><strong>How Avery responded</strong>Clarified upfront that the accelerator is advertised as group mastermind format (not 1:1), pointed her to the free special-offers/service-provider board where members give complimentary consultations, invited her to submit a question for the town hall for direct time with Rebecca and Ali, flagged the quarterly pitch deck competition as a free way to get deck feedback, and booked a part-two call to follow up once she'd reviewed the links.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fb-section">
+    <div class="fb-section-head"><h2>All calls on file</h2><span class="fb-count-badge">14 shown</span></div>
+    <div class="fb-sub">Every call in the folder except the one excluded above, plus 5 new finds from the wider 113-meeting review — weighted toward 2026 calls per Avery's request for more recent coverage — in reverse chronological order. "Theme" is how the call reads overall; not every call contained an explicit testimonial or complaint — several were onboarding/logistics check-ins with only mild sentiment either way. Where a call surfaced a concern, the quote cell also notes how Avery addressed it on the call.</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Member</th><th>Business</th><th>Theme</th><th>Quote</th></tr></thead>
+        <tbody>
+          <tr><td>2026-03-25</td><td>Jennifer Smiga</td><td>Ultraviolet Agency</td><td class="theme-cell"><span class="theme-pill">Positive engagement</span></td><td class="quote"><div class="quote-text">Had a positive experience at Founder's Day, brought a friend who will likely join, and connected with Angela's funding group through the community — now planning to start her own huddle in the home industry.</div></td></tr>
+          <tr><td>2026-02-13</td><td>Ana Maria Moreno</td><td>The Copal</td><td class="theme-cell"><span class="theme-pill">Testimonial + re-engagement</span></td><td class="quote"><div class="quote-text">"The women that I met were honestly so incredible, and I'm so grateful... your sessions were so loved" — returning from maternity leave to resume hosting community conversations and re-engage after finding real value previously.</div></td></tr>
+          <tr><td>2026-02-11</td><td>Sarah Ghabbour</td><td>Loved Twice Bridal</td><td class="theme-cell"><span class="theme-pill">Feedback — niche fit gap</span></td><td class="quote"><div class="quote-text">Felt the fashion/accessory cohort "isn't tailored enough" for her service-based bridal brokerage and worried she was missing more relevant connections.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>Confirmed a Business Services cohort is launching in the next few months with automatic access as a current member, proposed reviving the dormant bridal-industry huddle with Sarah as co-host, and named specific bridal-space members (Jess Zeldner, Nimmy, Julie Cronin) to connect her with directly.</div></div></td></tr>
+          <tr><td>2026-02-10</td><td>Anjali Purohit</td><td>Studio Variously</td><td class="theme-cell"><span class="theme-pill">Onboarding</span></td><td class="quote"><div class="quote-text">Looking to connect with interior designers and sustainable-sourcing partners through the community; enrolled in the Founders Operating Manual.</div></td></tr>
+          <tr><td>2026-02-02</td><td>Christina</td><td>Medical aesthetics practice</td><td class="theme-cell"><span class="theme-pill">Feedback — niche fit gap</span></td><td class="quote"><div class="quote-text">Unsure the beauty cohort was right for her since it reads as CPG-focused and her medical aesthetics practice is brick-and-mortar/service-based.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>Explained she'd be placed in the right industry space regardless of which cohort she applied through, pointed her to the Business Services space and Service Provider Board, recommended The North's 1:1 advisory as a better fit than the group accelerator and offered to find her a mentor with medical-practice experience, and shared the free public NYC networking calendar (open to non-members) as a lower-commitment starting point.</div></div></td></tr>
+          <tr><td>2026-01-20</td><td>Yvonne Georgi</td><td>Tomorrow in a Year</td><td class="theme-cell"><span class="theme-pill">Re-engagement</span></td><td class="quote"><div class="quote-text">Acknowledged reduced activity over the past year while testing her business model; now re-engaging with the community for partnership and mentorship support.</div></td></tr>
+          <tr><td>2026-01-30</td><td>Poorvi Mehta</td><td>fashion tech (early-stage)</td><td class="theme-cell"><span class="theme-pill">Feedback — expectations gap</span></td><td class="quote"><div class="quote-text">"It's more just getting access to people... maybe they help you, maybe they don't, maybe they charge you, maybe they don't" — expected 1:1 mentorship on KPIs/financials/pitch deck from the accelerator, found group mastermind format instead.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>See full response noted in the quote card above — clarified format, pointed to free 1:1 alternatives via special offers/service provider board and the town hall, flagged the pitch deck competition, booked a follow-up call.</div></div></td></tr>
+          <tr><td>2026-01-13</td><td>Alejandra Jaimes</td><td>Estellar Coffee</td><td class="theme-cell"><span class="theme-pill">Feedback — network gap</span></td><td class="quote"><div class="quote-text">Noted her existing network skews toward male tech/software founders and said she's seeking "more relevant peer connections" through the community, describing the search as feeling "lonely."<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>Recommended she reintroduce herself in the "Say Hello" and Partnerships/Collaborations/Gifting spaces, pointed her to monthly cross-industry huddles including the new Community Builders Huddle, gave her complimentary access to the Founder's Operating Manual, connected her to The North for fundraising-stage advisory, and booked a check-in call for a few weeks out.</div></div></td></tr>
+          <tr><td>2025-12-22</td><td>Keanna O'Quinn</td><td>Sonic Sommelier</td><td class="theme-cell"><span class="theme-pill">Feedback — platform gap</span></td><td class="quote"><div class="quote-text">"It's been a challenge to really find my footing within the community" — cited a confusing Weekly Digest, irrelevant content for her industry, and a huddle she signed up for but couldn't join, with no follow-up ad since.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>See full response noted in the quote card above — proposed co-hosting a revived wedding/events huddle and followed up on a Female Founders Day sponsorship idea.</div></div></td></tr>
+          <tr><td>2025-12-22</td><td>Tina Yau</td><td>Tivy</td><td class="theme-cell"><span class="theme-pill">Onboarding</span></td><td class="quote"><div class="quote-text">Brand new (launched Oct 2025); exploring product donations, co-working-space events, and a possible panel with another member.</div></td></tr>
+          <tr><td>2025-12-22</td><td>Natalie Amoils</td><td>NLA Collection</td><td class="theme-cell"><span class="theme-pill">Discovery story</span></td><td class="quote"><div class="quote-text">Discovered FFC through a member referral — met Rebecca at a Santa Monica book signing — and joined specifically for the Accessories Council.</div></td></tr>
+          <tr><td>2025-12-22</td><td>Nkosi Harvey</td><td>Rympok</td><td class="theme-cell"><span class="theme-pill">Testimonial + churn-risk</span></td><td class="quote"><div class="quote-text">"I found that the live events are really where the value in the Female Founders Collective is" — but considering canceling since relocating to Atlanta, where FFC has limited in-person presence.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>Confirmed she'd keep full access to the Founder's Operating Manual as a current member regardless, connected her to the job board and a North advisor for her marketing-hire question, and encouraged her to become an Atlanta city-session host (member-led, FFC covers costs via ticket reimbursement) to help build a local presence.</div></div></td></tr>
+          <tr><td>2025-12-18</td><td>Nina Harrell</td><td>Thryve</td><td class="theme-cell"><span class="theme-pill">Positive engagement</span></td><td class="quote"><div class="quote-text">Attended the FFC Tampa event; actively co-planning an International Women's Day event and a World Cup pop-up activation with FFC for 2026.</div></td></tr>
+          <tr><td>2025-12-15</td><td>Shlesha</td><td>Banyan Agency</td><td class="theme-cell"><span class="theme-pill">Renewal / life circumstances</span></td><td class="quote"><div class="quote-text">Requested a renewal extension after a difficult year (death of someone close); re-engaging now and interested in the service-provider board and a speaking slot.</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer-note">Source: Granola "1:1 Member Calls" folder (10 notes) plus a wider review of all 113 meetings in Avery's Granola account as of 2026-07-22, with extra weight given to 2026 calls. This is a manually-curated one-time pull, not on the daily auto-refresh yet — ask to have it added to the daily testimonials task if you want it kept current automatically. Most of Avery's historical 1:1 call bookings do not have a Granola transcript on file; only calls actually recorded via Granola appear here.</div>
+</div>
+
+<script>
+const STORAGE_KEY = 'ffc_testimonials_dashboard_v1';
+
+const CURATED = [
+  { id: 'natacha-lacroix-1', date: '2026-07-22', name: 'Natacha Lacroix', business: 'BLOOMEST BY N. LACROIX', industry: 'Health & Wellness / Maternity / Technology', memberType: 'Member', source: 'Circle Comment (reply to Avery)', quote: "Avery, thank you so much. 🤎 Your encouragement has meant so much throughout this journey! ...Thank you for thinking of Bloomest, and for always cheering us on. It truly means a lot ❤️", theme: 'Gratitude for Avery / community support', host: '', profileUrl: 'https://community.the10thhouse.co/u/2bb4f39a', useCase: 'Social', defaultApproved: 'Pending' },
+  { id: 'michelle-nagy-1', date: '2026-06-23', name: 'Michelle Nagy', business: 'Laws of Lux', industry: 'Fashion', memberType: 'Member', source: 'Email', quote: "Hi Avery, Thank you for thinking of me! I feel like I have truly found a community that I belong to here and am so happy to be part of it. I definitely would sign up for lifetime membership, where do I sign up!", theme: 'Community belonging / Membership value', host: '', profileUrl: 'https://community.the10thhouse.co/u/e52a5ad9', useCase: 'LP', defaultApproved: 'Yes' },
+  { id: 'chelsea-lowry-1', date: '', name: 'Chelsea Lowry', business: 'Benton Collective', industry: 'EComm / Consumer Goods / Family & Parenting / Maternity / Fashion', memberType: 'Member', source: 'Email', quote: "I just wanted to send a note that our Fashion and Accessories Huddle was so valuable. Laura does an amazing job hosting these, and really elevates the value of the discussion... She also individually reached out to connect with several of us, to learn more about our businesses and just gives such an elevated experience.", theme: 'Huddle quality / Host recognition', host: 'Laura (Fashion & Accessories Huddle)', profileUrl: 'https://community.the10thhouse.co/u/ca852e78', useCase: 'LP / Social', defaultApproved: 'Yes' },
+  { id: 'saadia-khan-1', date: '2025-10-19', name: 'Saadia Khan', business: 'Indus Threads', industry: 'Fashion', memberType: 'Fashion Cohort Participant', source: 'Survey', quote: "Being part of the Female Founder Collective Fashion Cohort was an inspiring and empowering experience. I connected with incredible women founders, gained insights from industry leaders, and refined my vision for Indus Threads.", theme: 'Fashion Cohort - community & growth', host: 'Fashion Cohort', profileUrl: '', useCase: '', defaultApproved: 'Pending' },
+  { id: 'elizabeth-goodwin-welborn-1', date: '2025-10-19', name: 'Elizabeth Goodwin Welborn', business: 'Stick & Ball', industry: 'Fashion', memberType: 'Fashion Cohort Participant', source: 'Survey', quote: "Having the ability to connect with other founders throughout the fashion industry at various stages not only provides a much needed community, it enables us to exchange experiences, resources and support needed to make better decisions and to be confident leaders.", theme: 'Fashion Cohort - community & growth', host: 'Fashion Cohort', profileUrl: '', useCase: '', defaultApproved: 'Pending' },
+  { id: 'cynthia-ondine-1', date: '2025-10-20', name: 'cynthia', business: 'Ondine', industry: 'Fashion', memberType: 'Fashion Cohort Participant', source: 'Survey', quote: "loved it as I wasn't from the fashion industry I was able to get connected to some experts and learn more about this new industry for me which was priceless", theme: 'Fashion Cohort - community & growth', host: 'Fashion Cohort', profileUrl: '', useCase: '', defaultApproved: 'Pending' },
+  { id: 'ashley-rector-1', date: '2022-11-16', name: 'Ashley Rector', business: 'Quimby Digital', industry: 'Business Services', memberType: 'Member', source: 'Circle Comment', quote: "The 10th house has provided a tremendous amount of valuable resources and most importantly, a community of women who are helping one another move the needle in their business... I would recommend the 10th house.", theme: 'Community value / Recommend 10th House', host: '', profileUrl: 'https://community.the10thhouse.co/u/03dc06f6', useCase: '', defaultApproved: 'Pending' },
+  { id: 'marika-adamopoulos-1', date: '2021-08-10', name: 'Marika Adamopoulos', business: 'Axia', industry: 'Creative Services / Business Services', memberType: 'Member', source: 'Circle Comment', quote: "I love this community! It's already paid for itself in the wealth of knowledge, resources, and relationships. Excited to keep diving in!", theme: 'Community value / ROI', host: '', profileUrl: 'https://community.the10thhouse.co/u/fe856805', useCase: '', defaultApproved: 'Pending' },
+  { id: 'tracy-memoli-rassin-1', date: '2025-07-10', name: 'Tracy Memoli Rassin', business: 'FrutaPOP', industry: 'Food & Bev', memberType: 'Member', source: 'Circle Comment', quote: "So grateful to be part of this incredible community!", theme: 'Community gratitude', host: '', profileUrl: 'https://community.the10thhouse.co/u/de2816b9', useCase: '', defaultApproved: 'Pending' },
+  { id: 'gesche-haas-1', date: '2023-02-01', name: 'Gesche Haas', business: 'Dreamers & Doers', industry: 'Community Organizations', memberType: 'Member', source: 'Circle Comment', quote: "Celebrating the powerful 10th House community and all its supportive members and team. What a winning formula to be part of this incredible community.", theme: 'Community praise', host: '', profileUrl: 'https://community.the10thhouse.co/u/55ee8b39', useCase: '', defaultApproved: 'Pending' },
+  { id: 'amodhi-weeresinghe-1', date: '2025-10-07', name: 'Amodhi Weeresinghe', business: 'Coura', industry: 'Technology / Business Services / EComm / Marketing', memberType: 'Member', source: 'Circle Comment', quote: "Love this community. Y'all have built something really special here.", theme: 'Community praise', host: '', profileUrl: 'https://community.the10thhouse.co/u/5aa83d88', useCase: '', defaultApproved: 'Pending' },
+  { id: 'shruti-goradia-1', date: '2025-07-28', name: 'Shruti Goradia', business: 'MAUJH', industry: 'EComm / Fashion', memberType: 'Member', source: 'Circle Comment', quote: "Happy Birthday to this incredible community!", theme: 'Community praise', host: '', profileUrl: 'https://community.the10thhouse.co/u/41abea00', useCase: '', defaultApproved: 'Pending' },
+  { id: 'monica-rawicz-1', date: '2025-07-10', name: 'Monica Rawicz', business: '100Ninjas', industry: 'Business Services', memberType: 'Member', source: 'Circle Comment', quote: "Grateful to be part of this amazing community!", theme: 'Community praise', host: '', profileUrl: 'https://community.the10thhouse.co/u/167da84b', useCase: '', defaultApproved: 'Pending' },
+  { id: 'sydney-dake-1', date: '2024-10-31', name: 'Sydney Dake', business: 'Gntl', industry: 'Beauty & Personal Care', memberType: 'Member', source: 'Circle Comment', quote: "Grateful for this community!", theme: 'Community gratitude', host: '', profileUrl: 'https://community.the10thhouse.co/u/4ea3433d', useCase: '', defaultApproved: 'Pending' },
+  { id: 'jess-zeldner-1', date: '2025-12-11', name: 'Jess Zeldner', business: 'The Rescue Kit Company', industry: 'Fashion', memberType: 'Member', source: 'Circle Comment', quote: "I am so grateful to this community!", theme: 'Community gratitude', host: '', profileUrl: 'https://community.the10thhouse.co/u/491d20d4', useCase: '', defaultApproved: 'Pending' },
+  { id: 'andrea-goulet-1', date: '2025-01-29', name: 'Andrea Goulet', business: 'Debugging Human Communications', industry: 'Business Services / Marketing & Communications / Technology', memberType: 'Member', source: 'Circle Comment', quote: "That's a big reason I signed up for this community and I'm very grateful to have a place where it feels safe to share some of the challenges.", theme: 'Community helped her / belonging', host: '', profileUrl: 'https://community.the10thhouse.co/u/1a4afd49', useCase: '', defaultApproved: 'Pending' },
+  { id: 'lauren-bercuson-1', date: '2024-05-02', name: 'Lauren Bercuson', business: 'Storylock Legal', industry: 'Business Services', memberType: 'Member', source: 'Circle Comment', quote: "Welcome to the very best community ever.", theme: 'Community praise', host: '', profileUrl: 'https://community.the10thhouse.co/u/3787852e', useCase: '', defaultApproved: 'Pending' },
+  { id: 'dani-audette-1', date: '2024-05-02', name: 'Dani', business: 'Audette Law', industry: 'Business Services', memberType: 'Member', source: 'Circle Comment', quote: "This community has been really inspiring and warm and I'm so thankful for it.", theme: 'Community praise', host: '', profileUrl: 'https://community.the10thhouse.co/u/a392d36e', useCase: '', defaultApproved: 'Pending' },
+  { id: 'sharon-odonnell-1', date: '2021-08-16', name: "Sharon O'Donnell", business: 'Fit For Good', industry: 'Fitness & Recreation (inferred)', memberType: 'Member', source: 'Circle Comment', quote: "This community has been amazing thus far, and only gets better with each passing day.", theme: 'Community praise', host: '', profileUrl: 'https://community.the10thhouse.co/u/2af924d4', useCase: '', defaultApproved: 'Pending' },
+  { id: 'jennifer-jane-young-1', date: '2024-12-15', name: 'Jennifer Jane Young', business: 'School of Intuitive Leadership', industry: 'Education / Business Services (inferred)', memberType: 'Member', source: 'Circle Comment', quote: "Ohhhh it has been such an honour... So grateful to be in this community!! To many more in 2025", theme: 'Community gratitude', host: '', profileUrl: 'https://community.the10thhouse.co/u/43dab748', useCase: '', defaultApproved: 'Pending' },
+  { id: 'glynis-tao-1', date: '2026-01-21', name: 'Glynis Tao', business: 'Chase Your Dreams Consulting', industry: 'EComm / Fashion / Business Services / Technology / Marketing & Communications', memberType: 'Member', source: 'Granola Meeting (Community Builders Huddle)', quote: "Being in the 10th house has been amazing. I've made some really amazing connections there. I think they've done a wonderful job... I've tried a lot of different networking groups out there, memberships and that sort of thing, and still always came back to the 10th house because of the engagement part.", theme: 'Recommend 10th House / comparison to other groups', host: 'Community Builders Huddle', profileUrl: 'https://community.the10thhouse.co/u/dbf7cbb4', useCase: '', defaultApproved: 'Pending' },
+  { id: 'alyson-iarrusso-1', date: '2026-04-08', name: 'Alyson Iarrusso', business: 'Cove Fine Jewelry', industry: 'Fashion', memberType: 'Member', source: 'Granola Meeting (1:1 with Avery)', quote: "One huge win is I found my PR, my PR like love of my life PR like girl like perfect match through a recommendation in the 10th house. I've also found my bookkeeper through the network. So that's been really awesome.", theme: 'Community helped her scale / concrete ROI', host: '', profileUrl: 'https://community.the10thhouse.co/u/b1230132', useCase: '', defaultApproved: 'Pending' },
+  { id: "amanda-perna-1", date: '', name: "Amanda Perna", business: "The House of Perna", industry: "", memberType: 'Member', source: "PDF (10H ROI + Testimonials)", quote: "I have met great people to network with, have gotten some new customers, and feel part of something so much bigger than myself and my brand.", theme: "Networking / concrete ROI", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "yvonne-georgi-1", date: '', name: "Yvonne Georgi", business: "Tomorrow in a Year", industry: "", memberType: 'Member', source: "PDF (10H ROI + Testimonials)", quote: "The workshops and webinars are great and I love that we can have our questions answered in the sessions and even discuss them live in the event.", theme: "Programming value", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "aleksandra-miloseska-1", date: '', name: "Aleksandra Miloseska", business: "Quick Fit Bites", industry: "Food & Bev", memberType: 'Member', source: "PDF (10H ROI + Testimonials)", quote: "My membership has fostered my growth and development. I have gained new insights, learned to take risks, and enhanced my leadership abilities through exposure to other successful women entrepreneurs.", theme: "Growth & leadership development", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "jessica-korthuis-1", date: '', name: "Jessica Korthuis", business: "Sohuis", industry: "", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "We've grown our brand's presence significantly through the collaborative programming we've created in partnership with FFC, and it's helped us reach the exact customer we are here to serve — early-stage womenpreneurs!", theme: "Brand growth / partnership ROI", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "kanika-chadda-gupta-1", date: '', name: "Kanika Chadda-Gupta", business: "Kronologie Agency", industry: "Marketing & Communications", memberType: 'Member', source: "PDF (10H ROI + Testimonials)", quote: "Being part of the 10th House has led to brand partnerships for my podcast through relationships built inside the network.", theme: "Concrete ROI / brand partnerships", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "chriselle-lim-1", date: '', name: "Chriselle Lim", business: "BümoBrain & BümoWork", industry: "", memberType: 'Member', source: "PDF (10H ROI + Testimonials)", quote: "Through the 10th House, we've gained exposure and direct attention from larger companies.", theme: "Exposure / ROI", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "amanda-hofman-1", date: '', name: "Amanda Hofman", business: "Go To Market", industry: "Business Services", memberType: 'Member', source: "PDF (Member Testimonials)", quote: "I've met so many women who have become colleagues in entrepreneurship. We support each other and are looking out for each other. It's a real community!", theme: "Community praise", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "amanda-pearl-1", date: '', name: "Amanda Pearl", business: "Amanda Pearl", industry: "Fashion", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "A community of lady entrepreneurs to whom I can go with questions, and to also be a resource to others. Better together!", theme: "Community praise", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "malinda-coler-1", date: '', name: "Malinda Coler", business: "LessonsUp", industry: "Education", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "I met 5 fantastic founders on FFC thru a promo video give away that I hosted for this community. We've since been able to support each other on social media, and I've had a few referrals join our community at LessonsUp.", theme: "Concrete ROI / referrals", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "christine-nava-1", date: '', name: "Christine Nava", business: "Keres Solutions Limited", industry: "", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "It's fantastic to be surrounded by such strong and wonderful ladies who share the same goal: succeed.", theme: "Community praise", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "kimberley-bueno-schonig-1", date: '', name: "Kimberley Bueno-Schonig", business: "BuenoSchonig Consulting & The Cuddly Boutique", industry: "", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "FFC has been an incredible community for me to connect with other like-minded, ambitious, and successful women. I've been able to build relationships that has helped me personally and professionally.", theme: "Community value", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "maya-holihan-1", date: '', name: "Maya Holihan", business: "EWedded", industry: "EComm", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "The FCC has connected me to companies who have products ideal for my marketplace, so new sellers are being introduced to EWedded everyday.", theme: "Concrete ROI", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "farah-azmi-1", date: '', name: "Farah Azmi", business: "IXORA Apparel", industry: "Fashion", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "I'm so grateful for all of the resources and support this network has provided. I remember specifically needing help with shipments to and from my manufacturer in China - I posted it to the slack channel and someone instantly reached out and walked me through the process.", theme: "Community helped her / concrete support", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "lusine-simonyan-1", date: '', name: "Lusine Simonyan", business: "Miray", industry: "", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "A network of likeminded entrepreneurs. It's a huge support system.", theme: "Community value", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "jaclyn-grauman-1", date: '', name: "Jaclyn Grauman", business: "The Verticale", industry: "", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "Access to programming, i.e. Project Entrepreneur was major for my business.", theme: "Programming ROI", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "susan-mcpherson-1", date: '', name: "Susan McPherson", business: "McPherson Strategies", industry: "Marketing & Communications", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "It's truly a community of good — women supporting and lifting each other every single day. Given the current state of the world, having access to such a bold and open community, is a gift.", theme: "Community praise", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "melissa-blatt-1", date: '', name: "Melissa Blatt", business: "indipop.co", industry: "EComm", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "I have seen the FCC logo on several of my female founder friends' sites and it feels very special to be part of this group of extraordinary women!", theme: "Community belonging", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "chloe-watts-1", date: '', name: "Chloé Watts", business: "chloédigital", industry: "Marketing & Communications", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "A sense of belonging in this lonely Entrepreneur world! The strategic network is amazing!", theme: "Community belonging", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "rhowena-1", date: '', name: "Rhowena", business: "Healing Mama Co.", industry: "Family & Parenting", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "We actually connected with a fellow FFC member and she created our origin story video that we used to kick off the start of our 1st Healing Mama Parent Shower Week.", theme: "Concrete ROI / connections", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "cori-lee-seaberg-1", date: '', name: "Cori Lee Seaberg", business: "Out East", industry: "", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "It's a great way to network, seek business advice from other founders and be connected with a fantastic group of women. It has also helped showcase our brand to an expansive female network to get it noticed even more.", theme: "Networking & brand exposure", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "adi-arezzini-1", date: '', name: "Adi Arezzini", business: "Teami Blends", industry: "Food & Bev", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "Being part of a community of women who truly have the best interest for each other. Lift each other up, inspire and motivate one another!", theme: "Community praise", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "ali-kaminetsky-1", date: '', name: "Ali Kaminetsky", business: "Modern Picnic", industry: "Fashion", memberType: 'Member', source: "Survey (FFC Testimonials 2021)", quote: "FFC has been incredibly instrumental in helping Modern Picnic grow. Whether that is in terms of networking, building relationships, expanding skill sets or providing resources to grow, they have been such an important community.", theme: "Business growth", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "ari-1", date: '', name: "Ari", business: "Chykalophia", industry: "", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "Being part of the 10th House has truly transformed my founder's journey. The in-person events, in particular, set this community apart, offering unique opportunities to forge deep, genuine connections with fellow women founders across various industries.", theme: "In-person events value", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "virginia-1", date: '', name: "Virginia", business: "Party Trick", industry: "", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "The 10th House Community offers the perfect blend of education, general support, connections, and overall, it's a safe place where community flourishes. From finding new team members to connecting with other founders... it's been a beyond helpful resource for me.", theme: "Comprehensive value", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "stacy-1", date: '', name: "Stacy", business: "Bored Rebel", industry: "", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "The friendships with other women founders that I've made because of 10th House have been outrageously valuable to both my business and to me personally.", theme: "Friendship / relationship value", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "babs-cheung-1", date: '', name: "Babs Cheung", business: "Babs Cheung", industry: "", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "What I love most about the FFC community is how willing members are to suggest resources or give useful advice. Hosting networking events has been a perk too as it allows me to connect to the members in my city.", theme: "Community helpfulness", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "nicole-brunoprand-1", date: '', name: "Nicole", business: "Bruno Prand Social", industry: "Marketing & Communications", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "The virtual workshops have been incredibly educational, and the in-person events have connected me with amazing people. I have formed valuable collaborations and partnerships with other 10th House members, which have helped me expand and elevate the service offerings of my boutique PR and social media agency.", theme: "Concrete ROI / partnerships", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "shea-1", date: '', name: "Shea", business: "Breakaway", industry: "Business Services", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "Every time I dive into the 10th House's community, I come away with something valuable. I recently opted out of most of the online networking groups I was in, but 10th House remained a priority!", theme: "Retention / value vs. alternatives", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "christina-brightfield-1", date: '', name: "Christina", business: "Brightfield", industry: "", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "I love the professional development sessions that help me continually learn new things, the supportive online community, and the in-person events and networking, like brunch, coffee chats and the pickleball social.", theme: "Programming & events", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "paige-hughesmarino-1", date: '', name: "Paige", business: "Hughes Marino", industry: "Business Services", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "10th House is more than just a community—it's a source of inspiration, collaboration, and opportunities. From the best community builder I could ask for to clients who are now dear friends, the networking opportunities and invaluable training on scalability and funding have significantly developed me as a founder.", theme: "Comprehensive value", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "sam-audab-1", date: '', name: "Sam", business: "Audab Beauty", industry: "Beauty & Personal Care", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "I love that Female Founder Collective provides the opportunity to build connections with like-minded female founders on a similar journey. As the LA Chapter lead, I am looking forward to curating amazing events where founders can build real relationships.", theme: "Chapter lead / community", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "hanah-cota-1", date: '', name: "Hanah", business: "Cota Creative", industry: "Creative Services", memberType: 'Member', source: "Email (Chapter Lead Outreach)", quote: "Joining the 10th House has surpassed my expectations by fulfilling my need for meaningful connections and offering a well-structured forum for skill sharing and growth among fellow founders.", theme: "Community & growth", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "april-frazier-1", date: '', name: "April Frazier", business: "FRWD Confidence Coaching", industry: "Coaching / Business Services", memberType: 'Member', source: "Marketing Testimonial Card", quote: "I invested in The 10th House and made my membership investment back in less than 60 days! The network is top notch.", theme: "ROI", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "nicole-gardner-1", date: '', name: "Nicole Gardner", business: "Ideally This", industry: "", memberType: 'Member', source: "Marketing Testimonial Card", quote: "10th House has been a deeply enriching way for me to connect with other founders — from finding a sounding board in my Boardroom to meeting new friends IRL after my move to offering flash consulting sessions with early stage DTC founders to helping me jump start my angel investing journey — there's so much connection and support in any way you are seeking it!", theme: "Comprehensive value", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "amber-frankhuizer-1", date: '', name: "Amber Frankhuizer", business: "AFMKTG / Old Money Podcast", industry: "Marketing & Communications", memberType: 'Member', source: "Marketing Testimonial Card", quote: "I've joined many different groups in my entrepreneurial journey - but 10th House FFC is the ONLY ONE I've ever renewed with. I've personally made so many amazing connections that have turned into business partners, clients, cheerleaders and new friends.", theme: "Renewal / ROI", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "nicole-glock-1", date: '', name: "Nicole Glock", business: "Sticky Digital", industry: "Marketing & Communications", memberType: 'Member', source: "Marketing Testimonial Card", quote: "I am thoroughly impressed with the value that my 10th House membership has brought. In my first month of joining, I had the privilege of meeting one of my business idols and connecting with another founder who we have since combined office spaces for our team.", theme: "Concrete ROI", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "krista-1", date: '', name: "Krista", business: "", industry: "", memberType: 'Member', source: "Marketing Testimonial Card", quote: "I was hesitant to join at first. Now I just wish I had done it sooner.", theme: "ROI / hesitation overcome", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "julie-1", date: '', name: "Julie", business: "", industry: "", memberType: 'Member', source: "Marketing Testimonial Card", quote: "The combination of community, mentorship, and real operator insight has been a game-changer for how I think about scaling my company.", theme: "Comprehensive value", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "kimberly-j-1", date: '', name: "Kimberly J.", business: "", industry: "", memberType: 'Member', source: "The North Testimonials", quote: "The expertise was so fresh and relevant, personalized to my needs and pain points. The solutions offered were on point and left me motivated and inspired to go get it!", theme: "The North - mentor expertise", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "kristen-s-1", date: '', name: "Kristen S.", business: "", industry: "", memberType: 'Member', source: "The North Testimonials", quote: "The North is a true testament to women supporting women, and I believe the level of leadership across the platform can be helpful to those looking to move the needle on a specific blocker or challenge.", theme: "The North - leadership access", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "precious-w-1", date: '', name: "Precious W.", business: "", industry: "", memberType: 'Member', source: "The North Testimonials", quote: "These women are the tops of their field! They do not play and don't waste time!", theme: "The North - mentor quality", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "amanda-c-1", date: '', name: "Amanda C.", business: "", industry: "", memberType: 'Member', source: "The North Testimonials", quote: "Having access to high quality mentors is worth every penny. This is great if you have a specific goal and need immediate action or a rough game plan.", theme: "The North - mentor ROI", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "stephanie-b-1", date: '', name: "Stephanie B.", business: "", industry: "", memberType: 'Member', source: "The North Testimonials", quote: "It's a great way to get fractional support from inspiring and brilliant women.", theme: "The North - fractional support", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: "christiana-b-1", date: '', name: "Christiana B.", business: "", industry: "", memberType: 'Member', source: "The North Testimonials", quote: "The access to your board of advisors is super valuable for entrepreneurs in all stages of their journey.", theme: "The North - advisory access", host: '', profileUrl: '', useCase: '', defaultApproved: 'Yes' },
+  { id: 'karen-maschi-1', date: '2026-07-23', name: 'Karen Maschi', business: 'Veza Innovations', industry: 'Consumer Goods (inferred)', memberType: 'Member', source: 'HubSpot (Advisor Experience Feedback)', quote: "This couldn't have gone any better!", theme: 'Advisor experience satisfaction', host: '', profileUrl: 'https://community.the10thhouse.co/u/56439f74', useCase: '', defaultApproved: 'Pending' },
+
+  /* --- Community Testimonials doc (event feedback, curated for sales/partnership use) --- */
+  { id: "sara-da-silva-1", date: "", name: "Sara da Silva", business: "RELO of GCC", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "I absolutely loved the session! The benchmarks on gross margins, LTV:CAC, and retention provided real, tactical value I can act on immediately. The advice on founder superpowers and capitalization strategy was a highlight as I build out my own roadmap. This has given me so much confidence as I step into this next chapter.", theme: "Investor content — tactical fundraising value", host: "Inside the Investor Mind: What Makes a Consumer Brand Fundable", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "briana-hart-1", date: "", name: "Briana Hart", business: "Buy Verde", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "This was the most on point, relevant and succinct event I've been to for VCs. I attribute that equally to Ali with her questions and the speaker with her experience. I truly appreciate the 10th House putting this together.", theme: "Investor content — VC programming quality", host: "Venture Capital for Early and Growth Stage Founders with Gosia Karas of SoftBank", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "kelly-solospouse-1", date: "", name: "Kelly", business: "Solo Spouse", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "Jesse Draper is pure magic — a rare combination of deep expertise and genuine empathy. She delivered that essential 'never give up, we can do this' energy while simultaneously diving deep into business potential. Her emphasis on valuation — how we as women need to value ourselves and our businesses more highly — isn't just business advice. It's about changing our fundamental relationship with our own worth.", theme: "Investor content — speaker impact & valuation mindset", host: "Pitch Demo Day with Jesse Draper", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "jamie-hunt-1", date: "", name: "Jamie Hunt", business: "Fast Penny Spirits", industry: "Food & Bev", memberType: "Member", source: "Post-Event Survey", quote: "It was very valuable to have an in-depth discussion around how to build a powerful pitch deck for an impact company. I appreciate the idea of staying true to your vision — the right people will find and join the mission.", theme: "Investor content — pitch deck workshop", host: "Pitch like a Goddess — How Pre-seed Impact Founders Can Magnetize Millions", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "angela-spencer-1", date: "", name: "Angela Spencer", business: "We Are Mavens", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "I loved Rachel's candor in sharing her 'how I built this' explanations. No gatekeeping here! Her confidence and path to success make it seem like 'You got this!' for other founders. LOVE that she was super candid on her ambition and intention to be financially successful — and how that directed her entrepreneurial path.", theme: "Founder conversations — candor & inspiration", host: "Becoming One of The Fastest Growing Private Companies — Rachel Liverman of Glowbar", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "kim-howard-1", date: "", name: "Kim Howard", business: "Green Bee Botanicals", industry: "Beauty & Personal Care", memberType: "Member", source: "Post-Event Survey", quote: "Best hour of my week! The details Rosa Li shared were incredibly helpful — about inventory, cash flow, approaching retailers, Shark Tank — all of it. Most insightful founder's interview I've listened to yet, and I've listened to many dozens.", theme: "Founder conversations — retail & ops tactics", host: "Door Knocking Your Way Into 100+ Retailers with Rosa Li", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "jennifer-higgins-1", date: "", name: "Jennifer Higgins", business: "Metamorphosis Co.", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "I have been a founder for a long time, just figuring things out as I go. I finally feel like I'm really getting access to the things I needed to know all along. SOOOO glad I found you. I'm ready to soar with the 10th House!", theme: "Founder conversations — access & confidence", host: "Meet the Founders: Live Q&A with Alison Wyatt and Rebecca Minkoff", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "lisa-lecorps-1", date: "", name: "Lisa Lecorps", business: "", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "I thank Justina for the wonderful insight on building her brand. The discussions on partnerships, taking 3 minutes to navigate your emotions, and following your intuition — these lessons gave me a new perspective. Getting closer to nature and slowing down has brought calm to my heart.", theme: "Founder conversations — mindset & creativity", host: "Color Outside the Lines: Justina Blakeney on Art, Interiors & Entrepreneurship", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "rachael-mahoney-1", date: "", name: "Rachael Mahoney", business: "Kinney Lane", industry: "Food & Bev", memberType: "Member", source: "Post-Event Survey", quote: "Framework for quantifying goals and team building is everything. So many entrepreneurs know what they need — but struggle to put clear systems in place to make it happen. This session broke down specific, actionable management tactics I can implement right away. Truly MBA-level knowledge right here. So thankful for this program.", theme: "Workshops — actionable frameworks", host: "F&B Growth Track: Founder as Brand Builder with Meghan Caiazzo", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "kris-ravenscroft-1", date: "", name: "Kris Ravenscroft", business: "Beauty Gourmet", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "This was one of the best free information sessions I have ever attended. Paige gave the process we can use from start to finish to increase our chances for successful PR outreach — and asked for nothing in return. She truly set us up for success. When we are funded, I would want to work with her.", theme: "Workshops — PR & media training", host: "How To Craft An Irresistible Media Pitch and Build A Media Kit That Converts", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "ownyourspotlight-1", date: "", name: "OwnYourSpotlight", business: "", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "This was what a workshop should be — real information, actionable steps, and a CTA. Not a bunch of 'why you need it' fluff with only the intent to sell at the end. Great on the part of the 10th House for that.", theme: "Workshops — practical SEO training", host: "SEO 101: Optimization for the Modern Web Workshop", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "lisa-resnick-1", date: "", name: "Lisa Resnick", business: "Dandelion", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "Lisa was inspiring and educational all at the same time. She evoked and gave power to all the things we internally know but don't give fuel to on a day-to-day basis. I totally bought her book immediately afterward. Thank you for curating such a positive and insightful venue.", theme: "Workshops — negotiation & confidence", host: "Negotiate, Earn, and Raise The Money You Deserve — Lisa Carmen Wang", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "victoria-heldt-1", date: "", name: "Victoria Heldt", business: "Conscia", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "Ali put on such a great presentation. She was real and down-to-earth and provided valuable insight into how and why acquisitions happen and what you need to do to position yourself for one. Really enjoyed it and took a lot away.", theme: "Workshops — M&A & exit strategy", host: "How to Build a Business You Can Sell: The Path to Acquisition with Ali Kriegsman", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "lili-tan-1", date: "", name: "LiLi Tan", business: "Kailu Silk", industry: "Fashion", memberType: "Member", source: "Post-Event Survey", quote: "Great event — beautiful space, interesting conversation, and it was great meeting people in person! Thank you to Ali for the intros. It was a nice size group so it was intimate enough to have back and forth, meet the speakers, and not feel overwhelming. Absolutely worth the trip down from SF.", theme: "In-person events — intimate format", host: "[LA - FFCExpert] Built Beautiful: Founders Who Shape the Way We Live", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "brittany-ambridge-1", date: "", name: "Brittany Ambridge", business: "Brittany Ambridge", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "I absolutely loved the event. A lot of what was discussed was applicable to what my life is like right now. It was real, applicable advice and feedback. I loved getting to meet the other founders there — each person was uniquely interesting. What a treat to have so many great like-minded women.", theme: "In-person events — relatable advice", host: "{NYC} A Morning with Ali & Rebecca", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "vanessa-oberto-1", date: "", name: "Vanessa Oberto", business: "", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "Ali and Rebecca are such professionals!! I really enjoyed them answering questions with a business mind. Advice from people who have done it before is invaluable. I felt like a plethora of knowledge was packed into 1 hour.", theme: "In-person events — leadership Q&A", host: "10th House Town Hall", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "chi-dates-1", date: "", name: "Chi Dates", business: "The Dates Group", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "It was phenomenal. So informative, high-level, well organized, and captivating. I don't see how it could have been improved upon. I flew in from Chicago and I couldn't be happier with the results. I have new strategies going forward.", theme: "In-person events — financial strategy", host: "Common Cents: Conversations And Strategies On Where To Find Money", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "rachael-mahoney-2", date: "", name: "Rachael Mahoney", business: "Kinney Lane", industry: "Food & Bev", memberType: "Member", source: "Post-Event Survey", quote: "Conversation with other female founders, especially of this caliber, helps forge a path like nothing else. When brilliant female founders share the room, we don't just feel inspired — we leave with playbook-level insights. That combination of data and inspiration is where magic happens and superpowers are made.", theme: "Community — peer caliber & insight", host: "10th House Town Hall", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "leah-gunter-1", date: "", name: "Leah Gunter", business: "", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "Daria was amazing! She has a pulse on the market, and I'm so glad for The Female Founders Collective. I joined a couple of years ago and am so happy this community exists. Keep up the great work ladies!", theme: "Community — long-term member satisfaction", host: "Trend Forecasting & Brand Innovation with Daria Burke (L'Oréal, Estée Lauder, Facebook)", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "melodie-fatt-1", date: "", name: "Melodie", business: "Fatt Skincare", industry: "Beauty & Personal Care", memberType: "Member", source: "Post-Event Survey", quote: "I loved the event. It was truly enlightening to hear from Ali & Rebecca. Real, applicable advice. I loved getting to meet the other founders. I can get daunted in networking events but this was so friendly and effortless. More of these events please!", theme: "Community — approachable networking", host: "{NYC} A Morning with Ali & Rebecca", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+  { id: "lisa-lecorps-2", date: "", name: "Lisa Lecorps", business: "", industry: "", memberType: "Member", source: "Post-Event Survey", quote: "I enjoyed the discussion on partnerships, following your intuition, and slowing down to enjoy the beauty around you. These lessons I hold dear to my heart. I am following my heart and will continue to pursue my passion.", theme: "Community — mindset & intuition", host: "Color Outside the Lines: Justina Blakeney", profileUrl: "", useCase: "", defaultApproved: "Yes" },
+];
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return { addedRows: [] };
+}
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+let state = loadState();
+
+function allRows() {
+  return CURATED.concat(state.addedRows || []);
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const parts = d.split('-');
+  if (parts.length === 3) return `${parts[1]}/${parts[2]}/${parts[0]}`;
+  return d;
+}
+
+function renderStats() {
+  const rows = allRows();
+  const circleCount = rows.filter(r => r.source === 'Circle Comment').length;
+  const granolaCount = rows.filter(r => r.source && r.source.startsWith('Granola')).length;
+  const themeCount = new Set(rows.map(r => r.theme)).size;
+  const el = document.getElementById('statsRow');
+  el.innerHTML = `
+    <div class="stat-card"><div class="num">${rows.length}</div><div class="label">Total testimonials</div></div>
+    <div class="stat-card"><div class="num">${circleCount}</div><div class="label">From Circle (active members)</div></div>
+    <div class="stat-card"><div class="num">${granolaCount}</div><div class="label">From Granola calls</div></div>
+    <div class="stat-card"><div class="num">${themeCount}</div><div class="label">Themes covered</div></div>
+  `;
+}
+
+function populateThemeFilter() {
+  const sel = document.getElementById('themeFilter');
+  const themes = [...new Set(allRows().map(r => r.theme))].sort();
+  sel.innerHTML = '<option value="">All themes</option>' + themes.map(t => `<option value="${t}">${t}</option>`).join('');
+}
+
+let sortKey = 'date';
+let sortDir = -1;
+
+function currentFilteredSorted() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  const themeF = document.getElementById('themeFilter').value;
+  let rows = allRows().filter(r => {
+    if (themeF && r.theme !== themeF) return false;
+    if (q) {
+      const hay = (r.name + ' ' + r.business + ' ' + r.quote + ' ' + r.industry).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  rows.sort((a, b) => {
+    let av = a[sortKey] || '';
+    let bv = b[sortKey] || '';
+    if (av < bv) return -1 * sortDir;
+    if (av > bv) return 1 * sortDir;
+    return 0;
+  });
+  return rows;
+}
+
+function renderTable() {
+  const tbody = document.getElementById('mainTbody');
+  const rows = currentFilteredSorted();
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" class="empty-msg">No testimonials match these filters.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(r => {
+    const shortQuote = r.quote.length > 140 ? r.quote.slice(0, 140) + '…' : r.quote;
+    const needsToggle = r.quote.length > 140;
+    const profileCell = r.profileUrl
+      ? `<a class="profile-link" href="${r.profileUrl}" target="_blank" rel="noopener">View profile ↗</a>`
+      : '<span class="source-tag">—</span>';
+    return `
+      <tr>
+        <td>${fmtDate(r.date)}</td>
+        <td><strong>${escapeHtml(r.name)}</strong></td>
+        <td>${escapeHtml(r.business) || '—'}</td>
+        <td>${escapeHtml(r.industry) || '—'}</td>
+        <td><span class="theme-pill">${escapeHtml(r.theme)}</span></td>
+        <td><span class="source-tag">${escapeHtml(r.source)}</span></td>
+        <td class="quote">
+          <div class="quote-text" data-full="${escapeAttr(r.quote)}" data-short="${escapeAttr(shortQuote)}">${escapeHtml(shortQuote)}</div>
+          ${needsToggle ? '<span class="quote-toggle" onclick="toggleQuote(this)">Show more</span>' : ''}
+        </td>
+        <td>${profileCell}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function toggleQuote(el) {
+  const textDiv = el.previousElementSibling;
+  const isShort = textDiv.textContent === textDiv.dataset.short;
+  textDiv.textContent = isShort ? textDiv.dataset.full : textDiv.dataset.short;
+  el.textContent = isShort ? 'Show less' : 'Show more';
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(str) { return escapeHtml(str); }
+
+/* ===================== Top Testimonials ranking ===================== */
+
+const IMPACT_KEYWORDS = ['roi', 'scale', 'recommend', 'revenue', 'partnership', 'partnerships', 'brand', 'invest', 'sold', 'sale', 'client', 'clients', 'customer', 'customers', 'renew', 'exposure', 'bookkeeper', 'pr like', 'connections'];
+
+function scoreTestimonial(r) {
+  let score = 0;
+  if (r.defaultApproved === 'Yes') score += 3;
+  if (r.profileUrl) score += 2;
+  if (r.business) score += 1;
+  const hay = (r.quote + ' ' + r.theme).toLowerCase();
+  if (IMPACT_KEYWORDS.some(k => hay.includes(k))) score += 2;
+  if (r.quote.length > 120) score += 1;
+  if (r.quote.length < 40) score -= 1;
+  return score;
+}
+
+function renderTopTestimonials() {
+  const ranked = allRows()
+    .map(r => ({ r, score: scoreTestimonial(r) }))
+    .sort((a, b) => b.score - a.score || (b.r.date || '').localeCompare(a.r.date || ''));
+
+  // keep it to one testimonial per member so the list isn't dominated by one person
+  const seenNames = new Set();
+  const top = [];
+  for (const item of ranked) {
+    if (seenNames.has(item.r.name)) continue;
+    seenNames.add(item.r.name);
+    top.push(item);
+    if (top.length === 6) break;
+  }
+
+  document.getElementById('topTestimonialsList').innerHTML = top.map((item, i) => {
+    const r = item.r;
+    const shortQuote = r.quote.length > 160 ? r.quote.slice(0, 160) + '…' : r.quote;
+    const tags = [];
+    if (r.defaultApproved === 'Yes') tags.push('Approved');
+    if (r.profileUrl) tags.push('Verified profile');
+    const hay = (r.quote + ' ' + r.theme).toLowerCase();
+    if (IMPACT_KEYWORDS.some(k => hay.includes(k))) tags.push('Concrete impact');
+    return `
+      <div class="top-card">
+        <div class="top-rank">${i + 1}</div>
+        <div class="top-body">
+          <div class="fb-quote">"${escapeHtml(shortQuote)}"</div>
+          <div class="top-meta">
+            <span class="top-who">${escapeHtml(r.name)}${r.business ? ' — ' + escapeHtml(r.business) : ''}</span>
+            <span class="top-tags">${tags.map(t => `<span class="top-tag">${escapeHtml(t)}</span>`).join('')}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+document.querySelectorAll('#mainTable thead th[data-key]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+    renderTable();
+  });
+});
+document.getElementById('searchBox').addEventListener('input', renderTable);
+document.getElementById('themeFilter').addEventListener('change', renderTable);
+
+renderStats();
+populateThemeFilter();
+renderTable();
+renderTopTestimonials();
+
+/* ===================== Member Feedback tab ===================== */
+
+const POSITIVE_THEMES = [
+  { theme: "Still feels personal", detail: "Members say the community hasn't lost its personal touch despite scale — the team's attentiveness stands out.", mentions: "Elizabeth Welborn (Stick & Ball)" },
+  { theme: "IRL relationship-building", detail: "In-person trips (Summit) deliver real relationship value that's hard to replicate virtually.", mentions: "Gesche Haas (Dreamers & Doers)" },
+  { theme: "Structured education (FOM) delivers", detail: "Long-format, structured programming is called out as the platform at its best — and the reason members joined.", mentions: "Maria Piotrowski (White Turtle Beauty)" },
+  { theme: "Good individual connections made", detail: "Members are forming real connections, though most say they could be getting more out of the platform than they currently are.", mentions: "Jennifer Higgins (Metamorphosis Co.)" },
+  { theme: "Holds up against alternatives", detail: "No major complaints — members compare it favorably to other, smaller groups they're also part of.", mentions: "Julie Corwin (Birdie & Claire)" },
+];
+
+const NEGATIVE_THEMES = [
+  { theme: "Hard to find the right people", detail: "The community feels scattered — no clear way to find the specific clients, partners, or genuine peer connections members are looking for.", mentions: "3 mentions — Joanna Holden, Cheryl Walpole Tiku, Alaina Rajagopal", fix: "Build a structured intro/matchmaking flow — an industry-tagged member directory or a recurring curated-intro thread — instead of leaving networking to chance." },
+  { theme: "Low peer engagement on the feed", detail: "Posts skew self-promotional and staff reply more than members do — a gap in a community built on human connection.", mentions: "2 mentions — Allison LaGuardia, Maria Piotrowski", done: "The AI auto-response on member posts (flagged as impersonal) has been removed.", fix: "Now that the chatbot's gone, seed the feed with staff-led prompts that invite peer replies to lift member-to-member engagement further." },
+  { theme: "Programs lose momentum after launch", detail: "A cohort program started strong with 3 events, then fizzled within 2.5 months with no clear wind-down or explanation.", mentions: "1 mention — Ana Fabiano", fix: "Assign a point person to see cohort/pilot programs through their full stated window, with scheduled mid-program check-ins so momentum doesn't die after the kickoff." },
+  { theme: "Event notice & logistics", detail: "RSVP windows are too short to plan around a full-time job; no recordings or digests for members who can't attend live.", mentions: "1 mention — Liz Christenbury", fix: "Publish the event calendar at least a month out, and record + digest every session by default." },
+  { theme: "Remote members underserved", detail: "Members outside hub cities feel at a disadvantage since most of the community's value shows up in person.", mentions: "1 mention — Jennifer Higgins", fix: "Stand up virtual-equivalent programming or regional pods so remote members get a comparable experience to in-person hubs." },
+];
+
+const JOIN_TALLY = [
+  { label: "Connections & network", count: 10 },
+  { label: "Specific business advice", count: 3 },
+  { label: "Something else (FOM)", count: 1 },
+  { label: "No answer given", count: 6 },
+];
+
+const JOIN_QUOTES = [
+  { quote: "Great community and really appreciate everything the team does to support the business owners. It still seems personal.", source: "Elizabeth Welborn — cited connections & network as most valuable" },
+  { quote: "The FOM is the reason I joined... long-format, structured education that delivers real value.", source: "Maria Piotrowski — cited \"something else\" (the FOM specifically) as most valuable" },
+];
+
+const CHURN_REASONS = [
+  { label: "No time / capacity", count: 9 },
+  { label: "No reason provided", count: 8 },
+  { label: "Temporary pause (not full churn)", count: 6 },
+  { label: "Not using membership enough", count: 5 },
+  { label: "Budget / cash flow", count: 5 },
+  { label: "Didn't get enough value", count: 2 },
+  { label: "Not the right stage", count: 2 },
+  { label: "Didn't realize plan was recurring", count: 1 },
+];
+
+const CHURN_NOTES = [
+  { who: "Kelly Groehle", note: "reason logged as \"didn't know plan was recurring\" — cancelled but not refunded", date: "May '26" },
+  { who: "Sofia Rovirosa", note: "stopped receiving invoices since February; didn't respond after first reaching out — billing communication broke down before she churned", date: "Jun '26" },
+  { who: "Anjali Purohit / Esmeralda Rose", note: "missed payments, about to be terminated — payment failure rather than active dissatisfaction", date: "May–Jun '26" },
+  { who: "Chasiy Dey / Dr. Yeni Abraham / Bianka Krausch", note: "requested a temporary pause and were retained (2 transitioned to Alumni) — proof the pause offer works", date: "May '26" },
+];
+
+function renderFeedbackStats() {
+  const el = document.getElementById('fbStatsRow');
+  el.innerHTML = `
+    <div class="stat-card"><div class="num">13</div><div class="label">Named 2026 survey quotes synthesized into themes below</div></div>
+    <div class="stat-card"><div class="num">38</div><div class="label">Cancellation requests analyzed (Jan–Jul '26)</div></div>
+    <div class="stat-card"><div class="num">No time/capacity</div><div class="label">Top churn reason</div></div>
+    <div class="stat-card"><div class="num">Connections</div><div class="label">Top reason members join</div></div>
+  `;
+  document.getElementById('posNegBadge').textContent = `${POSITIVE_THEMES.length} positive themes · ${NEGATIVE_THEMES.length} negative themes`;
+}
+
+function renderPositiveGrid() {
+  document.getElementById('positiveGrid').innerHTML = POSITIVE_THEMES.map(f => `
+    <div class="fb-card positive">
+      <div class="fb-theme">${escapeHtml(f.theme)}</div>
+      <div class="fb-detail">${escapeHtml(f.detail)}</div>
+      <div class="fb-mentions">${escapeHtml(f.mentions)}</div>
+    </div>
+  `).join('');
+}
+
+function renderNegativeGrid() {
+  document.getElementById('negativeGrid').innerHTML = NEGATIVE_THEMES.map(f => `
+    <div class="fb-card negative">
+      <div class="fb-theme">${escapeHtml(f.theme)}</div>
+      <div class="fb-detail">${escapeHtml(f.detail)}</div>
+      <div class="fb-mentions">${escapeHtml(f.mentions)}</div>
+      ${f.done ? `<div class="fb-fix-done"><strong>✓ Already addressed</strong>${escapeHtml(f.done)}</div>` : ''}
+      ${f.fix ? `<div class="fb-fix"><strong>Suggested fix</strong>${escapeHtml(f.fix)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderJoinTally() {
+  const max = Math.max(...JOIN_TALLY.map(j => j.count));
+  document.getElementById('joinTally').innerHTML = JOIN_TALLY.map(j => `
+    <div class="join-row">
+      <div class="join-label">${escapeHtml(j.label)}</div>
+      <div class="join-bar-track"><div class="join-bar-fill" style="width:${(j.count / max * 100).toFixed(0)}%"></div></div>
+      <div class="join-count">${j.count} of 20</div>
+    </div>
+  `).join('');
+  document.getElementById('joinQuotes').innerHTML = JOIN_QUOTES.map(f => `
+    <div class="fb-card positive">
+      <div class="fb-quote">"${escapeHtml(f.quote)}"</div>
+      <div class="fb-meta"><span class="fb-source">${escapeHtml(f.source)}</span></div>
+    </div>
+  `).join('');
+}
+
+function renderChurnBars() {
+  const max = Math.max(...CHURN_REASONS.map(c => c.count));
+  document.getElementById('churnBars').innerHTML = CHURN_REASONS.map(c => `
+    <div class="churn-row">
+      <div class="churn-label">${escapeHtml(c.label)}</div>
+      <div class="churn-bar-track"><div class="churn-bar-fill" style="width:${(c.count / max * 100).toFixed(0)}%"></div></div>
+      <div class="churn-count">${c.count}</div>
+    </div>
+  `).join('');
+  document.getElementById('churnNotes').innerHTML = CHURN_NOTES.map(n => `
+    <li><span class="cn-who">${escapeHtml(n.who)}</span> (${escapeHtml(n.date)}) — ${escapeHtml(n.note)}</li>
+  `).join('');
+}
+
+function renderFeedbackTab() {
+  renderFeedbackStats();
+  renderPositiveGrid();
+  renderNegativeGrid();
+  renderJoinTally();
+  renderChurnBars();
+}
+
+let feedbackRendered = false;
+
+/* ===================== Event Member Activity tab ===================== */
+
+const SESSIONS_DATA = [
+  { rank: 1, name: "Katie Blouin", email: "katie@shoplarken.com", sessions: 95, checkins: 0, memberSince: "Sep 2021" },
+  { rank: 2, name: "Brett", email: "brett@brettlauren.com", sessions: 94, checkins: 0, memberSince: "Dec 2021" },
+  { rank: 3, name: "Elizabeth Welborn", email: "elizabeth@stickandball.com", sessions: 82, checkins: 0, memberSince: "Aug 2021" },
+  { rank: 4, name: "Allison Fee", email: "ali@ali-fee.com", sessions: 73, checkins: 0, memberSince: "Apr 2023" },
+  { rank: 5, name: "Shannon Jones", email: "shannon@keekeesbigadventures.com", sessions: 59, checkins: 0, memberSince: "Sep 2021" },
+  { rank: 6, name: "Mahwash Bhimjee", email: "mahwash@meadowforall.com", sessions: 57, checkins: 0, memberSince: "Oct 2023" },
+  { rank: 7, name: "Jaclyn Lineback", email: "jaclyn@hartspan.com", sessions: 55, checkins: 0, memberSince: "May 2022" },
+  { rank: 8, name: "Sally Qiu", email: "qiu.sal@forseaandoats.com", sessions: 53, checkins: 1, memberSince: "Jul 2022" },
+  { rank: 9, name: "Raquel de Lavandeyra", email: "altcal@icloud.com", sessions: 52, checkins: 0, memberSince: "May 2022" },
+  { rank: 10, name: "Nkosi Harvey", email: "nkha@rympok.com", sessions: 51, checkins: 1, memberSince: "Mar 2024" },
+  { rank: 11, name: "Kodi Kitchen Berg", email: "kodi@equiptmovement.com", sessions: 50, checkins: 0, memberSince: "Sep 2021" },
+  { rank: 12, name: "Kari Dowiak", email: "kari@memorieyewear.com", sessions: 49, checkins: 0, memberSince: "Jul 2024" },
+  { rank: 13, name: "Yvonne Georgi", email: "yvonne@tomorrowinayear.com", sessions: 48, checkins: 0, memberSince: "Aug 2022" },
+  { rank: 14, name: "Marina", email: "marina@nnabilife.com", sessions: 46, checkins: 0, memberSince: "Nov 2023" },
+  { rank: 15, name: "Christina Gjiri", email: "christina@brightfield.ca", sessions: 46, checkins: 0, memberSince: "Jun 2023" },
+  { rank: 16, name: "Kristina Rudzinskaya", email: "kristina@shopetalon.com", sessions: 46, checkins: 0, memberSince: "Jun 2022" },
+  { rank: 17, name: "Sheila Pande", email: "sheila@beintandem.co", sessions: 46, checkins: 0, memberSince: "Sep 2021" },
+  { rank: 18, name: "Julie Corwin", email: "julie@birdieandclaire.com", sessions: 44, checkins: 0, memberSince: "May 2024" },
+  { rank: 19, name: "Kara Mac", email: "karamacshoes@gmail.com", sessions: 44, checkins: 0, memberSince: "Dec 2021" },
+  { rank: 20, name: "Danika Daly", email: "danika@danikadalypr.com", sessions: 42, checkins: 0, memberSince: "May 2022" },
+  { rank: 21, name: "Pamela Hunt", email: "pamela@orithyia.nyc", sessions: 42, checkins: 1, memberSince: "Sep 2021" },
+  { rank: 22, name: "Jessica Santander", email: "info@jessicasantander.com", sessions: 42, checkins: 0, memberSince: "Aug 2021" },
+  { rank: 23, name: "Kirsten Schmidtke", email: "schmidtke.kirsten@gmail.com", sessions: 41, checkins: 0, memberSince: "Aug 2022" },
+  { rank: 24, name: "Lilly", email: "info@hyp.tv", sessions: 41, checkins: 0, memberSince: "May 2022" },
+  { rank: 25, name: "Yvette Jain", email: "yrosalesjain@gmail.com", sessions: 41, checkins: 0, memberSince: "Sep 2021" },
+  { rank: 26, name: "Tye Barrett", email: "tye.barrett@amamiluxury.com", sessions: 40, checkins: 3, memberSince: "Jan 2024" },
+  { rank: 27, name: "Suzannah Raff", email: "suzannah@cleoandcoco.com", sessions: 40, checkins: 0, memberSince: "Apr 2023" },
+  { rank: 28, name: "LiLi Tan", email: "lili@kailusilk.com", sessions: 40, checkins: 0, memberSince: "Aug 2022" },
+  { rank: 29, name: "Christiana Bartolini", email: "christiana@elleada.com", sessions: 40, checkins: 0, memberSince: "Dec 2021" },
+  { rank: 30, name: "Amy Jackson", email: "amy@talesplash.com", sessions: 40, checkins: 0, memberSince: "Sep 2021" },
+  { rank: 31, name: "Nicole", email: "nicole@drinkbashi.com", sessions: 39, checkins: 0, memberSince: "Dec 2023" },
+  { rank: 32, name: "Chelsea Bai", email: "bai.chelsea@gmail.com", sessions: 38, checkins: 0, memberSince: "Apr 2024" },
+  { rank: 33, name: "Amanda Carlo", email: "amanda@goldgriffaa.com", sessions: 38, checkins: 0, memberSince: "Apr 2023" },
+  { rank: 34, name: "Uchenna Ngwudo", email: "uchenna@ceeceesclosetnyc.com", sessions: 38, checkins: 0, memberSince: "Jan 2023" },
+  { rank: 35, name: "Alenka Kyslik", email: "alenka@sahacollective.com", sessions: 37, checkins: 2, memberSince: "Apr 2024" },
+  { rank: 36, name: "Mary Repriseactivewear", email: "mary@repriseactivewear.com", sessions: 37, checkins: 1, memberSince: "Jul 2022" },
+  { rank: 37, name: "Rhonda Marshall", email: "rhonda@inahsi.com", sessions: 37, checkins: 0, memberSince: "Jun 2022" },
+  { rank: 38, name: "Nyenye MK", email: "menjiwe@yahoo.com", sessions: 37, checkins: 0, memberSince: "Jun 2022" },
+  { rank: 39, name: "Joanna Holden", email: "joanna@modularink.com", sessions: 37, checkins: 0, memberSince: "Oct 2021" },
+  { rank: 40, name: "Glynis Tao", email: "hello@glynistao.com", sessions: 37, checkins: 0, memberSince: "Sep 2021" },
+  { rank: 41, name: "Mari Denby", email: "mari@snugbox.co", sessions: 36, checkins: 0, memberSince: "Aug 2023" },
+  { rank: 42, name: "Harper Miller", email: "harper@bounddelivery.com", sessions: 36, checkins: 0, memberSince: "Oct 2022" },
+  { rank: 43, name: "CK", email: "ckrh@venuswalks.com", sessions: 35, checkins: 0, memberSince: "Feb 2025" },
+  { rank: 44, name: "Nimmi Chainani", email: "nimmi@scentille.com", sessions: 35, checkins: 2, memberSince: "Aug 2024" },
+  { rank: 45, name: "Randi Seiff", email: "randi@randiseiffdesign.com", sessions: 35, checkins: 0, memberSince: "Nov 2022" },
+  { rank: 46, name: "Carrie Sporer", email: "carrie@swairhair.com", sessions: 35, checkins: 0, memberSince: "Dec 2021" },
+  { rank: 47, name: "Cara Wenig", email: "cara@drinkmorninglover.com", sessions: 34, checkins: 1, memberSince: "Mar 2025" },
+  { rank: 48, name: "Anna Zepplin", email: "azepplin@gmail.com", sessions: 34, checkins: 0, memberSince: "Jul 2023" },
+  { rank: 49, name: "Saadia", email: "saadia@industhreads.com", sessions: 34, checkins: 0, memberSince: "Mar 2023" },
+  { rank: 50, name: "Julie Dusold Culbertson", email: "dusoldj@gmail.com", sessions: 34, checkins: 0, memberSince: "Aug 2022" },
+];
+
+const PARTICIPATORY_DATA = [
+  { rank: 1, name: "Elizabeth Welborn", email: "elizabeth@stickandball.com", submissions: 37, avgRating: 4.95 },
+  { rank: 2, name: "Kari Dowiak", email: "kari@memorieyewear.com", submissions: 35, avgRating: 4.49 },
+  { rank: 3, name: "Brett", email: "brett@brettlauren.com", submissions: 34, avgRating: 4.91 },
+  { rank: 4, name: "Nyenye MK", email: "menjiwe@yahoo.com", submissions: 25, avgRating: 4.92 },
+  { rank: 5, name: "Shannon Jones", email: "shannon@keekeesbigadventures.com", submissions: 22, avgRating: 4.73 },
+  { rank: 6, name: "Ashley DelBello", email: "ashley@ashleydelbello.com", submissions: 14, avgRating: 5.0 },
+  { rank: 7, name: "Monica Rawicz", email: "monica@100ninjas.io", submissions: 13, avgRating: 4.62 },
+  { rank: 8, name: "Harper Miller", email: "harper@bounddelivery.com", submissions: 13, avgRating: 4.77 },
+  { rank: 9, name: "Cardyn Brooks", email: "swimmissionswimcap@gmail.com", submissions: 11, avgRating: 4.91 },
+  { rank: 10, name: "Joy Osaka-Lu", email: "joy@oneripple.net", submissions: 11, avgRating: 5.0 },
+  { rank: 11, name: "Michelle Nagy", email: "michelle@lawsoflux.com", submissions: 10, avgRating: 5.0 },
+  { rank: 12, name: "Brandy Wykes", email: "brandy@mayesnyc.com", submissions: 10, avgRating: 4.9 },
+  { rank: 13, name: "Grace Nguyen", email: "grace.nguyen@loupn.com", submissions: 10, avgRating: 5.0 },
+  { rank: 14, name: "Christina Gjiri", email: "christina@brightfield.ca", submissions: 9, avgRating: 5.0 },
+  { rank: 15, name: "Shruti Goradia", email: "sgoradia@gmail.com", submissions: 9, avgRating: 4.56 },
+  { rank: 16, name: "Kimberly Jenkins", email: "kim@artissolomon.com", submissions: 9, avgRating: 4.44 },
+  { rank: 17, name: "Chasidy Dey", email: "support@noireessentials.net", submissions: 8, avgRating: 4.62 },
+  { rank: 18, name: "Tammy Nevin", email: "support@happysolwellness.com", submissions: 8, avgRating: 4.25 },
+  { rank: 19, name: "Katherine Danesi", email: "katherine@katherinedanesi.com", submissions: 8, avgRating: 5.0 },
+  { rank: 20, name: "Christina Gjiri", email: "christina@brightcandleco.com", submissions: 8, avgRating: 4.88 },
+  { rank: 21, name: "Lauren Adler", email: "lauren@chocolateexplorersclub.com", submissions: 7, avgRating: 4.86 },
+  { rank: 22, name: "Margaret Gallagher", email: "studiogately@gmail.com", submissions: 7, avgRating: 4.71 },
+  { rank: 23, name: "Dr. Monica Riley", email: "fountainofyouthguru6969@gmail.com", submissions: 7, avgRating: 5.0 },
+  { rank: 24, name: "Nkosi Harvey", email: "nkha@rympok.com", submissions: 7, avgRating: 4.57 },
+  { rank: 25, name: "Randi Seiff", email: "randi@randiseiffdesign.com", submissions: 7, avgRating: 4.71 },
+  { rank: 26, name: "Lisa Sorbo", email: "lasorbo@gmail.com", submissions: 7, avgRating: 4.86 },
+  { rank: 27, name: "Zochilth Flores Abarca", email: "zochilth@yahoo.com", submissions: 7, avgRating: 5.0 },
+  { rank: 28, name: "Kelly", email: "kelly@solospouse.com", submissions: 6, avgRating: 5.0 },
+  { rank: 29, name: "Michal Calairo", email: "mcalairo@mpwrgroup.com", submissions: 6, avgRating: 5.0 },
+  { rank: 30, name: "Diana Nguyen", email: "diana@madisonsavile.com", submissions: 6, avgRating: 4.67 },
+  { rank: 31, name: "Hallie", email: "hsslax@gmail.com", submissions: 6, avgRating: 5.0 },
+  { rank: 32, name: "Joanna Walker", email: "joanna@pointhrconsulting.com", submissions: 6, avgRating: 4.17 },
+  { rank: 33, name: "Sandi Hubbard", email: "info@floretaspen.com", submissions: 6, avgRating: 5.0 },
+  { rank: 34, name: "Chinyere Ishionwu", email: "chiinnetutu20@gmail.com", submissions: 6, avgRating: 4.5 },
+  { rank: 35, name: "Kathryn", email: "kathryn@artleaseaustin.com", submissions: 6, avgRating: 5.0 },
+  { rank: 36, name: "Fiona Devaney", email: "fiona@maatactive.com", submissions: 5, avgRating: 4.8 },
+  { rank: 37, name: "Karen Cardoso", email: "karen@bolsanovahandbags.com", submissions: 5, avgRating: 5.0 },
+  { rank: 38, name: "Emi Antal", email: "emi@atemier.com", submissions: 5, avgRating: 5.0 },
+  { rank: 39, name: "Jeri Fritz", email: "jeri@vellaclean.com", submissions: 5, avgRating: 5.0 },
+  { rank: 40, name: "Mika Josting", email: "mikajosting@gmail.com", submissions: 5, avgRating: 4.8 },
+  { rank: 41, name: "Lisa Hunt Stevens", email: "lisa@familiakitchen.com", submissions: 5, avgRating: 4.8 },
+  { rank: 42, name: "Siobhan Frost", email: "hello@iamendless.co", submissions: 5, avgRating: 4.8 },
+  { rank: 43, name: "Daria Wright", email: "daria@dariawright.com", submissions: 5, avgRating: 4.2 },
+  { rank: 44, name: "Mika Mooney", email: "mika@mikamooneylaw.com", submissions: 5, avgRating: 4.0 },
+  { rank: 45, name: "Maria Pio", email: "maria@whiteturtlebeauty.com", submissions: 5, avgRating: 4.2 },
+];
+
+const HIGHSCORER_DATA = [
+  { rank: 1, name: "Elizabeth Welborn", email: "elizabeth@stickandball.com", numRatings: 37, avgRating: 4.95 },
+  { rank: 2, name: "Brett", email: "brett@brettlauren.com", numRatings: 34, avgRating: 4.91 },
+  { rank: 3, name: "Nyenye MK", email: "menjiwe@yahoo.com", numRatings: 25, avgRating: 4.92 },
+  { rank: 4, name: "Ashley DelBello", email: "ashley@ashleydelbello.com", numRatings: 14, avgRating: 5.0 },
+  { rank: 5, name: "Joy Osaka-Lu", email: "joy@oneripple.net", numRatings: 11, avgRating: 5.0 },
+  { rank: 6, name: "Cardyn Brooks", email: "swimmissionswimcap@gmail.com", numRatings: 11, avgRating: 4.91 },
+  { rank: 7, name: "Michelle Nagy", email: "michelle@lawsoflux.com", numRatings: 10, avgRating: 5.0 },
+  { rank: 8, name: "Grace Nguyen", email: "grace.nguyen@loupn.com", numRatings: 10, avgRating: 5.0 },
+  { rank: 9, name: "Brandy Wykes", email: "brandy@mayesnyc.com", numRatings: 10, avgRating: 4.9 },
+  { rank: 10, name: "Christina Gjiri", email: "christina@brightfield.ca", numRatings: 9, avgRating: 5.0 },
+  { rank: 11, name: "Katherine Danesi", email: "katherine@katherinedanesi.com", numRatings: 8, avgRating: 5.0 },
+  { rank: 12, name: "Christina Gjiri", email: "christina@brightcandleco.com", numRatings: 8, avgRating: 4.88 },
+  { rank: 13, name: "Dr. Monica Riley", email: "fountainofyouthguru6969@gmail.com", numRatings: 7, avgRating: 5.0 },
+  { rank: 14, name: "Zochilth Flores Abarca", email: "zochilth@yahoo.com", numRatings: 7, avgRating: 5.0 },
+  { rank: 15, name: "Lauren Adler", email: "lauren@chocolateexplorersclub.com", numRatings: 7, avgRating: 4.86 },
+  { rank: 16, name: "Lisa Sorbo", email: "lasorbo@gmail.com", numRatings: 7, avgRating: 4.86 },
+  { rank: 17, name: "Kelly", email: "kelly@solospouse.com", numRatings: 6, avgRating: 5.0 },
+  { rank: 18, name: "Michal Calairo", email: "mcalairo@mpwrgroup.com", numRatings: 6, avgRating: 5.0 },
+  { rank: 19, name: "Hallie", email: "hsslax@gmail.com", numRatings: 6, avgRating: 5.0 },
+  { rank: 20, name: "Sandi Hubbard", email: "info@floretaspen.com", numRatings: 6, avgRating: 5.0 },
+  { rank: 21, name: "Kathryn", email: "kathryn@artleaseaustin.com", numRatings: 6, avgRating: 5.0 },
+  { rank: 22, name: "Karen Cardoso", email: "karen@bolsanovahandbags.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 23, name: "Emi Antal", email: "emi@atemier.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 24, name: "Jeri Fritz", email: "jeri@vellaclean.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 25, name: "Aleksandra Miloseska", email: "aleksandra@quickfitbites.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 26, name: "Meredith de Blois", email: "meredith.deblois@gmail.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 27, name: "Kelly Sayre", email: "kelly@thediamondarrowgroup.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 28, name: "Glynis Tao", email: "hello@glynistao.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 29, name: "Tracy Memoli", email: "tracy@frutapop.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 30, name: "Kristin Revere", email: "kristin@goldcoastdoulas.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 31, name: "Yvonne Georgi", email: "yvonne@tomorrowinayear.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 32, name: "Tracy Wydra", email: "ttwydra@gmail.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 33, name: "Susan Paul", email: "aimhighsdc@gmail.com", numRatings: 5, avgRating: 5.0 },
+  { rank: 34, name: "Fiona Devaney", email: "fiona@maatactive.com", numRatings: 5, avgRating: 4.8 },
+  { rank: 35, name: "Mika Josting", email: "mikajosting@gmail.com", numRatings: 5, avgRating: 4.8 },
+  { rank: 36, name: "Lisa Hunt Stevens", email: "lisa@familiakitchen.com", numRatings: 5, avgRating: 4.8 },
+  { rank: 37, name: "Siobhan Frost", email: "hello@iamendless.co", numRatings: 5, avgRating: 4.8 },
+  { rank: 38, name: "Angela Spencer", email: "angela@we-are-mavens.com", numRatings: 5, avgRating: 4.8 },
+  { rank: 39, name: "Tina", email: "tina@livebinders.com", numRatings: 5, avgRating: 4.8 },
+];
+
+const LONGTERM_DATA = [
+  { rank: 1, name: "Elizabeth Welborn", email: "elizabeth@stickandball.com", firstEvent: "Aug 2021", mostRecentEvent: "Mar 2026", eventsAttended: 37 },
+  { rank: 2, name: "Brett", email: "brett@brettlauren.com", firstEvent: "Jun 2022", mostRecentEvent: "Mar 2026", eventsAttended: 34 },
+  { rank: 3, name: "Nyenye MK", email: "menjiwe@yahoo.com", firstEvent: "Aug 2022", mostRecentEvent: "Sep 2025", eventsAttended: 25 },
+  { rank: 4, name: "Shannon Jones", email: "shannon@keekeesbigadventures.com", firstEvent: "Mar 2022", mostRecentEvent: "Apr 2026", eventsAttended: 22 },
+  { rank: 5, name: "Monica Rawicz", email: "monica@100ninjas.io", firstEvent: "Jul 2022", mostRecentEvent: "Oct 2025", eventsAttended: 13 },
+  { rank: 6, name: "Harper Miller", email: "harper@bounddelivery.com", firstEvent: "Nov 2022", mostRecentEvent: "Jul 2024", eventsAttended: 13 },
+  { rank: 7, name: "Joy Osaka-Lu", email: "joy@oneripple.net", firstEvent: "Jul 2022", mostRecentEvent: "Jul 2025", eventsAttended: 11 },
+  { rank: 8, name: "Dr. Monica Riley", email: "fountainofyouthguru6969@gmail.com", firstEvent: "Oct 2021", mostRecentEvent: "Sep 2025", eventsAttended: 7 },
+  { rank: 9, name: "Kristin Revere", email: "kristin@goldcoastdoulas.com", firstEvent: "Dec 2021", mostRecentEvent: "Jan 2024", eventsAttended: 5 },
+  { rank: 10, name: "Tracy Memoli", email: "tracy@frutapop.com", firstEvent: "Mar 2022", mostRecentEvent: "Apr 2024", eventsAttended: 5 },
+  { rank: 11, name: "Mika Josting", email: "mikajosting@gmail.com", firstEvent: "Jun 2022", mostRecentEvent: "Sep 2025", eventsAttended: 5 },
+  { rank: 12, name: "Mika Mooney", email: "mika@mikamooneylaw.com", firstEvent: "Dec 2022", mostRecentEvent: "Jan 2026", eventsAttended: 5 },
+  { rank: 13, name: "Milana Kleid", email: "milana.doz@gmail.com", firstEvent: "May 2022", mostRecentEvent: "Jun 2025", eventsAttended: 4 },
+  { rank: 14, name: "Kristina Rudzinskaya", email: "kristina@shopetalon.com", firstEvent: "Sep 2022", mostRecentEvent: "Jul 2025", eventsAttended: 4 },
+  { rank: 15, name: "Raquel de Lavandeyra", email: "altcal@icloud.com", firstEvent: "Nov 2022", mostRecentEvent: "Mar 2024", eventsAttended: 4 },
+  { rank: 16, name: "Marika Frumes", email: "marika@myshapods.com", firstEvent: "Oct 2021", mostRecentEvent: "Jul 2025", eventsAttended: 3 },
+  { rank: 17, name: "Pamela Hunt", email: "pamela@orithyia.nyc", firstEvent: "Dec 2021", mostRecentEvent: "Feb 2025", eventsAttended: 3 },
+  { rank: 18, name: "Vanessa Royle", email: "vanessa@drinktilden.com", firstEvent: "Jul 2022", mostRecentEvent: "Nov 2025", eventsAttended: 3 },
+  { rank: 19, name: "Laura Huston", email: "laura@belleandbottle.com", firstEvent: "Aug 2022", mostRecentEvent: "Jul 2025", eventsAttended: 3 },
+  { rank: 20, name: "Melissa Golubski", email: "melissa@nodfoods.com", firstEvent: "Sep 2021", mostRecentEvent: "Jun 2024", eventsAttended: 3 },
+  { rank: 21, name: "Donnett Mitchell", email: "furkatandrobbie@gmail.com", firstEvent: "Sep 2021", mostRecentEvent: "Apr 2024", eventsAttended: 3 },
+  { rank: 22, name: "Jennifer McKay Newton", email: "jennifer@definemefragrance.com", firstEvent: "Mar 2022", mostRecentEvent: "Jul 2024", eventsAttended: 3 },
+  { rank: 23, name: "Natalia Lima", email: "hello@curiouscatbakery.com", firstEvent: "Jun 2022", mostRecentEvent: "May 2024", eventsAttended: 3 },
+  { rank: 24, name: "Lisa McCaffrey", email: "lisa@kisscutcreative.com", firstEvent: "Jul 2022", mostRecentEvent: "Mar 2024", eventsAttended: 3 },
+  { rank: 25, name: "Kristi Noory", email: "kristi.noory@lustora.com", firstEvent: "Sep 2022", mostRecentEvent: "Oct 2024", eventsAttended: 3 },
+];
+
+const SUPERFANS = ["Elizabeth Welborn", "Brett", "Nyenye MK", "Shannon Jones", "Harper Miller"];
+
+function amIsSuperfan(name) { return SUPERFANS.includes(name); }
+
+function renderAmStats() {
+  document.getElementById('amStatsRow').innerHTML = `
+    <div class="stat-card"><div class="num">50</div><div class="label">Members tracked by attendance</div></div>
+    <div class="stat-card"><div class="num">95</div><div class="label">Most sessions RSVP'd (Katie Blouin)</div></div>
+    <div class="stat-card"><div class="num">${SUPERFANS.length}</div><div class="label">Superfans — top on every metric</div></div>
+    <div class="stat-card"><div class="num">${HIGHSCORER_DATA.length}</div><div class="label">Members rating 4.8★+ (3+ submissions)</div></div>
+  `;
+}
+
+function renderSuperfanList() {
+  document.getElementById('superfanList').innerHTML = SUPERFANS.map(n => `<span class="am-superfan-chip">${escapeHtml(n)}</span>`).join('');
+}
+
+function renderLeaderboard(data, tbodyId, showMoreId, rowFn, defaultShown) {
+  const tbody = document.getElementById(tbodyId);
+  const showMoreEl = document.getElementById(showMoreId);
+  function draw(showAll) {
+    const rows = showAll ? data : data.slice(0, defaultShown);
+    tbody.innerHTML = rows.map(rowFn).join('');
+    if (data.length > defaultShown) {
+      showMoreEl.style.display = '';
+      showMoreEl.textContent = showAll ? 'Show fewer ↑' : `Show all ${data.length} →`;
+      showMoreEl.onclick = () => draw(!showAll);
+    } else {
+      showMoreEl.style.display = 'none';
+    }
+  }
+  draw(false);
+}
+
+function sessionsRow(r) {
+  return `
+    <tr class="${amIsSuperfan(r.name) ? 'am-superfan-row' : ''}">
+      <td class="am-rank">${r.rank}</td>
+      <td><strong>${escapeHtml(r.name)}</strong></td>
+      <td class="am-email">${escapeHtml(r.email)}</td>
+      <td>${r.sessions}</td>
+      <td>${r.checkins || '—'}</td>
+      <td>${escapeHtml(r.memberSince)}</td>
+    </tr>
+  `;
+}
+function participatoryRow(r) {
+  return `
+    <tr class="${amIsSuperfan(r.name) ? 'am-superfan-row' : ''}">
+      <td class="am-rank">${r.rank}</td>
+      <td><strong>${escapeHtml(r.name)}</strong></td>
+      <td class="am-email">${escapeHtml(r.email)}</td>
+      <td>${r.submissions}</td>
+      <td class="am-star">${r.avgRating.toFixed(2)}★</td>
+    </tr>
+  `;
+}
+function highscorerRow(r) {
+  return `
+    <tr class="${amIsSuperfan(r.name) ? 'am-superfan-row' : ''}">
+      <td class="am-rank">${r.rank}</td>
+      <td><strong>${escapeHtml(r.name)}</strong></td>
+      <td class="am-email">${escapeHtml(r.email)}</td>
+      <td>${r.numRatings}</td>
+      <td class="am-star">${r.avgRating.toFixed(2)}★</td>
+    </tr>
+  `;
+}
+function longtermRow(r) {
+  return `
+    <tr class="${amIsSuperfan(r.name) ? 'am-superfan-row' : ''}">
+      <td class="am-rank">${r.rank}</td>
+      <td><strong>${escapeHtml(r.name)}</strong></td>
+      <td class="am-email">${escapeHtml(r.email)}</td>
+      <td>${escapeHtml(r.firstEvent)}</td>
+      <td>${escapeHtml(r.mostRecentEvent)}</td>
+      <td>${r.eventsAttended}</td>
+    </tr>
+  `;
+}
+
+const INDUSTRY_DATA = [
+  { label: "Beauty & Personal Care", count: 70 },
+  { label: "Health & Wellness", count: 59 },
+  { label: "Fashion & Accessories", count: 39 },
+  { label: "Marketing & Communications", count: 35 },
+  { label: "Food & Bev", count: 33 },
+  { label: "Home/Interiors", count: 24 },
+  { label: "Business Services", count: 21 },
+  { label: "Consumer Goods", count: 17 },
+  { label: "Hospitality & Event Planning", count: 14 },
+  { label: "Retail", count: 11 },
+];
+
+const FEEDBACK_HIGHLIGHTS = [
+  { category: "Investor & Fundraising Content", name: "Sara da Silva", business: "RELO of GCC", host: "Inside the Investor Mind: What Makes a Consumer Brand Fundable", quote: "I absolutely loved the session! The benchmarks on gross margins, LTV:CAC, and retention provided real, tactical value I can act on immediately. The advice on founder superpowers and capitalization strategy was a highlight as I build out my own roadmap. This has given me so much confidence as I step into this next chapter." },
+  { category: "Investor & Fundraising Content", name: "Briana Hart", business: "Buy Verde", host: "Venture Capital for Early and Growth Stage Founders with Gosia Karas of SoftBank", quote: "This was the most on point, relevant and succinct event I've been to for VCs. I attribute that equally to Ali with her questions and the speaker with her experience. I truly appreciate the 10th House putting this together." },
+  { category: "Investor & Fundraising Content", name: "Kelly", business: "Solo Spouse", host: "Pitch Demo Day with Jesse Draper", quote: "Jesse Draper is pure magic — a rare combination of deep expertise and genuine empathy. She delivered that essential 'never give up, we can do this' energy while simultaneously diving deep into business potential. Her emphasis on valuation — how we as women need to value ourselves and our businesses more highly — isn't just business advice. It's about changing our fundamental relationship with our own worth." },
+  { category: "Investor & Fundraising Content", name: "Jamie Hunt", business: "Fast Penny Spirits", host: "Pitch like a Goddess — How Pre-seed Impact Founders Can Magnetize Millions", quote: "It was very valuable to have an in-depth discussion around how to build a powerful pitch deck for an impact company. I appreciate the idea of staying true to your vision — the right people will find and join the mission." },
+  { category: "Founder Conversations & LinkedIn Live", name: "Angela Spencer", business: "We Are Mavens", host: "Becoming One of The Fastest Growing Private Companies — Rachel Liverman of Glowbar", quote: "I loved Rachel's candor in sharing her 'how I built this' explanations. No gatekeeping here! Her confidence and path to success make it seem like 'You got this!' for other founders. LOVE that she was super candid on her ambition and intention to be financially successful — and how that directed her entrepreneurial path." },
+  { category: "Founder Conversations & LinkedIn Live", name: "Kim Howard", business: "Green Bee Botanicals", host: "Door Knocking Your Way Into 100+ Retailers with Rosa Li", quote: "Best hour of my week! The details Rosa Li shared were incredibly helpful — about inventory, cash flow, approaching retailers, Shark Tank — all of it. Most insightful founder's interview I've listened to yet, and I've listened to many dozens." },
+  { category: "Founder Conversations & LinkedIn Live", name: "Jennifer Higgins", business: "Metamorphosis Co.", host: "Meet the Founders: Live Q&A with Alison Wyatt and Rebecca Minkoff", quote: "I have been a founder for a long time, just figuring things out as I go. I finally feel like I'm really getting access to the things I needed to know all along. SOOOO glad I found you. I'm ready to soar with the 10th House!" },
+  { category: "Founder Conversations & LinkedIn Live", name: "Lisa Lecorps", business: "", host: "Color Outside the Lines: Justina Blakeney on Art, Interiors & Entrepreneurship", quote: "I thank Justina for the wonderful insight on building her brand. The discussions on partnerships, taking 3 minutes to navigate your emotions, and following your intuition — these lessons gave me a new perspective. Getting closer to nature and slowing down has brought calm to my heart." },
+  { category: "Workshops", name: "Rachael Mahoney", business: "Kinney Lane", host: "F&B Growth Track: Founder as Brand Builder with Meghan Caiazzo", quote: "Framework for quantifying goals and team building is everything. So many entrepreneurs know what they need — but struggle to put clear systems in place to make it happen. This session broke down specific, actionable management tactics I can implement right away. Truly MBA-level knowledge right here. So thankful for this program." },
+  { category: "Workshops", name: "Kris Ravenscroft", business: "Beauty Gourmet", host: "How To Craft An Irresistible Media Pitch and Build A Media Kit That Converts", quote: "This was one of the best free information sessions I have ever attended. Paige gave the process we can use from start to finish to increase our chances for successful PR outreach — and asked for nothing in return. She truly set us up for success. When we are funded, I would want to work with her." },
+  { category: "Workshops", name: "OwnYourSpotlight", business: "", host: "SEO 101: Optimization for the Modern Web Workshop", quote: "This was what a workshop should be — real information, actionable steps, and a CTA. Not a bunch of 'why you need it' fluff with only the intent to sell at the end. Great on the part of the 10th House for that." },
+  { category: "Workshops", name: "Lisa Resnick", business: "Dandelion", host: "Negotiate, Earn, and Raise The Money You Deserve — Lisa Carmen Wang", quote: "Lisa was inspiring and educational all at the same time. She evoked and gave power to all the things we internally know but don't give fuel to on a day-to-day basis. I totally bought her book immediately afterward. Thank you for curating such a positive and insightful venue." },
+  { category: "Workshops", name: "Victoria Heldt", business: "Conscia", host: "How to Build a Business You Can Sell: The Path to Acquisition with Ali Kriegsman", quote: "Ali put on such a great presentation. She was real and down-to-earth and provided valuable insight into how and why acquisitions happen and what you need to do to position yourself for one. Really enjoyed it and took a lot away." },
+  { category: "In-Person Events & Member Mingles", name: "LiLi Tan", business: "Kailu Silk", host: "[LA - FFCExpert] Built Beautiful: Founders Who Shape the Way We Live", quote: "Great event — beautiful space, interesting conversation, and it was great meeting people in person! Thank you to Ali for the intros. It was a nice size group so it was intimate enough to have back and forth, meet the speakers, and not feel overwhelming. Absolutely worth the trip down from SF." },
+  { category: "In-Person Events & Member Mingles", name: "Brittany Ambridge", business: "Brittany Ambridge", host: "{NYC} A Morning with Ali & Rebecca", quote: "I absolutely loved the event. A lot of what was discussed was applicable to what my life is like right now. It was real, applicable advice and feedback. I loved getting to meet the other founders there — each person was uniquely interesting. What a treat to have so many great like-minded women." },
+  { category: "In-Person Events & Member Mingles", name: "Vanessa Oberto", business: "", host: "10th House Town Hall", quote: "Ali and Rebecca are such professionals!! I really enjoyed them answering questions with a business mind. Advice from people who have done it before is invaluable. I felt like a plethora of knowledge was packed into 1 hour." },
+  { category: "In-Person Events & Member Mingles", name: "Chi Dates", business: "The Dates Group", host: "Common Cents: Conversations And Strategies On Where To Find Money", quote: "It was phenomenal. So informative, high-level, well organized, and captivating. I don't see how it could have been improved upon. I flew in from Chicago and I couldn't be happier with the results. I have new strategies going forward." },
+  { category: "Community & Long-Term Members", name: "Rachael Mahoney", business: "Kinney Lane", host: "10th House Town Hall", quote: "Conversation with other female founders, especially of this caliber, helps forge a path like nothing else. When brilliant female founders share the room, we don't just feel inspired — we leave with playbook-level insights. That combination of data and inspiration is where magic happens and superpowers are made." },
+  { category: "Community & Long-Term Members", name: "Leah Gunter", business: "", host: "Trend Forecasting & Brand Innovation with Daria Burke (L'Oréal, Estée Lauder, Facebook)", quote: "Daria was amazing! She has a pulse on the market, and I'm so glad for The Female Founders Collective. I joined a couple of years ago and am so happy this community exists. Keep up the great work ladies!" },
+  { category: "Community & Long-Term Members", name: "Melodie", business: "Fatt Skincare", host: "{NYC} A Morning with Ali & Rebecca", quote: "I loved the event. It was truly enlightening to hear from Ali & Rebecca. Real, applicable advice. I loved getting to meet the other founders. I can get daunted in networking events but this was so friendly and effortless. More of these events please!" },
+  { category: "Community & Long-Term Members", name: "Lisa Lecorps", business: "", host: "Color Outside the Lines: Justina Blakeney", quote: "I enjoyed the discussion on partnerships, following your intuition, and slowing down to enjoy the beauty around you. These lessons I hold dear to my heart. I am following my heart and will continue to pursue my passion." },
+];
+
+const FEEDBACK_CATEGORIES = ["Investor & Fundraising Content", "Founder Conversations & LinkedIn Live", "Workshops", "In-Person Events & Member Mingles", "Community & Long-Term Members"];
+
+const INDUSTRY_GOTOS = [
+  {
+    "industry": "Beauty & Personal Care",
+    "leaders": [
+      { "name": "Dr. Monica Riley", "business": "", "stats": ["7 feedback submissions", "5★ avg rating", "member since Oct 2021"], "score": 68 },
+      { "name": "Sally Qiu", "business": "", "stats": ["53 event sessions"], "score": 43 },
+      { "name": "Tammy Nevin", "business": "", "stats": ["8 feedback submissions"], "score": 28 }
+    ],
+    "quote": { "name": "Sam", "business": "Audab Beauty", "text": "I love that Female Founder Collective provides the opportunity to build connections with like-minded founders and business owners.", "source": "Testimonial" },
+    "total": 70
+  },
+  {
+    "industry": "Health & Wellness",
+    "leaders": [
+      { "name": "Kristina Rudzinskaya", "business": "", "stats": ["46 event sessions", "member since Sep 2022"], "score": 47 },
+      { "name": "Jaclyn Lineback", "business": "", "stats": ["55 event sessions"], "score": 44 },
+      { "name": "Kelly", "business": "Solo Spouse", "stats": ["6 feedback submissions", "5★ avg rating"], "score": 41 }
+    ],
+    "quote": { "name": "Kelly", "business": "Solo Spouse", "text": "Jesse Draper is pure magic — a rare combination of deep expertise and genuine empathy. She delivered that essential 'never give up, we can do this' energy while simultaneously diving deep into business potential. Her emphasis on valuation — how we as women need to value ourselves and our businesses more highly — isn't just business advice. It's about changing our fundamental relationship with our own worth.", "source": "Testimonial" },
+    "total": 59
+  },
+  {
+    "industry": "Fashion & Accessories",
+    "leaders": [
+      { "name": "Elizabeth Welborn", "business": "", "stats": ["82 event sessions", "37 feedback submissions", "4.95★ avg rating", "member since Aug 2021"], "score": 157 },
+      { "name": "Brett", "business": "", "stats": ["94 event sessions", "34 feedback submissions", "4.91★ avg rating", "member since Jun 2022"], "score": 154 },
+      { "name": "Kari Dowiak", "business": "", "stats": ["49 event sessions", "35 feedback submissions"], "score": 83 }
+    ],
+    "quote": { "name": "Michelle Nagy", "business": "Laws of Lux", "text": "Hi Avery, Thank you for thinking of me! I feel like I have truly found a community that I belong to here and am so happy to be part of it. I definitely would sign up for lifetime membership, where do I sign up!", "source": "Testimonial" },
+    "total": 39
+  },
+  {
+    "industry": "Marketing & Communications",
+    "leaders": [
+      { "name": "Allison Fee", "business": "", "stats": ["73 event sessions"], "score": 47 },
+      { "name": "Danika Daly", "business": "", "stats": ["42 event sessions"], "score": 31 },
+      { "name": "Lilly", "business": "hyp.tv", "stats": ["41 event sessions"], "score": 27 }
+    ],
+    "quote": { "name": "Glynis Tao", "business": "Chase Your Dreams Consulting", "text": "Being in the 10th house has been amazing. I've made some really amazing connections there. I think they've done a wonderful job... I've tried a lot of different networking groups out there, memberships and that sort of thing, and still always came back to the 10th house because of the engagement part.", "source": "Testimonial" },
+    "total": 35
+  },
+  {
+    "industry": "Food & Bev",
+    "leaders": [
+      { "name": "Tracy Memoli", "business": "", "stats": ["5★ avg rating", "member since Mar 2022"], "score": 27 },
+      { "name": "Nicole", "business": "Bruno Prand Social", "stats": ["39 event sessions"], "score": 20 },
+      { "name": "Aleksandra Miloseska", "business": "Quick Fit Bites", "stats": ["5★ avg rating"], "score": 15 }
+    ],
+    "quote": { "name": "Nicole", "business": "Bruno Prand Social", "text": "The virtual workshops have been incredibly educational, and the in-person events have connected me with amazing people. I have formed valuable collaborations and partnerships with other 10th House members, which have helped me expand and elevate the service offerings of my boutique PR and social media agency.", "source": "Testimonial" },
+    "total": 33
+  },
+  {
+    "industry": "Home/Interiors",
+    "leaders": [
+      { "name": "Chasidy Dey", "business": "", "stats": ["8 feedback submissions"], "score": 29 },
+      { "name": "LiLi Tan", "business": "Kailu Silk", "stats": ["40 event sessions"], "score": 23 },
+      { "name": "Mari Denby", "business": "", "stats": ["36 event sessions"], "score": 10 }
+    ],
+    "quote": { "name": "LiLi Tan", "business": "Kailu Silk", "text": "Great event — beautiful space, interesting conversation, and it was great meeting people in person! Thank you to Ali for the intros. It was a nice size group so it was intimate enough to have back and forth, meet the speakers, and not feel overwhelming. Absolutely worth the trip down from SF.", "source": "Testimonial" },
+    "total": 24
+  },
+  {
+    "industry": "Business Services",
+    "leaders": [
+      { "name": "Joy Osaka-Lu", "business": "", "stats": ["11 feedback submissions", "5★ avg rating", "member since Jul 2022"], "score": 90 },
+      { "name": "Monica Rawicz", "business": "100Ninjas", "stats": ["13 feedback submissions", "member since Jul 2022"], "score": 60 },
+      { "name": "Katherine Danesi", "business": "", "stats": ["8 feedback submissions", "5★ avg rating"], "score": 56 }
+    ],
+    "quote": { "name": "Monica Rawicz", "business": "100Ninjas", "text": "Grateful to be part of this amazing community!", "source": "Testimonial" },
+    "total": 21
+  },
+  {
+    "industry": "Consumer Goods",
+    "leaders": [
+      { "name": "Nkosi Harvey", "business": "", "stats": ["51 event sessions", "7 feedback submissions"], "score": 63 },
+      { "name": "Tye Barrett", "business": "", "stats": ["40 event sessions"], "score": 25 },
+      { "name": "Jennifer McKay Newton", "business": "", "stats": ["member since Mar 2022"], "score": 4 }
+    ],
+    "quote": { "name": "Chelsea Lowry", "business": "Benton Collective", "text": "I just wanted to send a note that our Fashion and Accessories Huddle was so valuable. Laura does an amazing job hosting these, and really elevates the value of the discussion... She also individually reached out to connect with several of us, to learn more about our businesses and just gives such an elevated experience.", "source": "Testimonial" },
+    "total": 17
+  },
+  {
+    "industry": "Retail",
+    "leaders": [
+      { "name": "Christina Gjiri", "business": "Brightfield", "stats": ["46 event sessions", "9 feedback submissions", "5★ avg rating"], "score": 98 },
+      { "name": "Katie Blouin", "business": "", "stats": ["95 event sessions"], "score": 50 },
+      { "name": "Mahwash Bhimjee", "business": "", "stats": ["57 event sessions"], "score": 45 }
+    ],
+    "quote": null,
+    "total": 11
+  }
+];
+
+function escapeAttrSafe(s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); }
+
+function renderGotosTab() {
+  document.getElementById('gotosContainer').innerHTML = INDUSTRY_GOTOS.map(ind => {
+    const leadersHtml = ind.leaders.map((l, i) => `
+      <div class="goto-leader">
+        <span class="goto-rank">${i + 1}</span>
+        <span class="goto-name">${escapeHtml(l.name)}</span>
+        ${l.business ? `<span class="goto-business">— ${escapeHtml(l.business)}</span>` : ''}
+        <span class="goto-metrics">${l.stats.map(escapeHtml).join(' · ')}</span>
+      </div>
+    `).join('');
+    const quoteHtml = ind.quote ? `
+      <div class="goto-quote-box">
+        <div class="fb-quote">"${escapeHtml(ind.quote.text)}"</div>
+        <div class="fb-meta"><span class="fb-source">${escapeHtml(ind.quote.name)}${ind.quote.business ? ' — ' + escapeHtml(ind.quote.business) : ''}</span><span class="fb-source" style="color:#8a7a5c;">${escapeHtml(ind.quote.source)}</span></div>
+      </div>
+    ` : `<div class="goto-no-quote">No matching testimonial on file yet for this industry's top engagement leaders.</div>`;
+    return `
+      <div class="goto-card">
+        <div class="goto-card-head"><h3>${escapeHtml(ind.industry)}</h3><span class="am-badge">${ind.total} tagged members</span></div>
+        <div class="goto-leaders">${leadersHtml}</div>
+        ${quoteHtml}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderIndustryBars() {
+  const max = Math.max(...INDUSTRY_DATA.map(i => i.count));
+  document.getElementById('industryBars').innerHTML = INDUSTRY_DATA.map(i => `
+    <div class="churn-row">
+      <div class="churn-label">${escapeHtml(i.label)}</div>
+      <div class="churn-bar-track"><div class="churn-bar-fill" style="width:${(i.count / max * 100).toFixed(0)}%; background:#eab8e9;"></div></div>
+      <div class="churn-count">${i.count}</div>
+    </div>
+  `).join('');
+  document.getElementById('industryBadge').textContent = `Top ${INDUSTRY_DATA.length} of ${INDUSTRY_DATA.reduce((s, i) => s + i.count, 0)}+ tagged`;
+}
+
+function renderTopFeedback() {
+  document.getElementById('topFeedbackStatsRow').innerHTML = `
+    <div class="stat-card"><div class="num">4.64/5</div><div class="label">Average event rating, 2021–2026</div></div>
+    <div class="stat-card"><div class="num">77%</div><div class="label">Five-star submissions</div></div>
+    <div class="stat-card"><div class="num">${FEEDBACK_HIGHLIGHTS.length}</div><div class="label">Featured 5★ testimonials on file</div></div>
+    <div class="stat-card"><div class="num">5 yrs</div><div class="label">Of programming feedback data</div></div>
+  `;
+  document.getElementById('feedbackHighlightsContainer').innerHTML = FEEDBACK_CATEGORIES.map(cat => {
+    const items = FEEDBACK_HIGHLIGHTS.filter(f => f.category === cat);
+    return `
+      <div class="fb-section">
+        <div class="fb-section-head"><h2 style="font-size:13px;">${escapeHtml(cat)}</h2><span class="fb-count-badge">${items.length}</span></div>
+        <div class="fb-stack">
+          ${items.map(f => `
+            <div class="fb-card positive">
+              <div class="fb-quote">"${escapeHtml(f.quote)}"</div>
+              <div class="fb-meta"><span class="fb-source">${escapeHtml(f.name)}${f.business ? ' — ' + escapeHtml(f.business) : ''}</span><span class="fb-score">★★★★★</span></div>
+              <div class="am-email" style="margin-top:4px;">${escapeHtml(f.host)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderActiveTab() {
+  renderAmStats();
+  renderSuperfanList();
+  renderLeaderboard(SESSIONS_DATA, 'sessionsTbody', 'sessionsShowMore', sessionsRow, 12);
+  renderLeaderboard(PARTICIPATORY_DATA, 'participatoryTbody', 'participatoryShowMore', participatoryRow, 12);
+  renderLeaderboard(HIGHSCORER_DATA, 'highscorerTbody', 'highscorerShowMore', highscorerRow, 12);
+  renderLeaderboard(LONGTERM_DATA, 'longtermTbody', 'longtermShowMore', longtermRow, 12);
+  document.getElementById('participatoryBadge').textContent = `Top ${PARTICIPATORY_DATA.length} · feedback submissions`;
+  document.getElementById('highscorerBadge').textContent = `${HIGHSCORER_DATA.length} members · 4.8★+`;
+  document.getElementById('longtermBadge').textContent = `${LONGTERM_DATA.length} members · 2021–22 joins`;
+  renderIndustryBars();
+  renderTopFeedback();
+}
+
+let activeRendered = false;
+let gotosRendered = false;
+function switchTab(tab) {
+  document.getElementById('viewTestimonials').style.display = tab === 'testimonials' ? '' : 'none';
+  document.getElementById('viewFeedback').style.display = tab === 'feedback' ? '' : 'none';
+  document.getElementById('viewActive').style.display = tab === 'active' ? '' : 'none';
+  document.getElementById('viewGotos').style.display = tab === 'gotos' ? '' : 'none';
+  document.getElementById('viewGranola').style.display = tab === 'granola' ? '' : 'none';
+  document.getElementById('tabBtnTestimonials').classList.toggle('active', tab === 'testimonials');
+  document.getElementById('tabBtnFeedback').classList.toggle('active', tab === 'feedback');
+  document.getElementById('tabBtnActive').classList.toggle('active', tab === 'active');
+  document.getElementById('tabBtnGotos').classList.toggle('active', tab === 'gotos');
+  document.getElementById('tabBtnGranola').classList.toggle('active', tab === 'granola');
+  if (tab === 'feedback' && !feedbackRendered) {
+    renderFeedbackTab();
+    feedbackRendered = true;
+  }
+  if (tab === 'active' && !activeRendered) {
+    renderActiveTab();
+    activeRendered = true;
+  }
+  if (tab === 'gotos' && !gotosRendered) {
+    renderGotosTab();
+    gotosRendered = true;
+  }
+}
+</script>
+</body>
+</html>
