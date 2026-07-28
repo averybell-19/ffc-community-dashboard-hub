@@ -169,6 +169,9 @@
   .status-pill.snapshot { background: #f5daf3; color: #3f0213; }
   .status-pill.pending { background: #f3e2c2; color: #6b4a12; }
   .card-desc { font-size: 13px; color: #4a4a52; line-height: 1.55; margin-bottom: 14px; }
+  .card-desc-list { font-size: 13px; color: #4a4a52; line-height: 1.55; margin: 0 0 14px; padding-left: 18px; }
+  .card-desc-list li { margin-bottom: 3px; }
+  .card-desc-list .soon { color: #8a7a5c; font-style: italic; }
   .stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
   .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
   .open-btn {
@@ -533,7 +536,12 @@
           <h2>10th House · Community Growth</h2>
           <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
         </div>
-        <div class="card-desc">Circle community analytics — 18-month member and engagement trends, year-over-year comparison, and all-time records. Member-type only (admin/bot accounts excluded).</div>
+        <ul class="card-desc-list">
+          <li>18-month member and engagement trends</li>
+          <li>Year-over-year comparison</li>
+          <li>All-time records</li>
+          <li>Member-type only (admin/bot accounts excluded)</li>
+        </ul>
         <div class="stat-row">
           <div class="stat-chip">1,199 <span>total members</span></div>
           <div class="stat-chip">384 <span>active (MAU)</span></div>
@@ -549,7 +557,12 @@
           <h2>Community Host Tracker</h2>
           <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
         </div>
-        <div class="card-desc">City Sessions + Huddles host tracker: top cities, top huddle categories, and a 2025 vs. 2026 host comparison. Industry breakdown and RSVP leaderboards are being added in a follow-up refresh.</div>
+        <ul class="card-desc-list">
+          <li>Top cities</li>
+          <li>Top huddle categories</li>
+          <li>2025 vs. 2026 host comparison</li>
+          <li class="soon">Coming soon: industry breakdown + RSVP leaderboards</li>
+        </ul>
         <div class="stat-row">
           <div class="stat-chip">27 <span>city sessions '26</span></div>
           <div class="stat-chip">98 <span>huddles hosted</span></div>
@@ -565,7 +578,12 @@
           <h2>FFC Member Insights Hub</h2>
           <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
         </div>
-        <div class="card-desc">Curated testimonials for LPs/social/newsletters, member feedback themes, event-activity leaderboard, and industry "go-to" members — combined from Circle, HubSpot, Granola, and survey sources.</div>
+        <ul class="card-desc-list">
+          <li>Curated testimonials for LPs/social/newsletters</li>
+          <li>Member feedback themes</li>
+          <li>Event-activity leaderboard</li>
+          <li>Industry "go-to" members</li>
+        </ul>
         <div class="stat-row">
           <div class="stat-chip">Testimonials <span>tab</span></div>
           <div class="stat-chip">Member Feedback <span>tab</span></div>
