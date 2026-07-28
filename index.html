@@ -196,6 +196,42 @@
     display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #4a4f16;
     margin-right: 5px; box-shadow: 0 0 0 2px rgba(74,79,22,0.15);
   }
+
+  /* ---- page guide (orientation grid, shown once at top) ---- */
+  .page-guide {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px;
+  }
+  @media (max-width: 800px) { .page-guide { grid-template-columns: 1fr 1fr; } }
+  .guide-cell {
+    background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px; padding: 13px 14px;
+    text-decoration: none; display: block; box-shadow: 0 1px 4px rgba(85,61,1,0.05);
+  }
+  .guide-cell:hover { border-color: #d58e32; }
+  .guide-num {
+    display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px;
+    border-radius: 50%; background: #3f0213; color: #fcf3ed; font-size: 10.5px; font-weight: 800; margin-bottom: 7px;
+  }
+  .guide-title { font-size: 12.5px; font-weight: 800; color: #3f0213; margin-bottom: 4px; }
+  .guide-desc { font-size: 11px; color: #6b573a; line-height: 1.45; }
+  .guide-cell.gold { background: linear-gradient(180deg, #fffaf2, #f8ecda); border: 1.5px solid #d58e32; }
+  .guide-cell.gold .guide-num { background: #d58e32; }
+
+  /* ---- subsection dividers within a main section ---- */
+  .subsec { margin: 20px 0 12px; padding-top: 16px; border-top: 1px dashed #e2cec3; }
+  .subsec:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+  .subsec-label {
+    font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+    color: #a3672f; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ---- floating jump-to-dashboards button ---- */
+  .jump-fab {
+    position: fixed; bottom: 22px; right: 22px; z-index: 500;
+    background: linear-gradient(135deg, #eab8e9, #d58e32); color: #3f0213; text-decoration: none;
+    font-size: 12.5px; font-weight: 800; padding: 11px 18px; border-radius: 30px;
+    box-shadow: 0 4px 14px rgba(63,2,19,0.25); display: flex; align-items: center; gap: 6px;
+  }
+  .jump-fab:hover { opacity: 0.92; }
 </style>
 </head>
 <body>
@@ -236,6 +272,30 @@
 
   <div class="link-legend"><span class="lg-icon">🔗</span> Every pink pill marked with a <strong>🔗</strong> is a live link — click it to open the original Circle post in a new tab and read the full conversation.</div>
 
+  <!-- ============ PAGE GUIDE (orientation — what's where) ============ -->
+  <div class="page-guide">
+    <a class="guide-cell" href="#community-overview">
+      <div class="guide-num">1</div>
+      <div class="guide-title">Community Overview</div>
+      <div class="guide-desc">What members are talking about, and what each team should take from it.</div>
+    </a>
+    <a class="guide-cell" href="#executive-visibility">
+      <div class="guide-num">2</div>
+      <div class="guide-title">Executive Visibility</div>
+      <div class="guide-desc">Standout quotes, risk/opportunity calls, and cancellation health.</div>
+    </a>
+    <a class="guide-cell" href="#cross-functional">
+      <div class="guide-num">3</div>
+      <div class="guide-title">Cross-Functional</div>
+      <div class="guide-desc">Members to spotlight, and the feedback-loop format teams should reuse.</div>
+    </a>
+    <a class="guide-cell gold" href="#dashboards">
+      <div class="guide-num">4</div>
+      <div class="guide-title">⭐ Full Dashboards</div>
+      <div class="guide-desc">The 3 live, daily-refreshed tools — start here if you only have 2 minutes.</div>
+    </a>
+  </div>
+
   <div class="subnav">
     <a href="#community-overview">① Community Overview</a>
     <a href="#executive-visibility">② Executive Visibility</a>
@@ -247,81 +307,89 @@
   <div class="section" id="community-overview">
     <div class="section-head">
       <h2><span class="sec-num">1</span>Community Overview</h2>
-      <span class="refresh-pill">REFRESHED MONTHLY · JUL 27, 2026</span>
+      <span class="refresh-pill">REFRESHED MONTHLY · JUL 28, 2026</span>
     </div>
-    <div class="section-sub">Rolling last 30 days · Circle main discussion spaces (Ask the Community, 10th House Hub, Partnerships &amp; Collabs, Hiring &amp; Talent, Fundraising &amp; Investors, SeedHer, Local Founders) + HubSpot cancellation data · 87 posts analyzed</div>
+    <div class="section-sub">Rolling last 30 days · Circle main discussion spaces (Ask the Community, 10th House Hub, Partnerships &amp; Collabs, Hiring &amp; Talent, Fundraising &amp; Investors, Local Founders, Fashion) + HubSpot cancellation data · 86 posts analyzed · re-verified against source data Jul 28 (SeedHer had zero posts this cycle — excluded until active again)</div>
 
-    <div class="overview-grid">
-      <div class="ov-card">
-        <h3>Top 5 themes members are talking about</h3>
-        <ol>
-          <li>Vendor &amp; service-provider referrals (packaging/MOQ, manufacturing, 3PL, legal, PR, dev, trademark)</li>
-          <li>Partnership &amp; collab requests (brand collabs, swag bags, event co-hosting)</li>
-          <li>Founder visibility &amp; mindset (self-promotion discomfort, burnout, community-as-support)</li>
-          <li>AI tools entering daily workflows (site-building, agentic brand systems, AI search shift)</li>
-          <li>Fundraising &amp; alternative capital (crowdfunding, angel investment, creator equity)</li>
-        </ol>
-        <div class="src-row">
-          <span class="src-label">Linked posts:</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/us-apparel-factory-and-or-patternmaker-needed" target="_blank">Factory recco needed</a>
-          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/trademark-attorney-recco-needed-flat-fee" target="_blank">Trademark attorney recco</a>
-          <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">Collab request</a>
-          <a class="src-link" href="https://community.the10thhouse.co/c/fashion/fashion-huddle-building-agentically-friday-7-9-12pm-pst" target="_blank">Building agentically</a>
-          <a class="src-link" href="https://community.the10thhouse.co/c/deal-flow/the-mindful-wardrobe-fundraising" target="_blank">Fundraising post</a>
+    <div class="subsec">
+      <div class="subsec-label">🗣️ What the community is talking about</div>
+      <div class="overview-grid">
+        <div class="ov-card">
+          <h3>Top 5 themes members are talking about</h3>
+          <ol>
+            <li>Vendor &amp; service-provider referrals (packaging/MOQ, manufacturing, 3PL, legal, PR, dev, trademark)</li>
+            <li>Partnership &amp; collab requests (brand collabs, swag bags, event co-hosting)</li>
+            <li>Founder visibility &amp; mindset (self-promotion discomfort, burnout, community-as-support)</li>
+            <li>AI tools entering daily workflows (site-building, agentic brand systems, AI search shift) — still early/low-volume, worth watching rather than acting on yet</li>
+            <li>Fundraising &amp; alternative capital (crowdfunding, angel investment, creator equity)</li>
+          </ol>
+          <div class="src-row">
+            <span class="src-label">Linked posts:</span>
+            <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/us-apparel-factory-and-or-patternmaker-needed" target="_blank">Factory recco needed</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/trademark-attorney-recco-needed-flat-fee" target="_blank">Trademark attorney recco</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">Collab request</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/fashion/fashion-huddle-building-agentically-friday-7-9-12pm-pst" target="_blank">Building agentically</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/deal-flow/the-mindful-wardrobe-fundraising" target="_blank">Fundraising post</a>
+          </div>
+        </div>
+        <div class="ov-card">
+          <h3>What's changing</h3>
+          <p>AI adoption is visibly entering member workflows — website building, agentic brand systems, SEO/search shifts. This wasn't a visible thread a few months ago.</p>
+          <p>Members are reframing "visibility" from a marketing/content problem to a support/community problem.</p>
+          <p>Staff-run summer engagement campaigns (Founder Fuel, CEO Club) are driving some of the highest comment counts in recent history.</p>
+          <p><strong>Newly flagged:</strong> the single highest-engagement post this cycle wasn't a staff campaign — it's an organic peer "let's grow our Instagrams together" thread (16 comments). Peer-to-peer growth support is resonating more than any top-down content right now.</p>
+          <div class="src-row">
+            <span class="src-label">Linked posts:</span>
+            <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state/an-honest-converation-about-visibility" target="_blank">Visibility as support</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/founder-fuel-giveaway-3-make-5-founder-connections" target="_blank">Founder Fuel #3</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/ceo-club-giveaway-is-here-share-to-win" target="_blank">CEO Club giveaway</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/engagement-tips/help-my-instagram-is-stuck" target="_blank">"My Instagram is stuck"</a>
+          </div>
         </div>
       </div>
-      <div class="ov-card">
-        <h3>What's changing</h3>
-        <p>AI adoption is visibly entering member workflows — website building, agentic brand systems, SEO/search shifts. This wasn't a visible thread a few months ago.</p>
-        <p>Members are reframing "visibility" from a marketing/content problem to a support/community problem.</p>
-        <p>Staff-run summer engagement campaigns (Founder Fuel, CEO Club) are driving some of the highest comment counts in recent history.</p>
-        <div class="src-row">
-          <span class="src-label">Linked posts:</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state/an-honest-converation-about-visibility" target="_blank">Visibility as support</a>
-          <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/founder-fuel-giveaway-3-make-5-founder-connections" target="_blank">Founder Fuel #3</a>
-          <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/ceo-club-giveaway-is-here-share-to-win" target="_blank">CEO Club giveaway</a>
+
+      <div class="overview-grid">
+        <div class="ov-card full">
+          <h3>Objections we're hearing</h3>
+          <p><strong>Not Paid</strong> (billing/payment failure) is the single largest cancellation reason — ~37.5% of a ~500-record sample. That's a dunning problem, not a dissatisfaction signal.</p>
+          <p>"No longer a fit" (~19-24%, drifting down) and "financial reasons" (~9%) are the top qualitative objections. Smaller but direct: "outgrown content/community" and "product/service unsatisfactory."</p>
+          <p class="cap">Caveat: 34 of the last 43 cancellations (79%) have no reason logged — a data-capture gap worth closing. Source: HubSpot subscription cancellation-reason field (not Circle — no post links here).</p>
         </div>
       </div>
     </div>
 
-    <div class="overview-grid">
-      <div class="ov-card full">
-        <h3>Objections we're hearing</h3>
-        <p><strong>Not Paid</strong> (billing/payment failure) is the single largest cancellation reason — ~35% of a ~500-record sample. That's a dunning problem, not a dissatisfaction signal.</p>
-        <p>"No longer a fit" (~24%) and "financial reasons" (~9%) are the top qualitative objections. Smaller but direct: "outgrown content/community" and "product/service unsatisfactory."</p>
-        <p class="cap">Caveat: 34 of the last 43 cancellations (79%) have no reason logged — a data-capture gap worth closing. Source: HubSpot subscription cancellation-reason field (not Circle — no post links here).</p>
-      </div>
-    </div>
-
-    <div class="overview-grid cols-3">
-      <div class="ov-card">
-        <h3>What Marketing should know</h3>
-        <p>"Visibility is infrastructure, not vanity" and "support problem, not content problem" threads pull strong engagement — lean messaging into peer support over content polish.</p>
-        <p>Giveaway/challenge formats work: Founder Fuel posts pull 5-11 comments vs. a typical 0-3.</p>
-        <div class="src-row">
-          <span class="src-label">Linked posts:</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state/an-honest-converation-about-visibility" target="_blank">Visibility post</a>
-          <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/founder-fuel-giveaway-2-your-end-of-week-recharge" target="_blank">Founder Fuel #2</a>
+    <div class="subsec">
+      <div class="subsec-label">🧭 What each team should take away</div>
+      <div class="overview-grid cols-3">
+        <div class="ov-card">
+          <h3>What Marketing should know</h3>
+          <p>"Visibility is infrastructure, not vanity" and "support problem, not content problem" threads pull strong engagement — lean messaging into peer support over content polish.</p>
+          <p>Giveaway/challenge formats work: Founder Fuel posts pull 5-11 comments vs. a typical 0-3. The organic "grow together" Instagram thread out-performed all of them (16 comments) — peer-led beats staff-led right now.</p>
+          <div class="src-row">
+            <span class="src-label">Linked posts:</span>
+            <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state/an-honest-converation-about-visibility" target="_blank">Visibility post</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/founder-fuel-giveaway-2-your-end-of-week-recharge" target="_blank">Founder Fuel #2</a>
+          </div>
         </div>
-      </div>
-      <div class="ov-card">
-        <h3>What Programming should know</h3>
-        <p>Fashion and Beauty &amp; Personal Care remain the most active industry cohorts by conversation volume (consistent with all-time tags: Beauty &amp; Personal Care 70, Health &amp; Wellness 59, Fashion &amp; Accessories 39).</p>
-        <p>Recurring unmet needs: trademark/legal, packaging/MOQ sourcing, 3PL/fulfillment, fractional CMO/CFO.</p>
-        <div class="src-row">
-          <span class="src-label">Linked posts:</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/fashion/next-fashion-huddle-august-14" target="_blank">Next Fashion Huddle</a>
-          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/dtc-ecomm-founders-3pl-question" target="_blank">3PL question</a>
+        <div class="ov-card">
+          <h3>What Programming should know</h3>
+          <p>Fashion and Beauty &amp; Personal Care remain the most active industry cohorts by conversation volume (consistent with all-time tags: Beauty &amp; Personal Care 70, Health &amp; Wellness 59, Fashion &amp; Accessories 39).</p>
+          <p>Recurring unmet needs: trademark/legal, packaging/MOQ sourcing, 3PL/fulfillment, fractional CMO/CFO.</p>
+          <div class="src-row">
+            <span class="src-label">Linked posts:</span>
+            <a class="src-link" href="https://community.the10thhouse.co/c/fashion/next-fashion-huddle-august-14" target="_blank">Next Fashion Huddle</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/dtc-ecomm-founders-3pl-question" target="_blank">3PL question</a>
+          </div>
         </div>
-      </div>
-      <div class="ov-card">
-        <h3>What Growth should know</h3>
-        <p>"Ask the Community" is the dominant space — 36 of 87 recent posts (41%). Organic peer-to-peer activity is healthy and worth protecting.</p>
-        <p>Regional chapters keep generating real meetup requests — a growth lever beyond national programming.</p>
-        <div class="src-row">
-          <span class="src-label">Linked posts:</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question" target="_blank">Ask the Community</a>
-          <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state" target="_blank">NY/Tri-State chapter</a>
+        <div class="ov-card">
+          <h3>What Growth should know</h3>
+          <p>"Ask the Community" is the dominant space — 36 of 86 recent posts (42%). Organic peer-to-peer activity is healthy and worth protecting.</p>
+          <p>Regional chapters keep generating real meetup requests — a growth lever beyond national programming.</p>
+          <div class="src-row">
+            <span class="src-label">Linked posts:</span>
+            <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question" target="_blank">Ask the Community</a>
+            <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state" target="_blank">NY/Tri-State chapter</a>
+          </div>
         </div>
       </div>
     </div>
@@ -331,60 +399,73 @@
   <div class="section" id="executive-visibility">
     <div class="section-head">
       <h2><span class="sec-num">2</span>Executive Visibility</h2>
-      <span class="refresh-pill">REFRESHED MONTHLY · JUL 27, 2026</span>
+      <span class="refresh-pill">REFRESHED MONTHLY · JUL 28, 2026</span>
     </div>
     <div class="section-sub">For "what's happening in our community" / "who's most active in x industry" questions</div>
 
-    <div class="ov-card" style="margin-bottom:14px;">
-      <h3>Top trends &amp; quotes from Circle this month</h3>
-      <div class="quote-block">
-        <div class="qtext">"Can Communities Lead Women Founders Without Acknowledging Reality?"<span class="who">— Angela Acosta</span></div>
-        <a class="q-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/call-for-contributors-can-communities-lead-women-founders-without-acknowledging-reality" target="_blank">View post →</a>
-      </div>
-      <div class="quote-block">
-        <div class="qtext">Multiple posts on the discomfort of self-promotion while building a thoughtful new-mother brand — consistently high engagement.<span class="who">— Natacha Lacroix, Bloomest</span></div>
-        <a class="q-link" href="https://community.the10thhouse.co/c/ask-a-question/why-does-promoting-something-you-truly-believe-in-feel-uncomfortable" target="_blank">View post →</a>
-      </div>
-      <div class="quote-block">
-        <div class="qtext">"Are Men No Longer a Necessity in 2026?" — cultural commentary driving above-average discussion.<span class="who">— Kyrie Rogers</span></div>
-        <a class="q-link" href="https://community.the10thhouse.co/c/ask-a-question/are-men-no-longer-a-necessity-in-2026" target="_blank">View post →</a>
-      </div>
-    </div>
-
-    <div class="rp-grid">
-      <div class="rp-card risk">
-        <h4>Risk</h4>
-        <p>Angela Acosta's post signals a possible undercurrent of members feeling communities (implicitly including ours) aren't acknowledging harder realities. Worth a pulse-check before it becomes a broader sentiment.</p>
-        <div class="src-row">
-          <span class="src-label">Linked post:</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/call-for-contributors-can-communities-lead-women-founders-without-acknowledging-reality" target="_blank">Can Communities Lead...</a>
+    <div class="subsec">
+      <div class="subsec-label">💬 Standout posts &amp; quotes this month</div>
+      <div class="ov-card" style="margin-bottom:14px;">
+        <h3>Top trends &amp; quotes from Circle this month</h3>
+        <div class="quote-block">
+          <div class="qtext">"Can Communities Lead Women Founders Without Acknowledging Reality?"<span class="who">— Angela Acosta</span></div>
+          <a class="q-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/call-for-contributors-can-communities-lead-women-founders-without-acknowledging-reality" target="_blank">View post →</a>
         </div>
-      </div>
-      <div class="rp-card opp">
-        <h4>Opportunity</h4>
-        <p>Strong organic content creators (Substack writers, podcasters) in the community could be spotlighted or folded into official programming. High engagement on product/launch "wins" posts also shows appetite for a formal peer-recognition feature.</p>
-        <div class="src-row">
-          <span class="src-label">Linked post:</span>
-          <a class="src-link alt" href="https://community.the10thhouse.co/c/ask-a-question/headlines-have-been-insane-recently" target="_blank">Kyrie Rogers' articles</a>
-          <a class="src-link alt" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">Product launch win</a>
+        <div class="quote-block">
+          <div class="qtext">Multiple posts on the discomfort of self-promotion while building a thoughtful new-mother brand — consistently high engagement.<span class="who">— Natacha Lacroix, Bloomest</span></div>
+          <a class="q-link" href="https://community.the10thhouse.co/c/ask-a-question/why-does-promoting-something-you-truly-believe-in-feel-uncomfortable" target="_blank">View post →</a>
+        </div>
+        <div class="quote-block">
+          <div class="qtext">"Are Men No Longer a Necessity in 2026?" — cultural commentary driving above-average discussion.<span class="who">— Kyrie Rogers</span></div>
+          <a class="q-link" href="https://community.the10thhouse.co/c/ask-a-question/are-men-no-longer-a-necessity-in-2026" target="_blank">View post →</a>
+        </div>
+        <div class="quote-block">
+          <div class="qtext">"HELP MY INSTAGRAM IS STUCK" — organic peer growth-support thread, the highest-engagement post of the cycle (16 comments).<span class="who">— Kyrie Rogers</span></div>
+          <a class="q-link" href="https://community.the10thhouse.co/c/engagement-tips/help-my-instagram-is-stuck" target="_blank">View post →</a>
         </div>
       </div>
     </div>
 
-    <div class="ov-card" style="margin-top:14px;">
-      <h3>Cancellation requests</h3>
-      <div class="stat-line">
-        <div class="stat-chip">43 <span>cancellations, last 30 days</span></div>
-        <div class="stat-chip">9 <span>with reason logged</span></div>
-        <div class="stat-chip">6 <span>"Not Paid"</span></div>
-        <div class="stat-chip">3 <span>"Other"</span></div>
+    <div class="subsec">
+      <div class="subsec-label">⚠️ Risk &amp; opportunity</div>
+      <div class="rp-grid">
+        <div class="rp-card risk">
+          <h4>Risk</h4>
+          <p>Angela Acosta's post signals a possible undercurrent of members feeling communities (implicitly including ours) aren't acknowledging harder realities. Worth a pulse-check before it becomes a broader sentiment.</p>
+          <div class="src-row">
+            <span class="src-label">Linked post:</span>
+            <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/call-for-contributors-can-communities-lead-women-founders-without-acknowledging-reality" target="_blank">Can Communities Lead...</a>
+          </div>
+        </div>
+        <div class="rp-card opp">
+          <h4>Opportunity</h4>
+          <p>Strong organic content creators (Substack writers, podcasters) in the community could be spotlighted or folded into official programming. High engagement on product/launch "wins" posts and the organic Instagram-growth thread also show real appetite for a formal peer-recognition/peer-growth feature.</p>
+          <div class="src-row">
+            <span class="src-label">Linked post:</span>
+            <a class="src-link alt" href="https://community.the10thhouse.co/c/ask-a-question/headlines-have-been-insane-recently" target="_blank">Kyrie Rogers' articles</a>
+            <a class="src-link alt" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">Product launch win</a>
+          </div>
+        </div>
       </div>
-      <p class="cap" style="margin-top:10px;">34 of 43 have no reason captured — flagging this as a data gap for Growth/Ops, not an absence of objections. Source: HubSpot (no Circle posts to link here).</p>
     </div>
 
-    <div class="ov-card" style="margin-top:14px;">
-      <h3>Most active members by industry</h3>
-      <p>See the "Industry Go-Tos" tab on the Member Insights dashboard (<a href="#dashboards" style="color:#3f0213;font-weight:700;">jump to dashboards ↓</a>) for the full breakdown. Top 3 by engaged-member volume: Beauty &amp; Personal Care (70), Health &amp; Wellness (59), Fashion &amp; Accessories (39).</p>
+    <div class="subsec">
+      <div class="subsec-label">📈 Business health signals</div>
+      <div class="ov-card" style="margin-top:0;">
+        <h3>Cancellation requests</h3>
+        <div class="stat-line">
+          <div class="stat-chip">43 <span>cancellations, last 30 days</span></div>
+          <div class="stat-chip">9 <span>with reason logged</span></div>
+          <div class="stat-chip">6 <span>"Not Paid"</span></div>
+          <div class="stat-chip">3 <span>"Other"</span></div>
+        </div>
+        <p class="cap" style="margin-top:10px;">34 of 43 have no reason captured — flagging this as a data gap for Growth/Ops, not an absence of objections. Numbers re-confirmed against HubSpot Jul 28 — no material drift. Source: HubSpot (no Circle posts to link here).</p>
+      </div>
+
+      <div class="ov-card" style="margin-top:14px;">
+        <h3>Most active members by industry</h3>
+        <p>See the "Industry Go-Tos" tab on the Member Insights dashboard (<a href="#dashboards" style="color:#3f0213;font-weight:700;">jump to dashboards ↓</a>) for the full breakdown. Top 3 by engaged-member volume: Beauty &amp; Personal Care (70), Health &amp; Wellness (59), Fashion &amp; Accessories (39).</p>
+      </div>
     </div>
   </div>
 
@@ -392,47 +473,53 @@
   <div class="section" id="cross-functional">
     <div class="section-head">
       <h2><span class="sec-num">3</span>Cross-Functional Leadership &amp; Communications</h2>
-      <span class="refresh-pill">REFRESHED MONTHLY · JUL 27, 2026</span>
+      <span class="refresh-pill">REFRESHED MONTHLY · JUL 28, 2026</span>
     </div>
     <div class="section-sub">Automatic feedback loop for Marketing / Programming / Partnerships — members to highlight this month</div>
 
-    <div class="highlight-list">
-      <div class="highlight-row">
-        <span class="name">Natacha Lacroix</span>
-        <span class="why">— Bloomest (postpartum care). Thoughtful builder content; offered free memberships to the community.</span>
-        <a class="src-link" href="https://community.the10thhouse.co/c/special-discounts/a-season-held-for-you" target="_blank">View post →</a>
-      </div>
-      <div class="highlight-row">
-        <span class="name">Angela Acosta</span>
-        <span class="why">— Community-building commentary + The Gal Project contributor call.</span>
-        <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/write-for-the-gal-project-ongoing-contributors" target="_blank">View post →</a>
-      </div>
-      <div class="highlight-row">
-        <span class="name">Elizabeth Welborn</span>
-        <span class="why">— Hosts the Fashion Huddle; pivoted content to AI/agentic brand-building.</span>
-        <a class="src-link" href="https://community.the10thhouse.co/c/fashion/next-fashion-huddle-august-14" target="_blank">View post →</a>
-      </div>
-      <div class="highlight-row">
-        <span class="name">Cristina Garcia</span>
-        <span class="why">— Launched Content Bar beta (creator-content marketplace); building a creator advisory board.</span>
-        <a class="src-link" href="https://community.the10thhouse.co/c/news-room/content-bar-just-launched-our-beta-platform" target="_blank">View post →</a>
-      </div>
-      <div class="highlight-row">
-        <span class="name">Robyn Young</span>
-        <span class="why">— Wrote on fashion brand positioning (relatable vs. aspirational).</span>
-        <a class="src-link" href="https://community.the10thhouse.co/c/fashion/fashion-founders-this-one-s-for-you" target="_blank">View post →</a>
-      </div>
-      <div class="highlight-row">
-        <span class="name">Kyrie Rogers</span>
-        <span class="why">— Recurring cultural commentary; consistent engagement driver.</span>
-        <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/are-men-no-longer-a-necessity-in-2026" target="_blank">View post →</a>
+    <div class="subsec">
+      <div class="subsec-label">🌟 Members to spotlight</div>
+      <div class="highlight-list">
+        <div class="highlight-row">
+          <span class="name">Natacha Lacroix</span>
+          <span class="why">— Bloomest (postpartum care). Thoughtful builder content; offered free memberships to the community.</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/special-discounts/a-season-held-for-you" target="_blank">View post →</a>
+        </div>
+        <div class="highlight-row">
+          <span class="name">Angela Acosta</span>
+          <span class="why">— Community-building commentary + The Gal Project contributor call.</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/write-for-the-gal-project-ongoing-contributors" target="_blank">View post →</a>
+        </div>
+        <div class="highlight-row">
+          <span class="name">Elizabeth Welborn</span>
+          <span class="why">— Hosts the Fashion Huddle; pivoted content to AI/agentic brand-building.</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/fashion/next-fashion-huddle-august-14" target="_blank">View post →</a>
+        </div>
+        <div class="highlight-row">
+          <span class="name">Cristina Garcia</span>
+          <span class="why">— Launched Content Bar beta (creator-content marketplace); building a creator advisory board.</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/news-room/content-bar-just-launched-our-beta-platform" target="_blank">View post →</a>
+        </div>
+        <div class="highlight-row">
+          <span class="name">Robyn Young</span>
+          <span class="why">— Wrote on fashion brand positioning (relatable vs. aspirational).</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/fashion/fashion-founders-this-one-s-for-you" target="_blank">View post →</a>
+        </div>
+        <div class="highlight-row">
+          <span class="name">Kyrie Rogers</span>
+          <span class="why">— Two posts this cycle: cultural commentary + the highest-engagement thread of the month (organic Instagram growth-support post, 16 comments).</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/are-men-no-longer-a-necessity-in-2026" target="_blank">View post →</a>
+        </div>
       </div>
     </div>
 
-    <div class="loop-box">
-      <strong>Suggested feedback-loop format:</strong> "X members in [industry] are focused on [A, B, C]" — surfaced monthly for Marketing/Programming/Partnerships to act on.
-      <span class="example">Example: "5 members in Fashion this month are focused on: agentic brand-building tools, NYFW partnerships, trademark/IP protection, and wholesale strategy."</span>
-      <span class="example">Top themes to share cross-functionally this month: vendor/sourcing demand, AI tool adoption, the visibility-as-support reframe, and billing-driven churn.</span>
+    <div class="subsec">
+      <div class="subsec-label">🔁 How to use this</div>
+      <div class="loop-box">
+        <strong>Suggested feedback-loop format:</strong> "X members in [industry] are focused on [A, B, C]" — surfaced monthly for Marketing/Programming/Partnerships to act on.
+        <span class="example">Example: "5 members in Fashion this month are focused on: agentic brand-building tools, NYFW partnerships, trademark/IP protection, and wholesale strategy."</span>
+        <span class="example">Top themes to share cross-functionally this month: vendor/sourcing demand, the organic-over-staff engagement pattern (Instagram thread), the visibility-as-support reframe, and billing-driven churn.</span>
+      </div>
     </div>
   </div>
 
@@ -440,7 +527,7 @@
 
   <!-- ============ DASHBOARD LINKS (moved to bottom) ============ -->
   <div class="section dash-banner" id="dashboards">
-    <span class="dash-kicker">📊 LIVE TOOLS — NOT PART OF THE MONTHLY BRIEFING</span>
+    <span class="dash-kicker">📊 LIVE TOOLS — NOT PART OF THE MONTHLY BRIEFING · ⭐ START HERE IF YOU ONLY HAVE 2 MINUTES</span>
     <div class="section-head">
       <h2><span class="sec-num">4</span>Full Dashboards</h2>
     </div>
@@ -499,9 +586,10 @@
   </div>
 
   <div class="note-box">
-    <strong>Note:</strong> the Community Overview / Executive Visibility / Cross-Functional sections above refresh monthly (to stay on the free Netlify plan). The 3 dashboards below refresh daily. This page won't auto-update on its own — re-deploy when there's new data.
+    <strong>Note:</strong> the Community Overview / Executive Visibility / Cross-Functional sections above refresh monthly. The 3 dashboards below refresh daily. This page won't auto-update on its own — re-deploy when there's new data.
   </div>
   <div class="footer-note">Community Dashboard Hub · Female Founder Collective</div>
 </div>
+<a class="jump-fab" href="#dashboards">📊 Dashboards ↓</a>
 </body>
 </html>
