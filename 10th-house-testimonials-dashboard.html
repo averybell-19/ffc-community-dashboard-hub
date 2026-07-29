@@ -3,8 +3,16 @@
   "name": "10th House Testimonials Dashboard",
   "schemaVersion": 1,
   "description": "Live dashboard of 10th House member testimonials for LP/social/newsletter use. Combines curated email/survey testimonials with Circle-sourced quotes from verified active members (amazing community / helped scale / would recommend themes). Each reopen re-checks Circle for new matching comments via get_advanced_search, uses askClaude to judge genuine testimonials, and lets Avery approve/add them. Approval status and added rows persist in localStorage.",
-  "mcpTools": [],
-  "mcpServerNames": []
+  "mcpTools": [
+    "mcp__e6df22b0-6044-48a7-b903-86b2e105398d__search_files",
+    "mcp__e6df22b0-6044-48a7-b903-86b2e105398d__get_file_metadata",
+    "mcp__e6df22b0-6044-48a7-b903-86b2e105398d__read_file_content"
+  ],
+  "mcpServerNames": [
+    "Google Drive",
+    "Google Drive",
+    "Google Drive"
+  ]
 }
 </script>
 <html lang="en">
@@ -218,6 +226,45 @@
   .goto-quote-box .fb-quote { margin-bottom: 5px; }
   .goto-quote-box .fb-meta { font-size: 10.5px; }
   .goto-no-quote { font-size: 11.5px; color: #8a7a5c; font-style: italic; padding: 4px 2px; }
+  .call-card { background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(85,61,1,0.06); margin-bottom: 14px; border-left: 4px solid #4a4f16; }
+  .call-card.partner { border-left-color: #d58e32; }
+  .call-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .call-card-name { font-size: 15px; font-weight: 800; color: #3f0213; }
+  .call-card-business { font-size: 13px; color: #6b573a; font-weight: 600; }
+  .call-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .call-section { margin-bottom: 10px; }
+  .call-section-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #4a4f16; margin-bottom: 4px; }
+  .call-section ul { margin: 0; padding-left: 18px; }
+  .call-section li { font-size: 12.5px; color: #2a2a2e; line-height: 1.55; margin-bottom: 2px; }
+  .call-next-steps { background: rgba(213, 142, 50, 0.1); border-left: 3px solid #d58e32; border-radius: 7px; padding: 8px 12px; margin-top: 8px; }
+  .call-next-steps strong { color: #a35f0e; text-transform: uppercase; font-size: 10px; letter-spacing: 0.03em; display: block; margin-bottom: 4px; }
+  .call-next-steps ul { margin: 0; padding-left: 18px; }
+  .call-next-steps li { font-size: 12.5px; color: #2a2a2e; line-height: 1.5; }
+  .call-toggle { color: #3f0213; font-size: 11.5px; font-weight: 700; cursor: pointer; display: inline-block; margin-top: 2px; }
+  .call-toggle:hover { text-decoration: underline; }
+  .brief-call-list { display: flex; flex-direction: column; gap: 8px; }
+  .brief-call-item { font-size: 12.5px; color: #2a2a2e; background: #fffef7; border: 1px solid #e2cec3; border-radius: 8px; padding: 9px 12px; line-height: 1.5; }
+  .brief-call-item .bc-who { font-weight: 700; color: #4a4f16; }
+  .survey-card { background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(85,61,1,0.06); margin-bottom: 14px; border-left: 4px solid #4a4f16; }
+  .survey-card.quiet { border-left-color: #d58e32; }
+  .survey-card.dormant { border-left-color: #b9a89c; opacity: 0.88; }
+  .survey-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .survey-name { font-size: 15px; font-weight: 800; color: #3f0213; }
+  .survey-status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; }
+  .survey-status.live { background: #e7ecd6; color: #4a4f16; }
+  .survey-status.quiet { background: #f3e2c2; color: #6b4a12; }
+  .survey-status.dormant { background: #ece6e2; color: #6b573a; }
+  .survey-desc { font-size: 12.5px; color: #4a4a52; line-height: 1.55; margin-bottom: 10px; }
+  .survey-stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; }
+  .survey-stat { font-size: 12px; color: #4a4f16; }
+  .survey-stat strong { color: #3f0213; font-size: 14px; display: block; }
+  .survey-note { background: rgba(213, 142, 50, 0.1); border-left: 3px solid #d58e32; border-radius: 7px; padding: 7px 11px; font-size: 12px; color: #6b4a12; margin-bottom: 10px; }
+  .survey-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .survey-links a { font-size: 12px; font-weight: 700; color: #3f0213; background: #f5daf3; padding: 6px 12px; border-radius: 7px; text-decoration: none; }
+  .survey-links a:hover { opacity: 0.85; }
+  .survey-links a.secondary { background: #e7ecd6; color: #4a4f16; }
+  .survey-group-head { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #8a7a5c; margin: 18px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #e2cec3; }
+  .survey-group-head:first-of-type { margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -254,14 +301,15 @@
 </script>
 
 <h1>FFC Member Insights Hub</h1>
-<div class="subtitle">Curated testimonials for LPs, social, and newsletters; a cross-channel read on member sentiment; and a leaderboard of the most engaged members. Testimonials update automatically each day via a scheduled check of Circle, Granola, and HubSpot.<br><strong style="color:#3f0213;">Last updated: July 23, 2026</strong></div>
+<div class="subtitle">Curated testimonials for LPs, social, and newsletters; a cross-channel read on member sentiment; and a leaderboard of the most engaged members. Testimonials update automatically each day via a scheduled check of Circle, Granola, and HubSpot.<br><strong style="color:#3f0213;">Last updated: July 26, 2026</strong></div>
 
 <div class="tab-nav">
   <button class="tab-btn active" id="tabBtnTestimonials" onclick="switchTab('testimonials')">Testimonials</button>
   <button class="tab-btn" id="tabBtnFeedback" onclick="switchTab('feedback')">Member Feedback</button>
   <button class="tab-btn" id="tabBtnActive" onclick="switchTab('active')">Event Member Activity</button>
   <button class="tab-btn" id="tabBtnGotos" onclick="switchTab('gotos')">Industry Go-Tos</button>
-  <button class="tab-btn" id="tabBtnGranola" onclick="switchTab('granola')">Granola Calls</button>
+  <button class="tab-btn" id="tabBtnGranola" onclick="switchTab('granola')">1:1 Member Calls</button>
+  <button class="tab-btn" id="tabBtnSurveys" onclick="switchTab('surveys')">Surveys</button>
 </div>
 
 <div id="viewTestimonials">
@@ -436,8 +484,8 @@
 
 <div id="viewGranola" style="display:none;">
   <div class="quick-take">
-    <h2>Granola call insights</h2>
-    <div class="fb-sub" style="margin-bottom:0;">Starts with Avery's dedicated "1:1 Member Calls" Granola folder (10 recorded/transcribed calls), then expanded to a review of all 113 meetings in Avery's full Granola account to surface additional member feedback outside that folder, weighted toward 2026 calls. Most of the wider 113 are internal team syncs or brand-partner calls with no community feedback content — those are excluded. Five additional genuine member calls turned up in that wider pass (Jennifer Smiga, Sarah Ghabbour, Christina, Ana Maria Moreno, Poorvi Mehta) and are folded in below; two other names that came up (Glynis Tao, Alyson Iarrusso) were already captured as existing testimonials on the Testimonials tab, so they're not duplicated here. One call (Charlotte Bell, Dec 15) was excluded — its recording covered unrelated personal/property topics, not community feedback. Wherever a call surfaced a concern, we've added a note on how Avery addressed it during that same call.</div>
+    <h2>Avery's 1:1 member &amp; partner calls</h2>
+    <div class="fb-sub" style="margin-bottom:0;">Full call notes from Avery's 1:1 conversations — built for sharing with leadership. Weighted heavily toward 2026: covers all 9 usable calls in Avery's dedicated "1:1 Member Calls" Granola folder (a 10th, Charlotte Bell, was excluded — unrelated personal/property topics), the 6 calls Avery flagged directly, and a deeper sweep of Avery's full Granola account for 2026 that surfaced 16 more genuine member calls not previously captured in full detail anywhere on this dashboard. Every call gets the same treatment: business update, what came up in the conversation, and the concrete next steps out of it — not a one-line summary.</div>
   </div>
 
   <div class="fb-section">
@@ -476,32 +524,762 @@
   </div>
 
   <div class="fb-section">
-    <div class="fb-section-head"><h2>All calls on file</h2><span class="fb-count-badge">14 shown</span></div>
-    <div class="fb-sub">Every call in the folder except the one excluded above, plus 5 new finds from the wider 113-meeting review — weighted toward 2026 calls per Avery's request for more recent coverage — in reverse chronological order. "Theme" is how the call reads overall; not every call contained an explicit testimonial or complaint — several were onboarding/logistics check-ins with only mild sentiment either way. Where a call surfaced a concern, the quote cell also notes how Avery addressed it on the call.</div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Date</th><th>Member</th><th>Business</th><th>Theme</th><th>Quote</th></tr></thead>
-        <tbody>
-          <tr><td>2026-03-25</td><td>Jennifer Smiga</td><td>Ultraviolet Agency</td><td class="theme-cell"><span class="theme-pill">Positive engagement</span></td><td class="quote"><div class="quote-text">Had a positive experience at Founder's Day, brought a friend who will likely join, and connected with Angela's funding group through the community — now planning to start her own huddle in the home industry.</div></td></tr>
-          <tr><td>2026-02-13</td><td>Ana Maria Moreno</td><td>The Copal</td><td class="theme-cell"><span class="theme-pill">Testimonial + re-engagement</span></td><td class="quote"><div class="quote-text">"The women that I met were honestly so incredible, and I'm so grateful... your sessions were so loved" — returning from maternity leave to resume hosting community conversations and re-engage after finding real value previously.</div></td></tr>
-          <tr><td>2026-02-11</td><td>Sarah Ghabbour</td><td>Loved Twice Bridal</td><td class="theme-cell"><span class="theme-pill">Feedback — niche fit gap</span></td><td class="quote"><div class="quote-text">Felt the fashion/accessory cohort "isn't tailored enough" for her service-based bridal brokerage and worried she was missing more relevant connections.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>Confirmed a Business Services cohort is launching in the next few months with automatic access as a current member, proposed reviving the dormant bridal-industry huddle with Sarah as co-host, and named specific bridal-space members (Jess Zeldner, Nimmy, Julie Cronin) to connect her with directly.</div></div></td></tr>
-          <tr><td>2026-02-10</td><td>Anjali Purohit</td><td>Studio Variously</td><td class="theme-cell"><span class="theme-pill">Onboarding</span></td><td class="quote"><div class="quote-text">Looking to connect with interior designers and sustainable-sourcing partners through the community; enrolled in the Founders Operating Manual.</div></td></tr>
-          <tr><td>2026-02-02</td><td>Christina</td><td>Medical aesthetics practice</td><td class="theme-cell"><span class="theme-pill">Feedback — niche fit gap</span></td><td class="quote"><div class="quote-text">Unsure the beauty cohort was right for her since it reads as CPG-focused and her medical aesthetics practice is brick-and-mortar/service-based.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>Explained she'd be placed in the right industry space regardless of which cohort she applied through, pointed her to the Business Services space and Service Provider Board, recommended The North's 1:1 advisory as a better fit than the group accelerator and offered to find her a mentor with medical-practice experience, and shared the free public NYC networking calendar (open to non-members) as a lower-commitment starting point.</div></div></td></tr>
-          <tr><td>2026-01-20</td><td>Yvonne Georgi</td><td>Tomorrow in a Year</td><td class="theme-cell"><span class="theme-pill">Re-engagement</span></td><td class="quote"><div class="quote-text">Acknowledged reduced activity over the past year while testing her business model; now re-engaging with the community for partnership and mentorship support.</div></td></tr>
-          <tr><td>2026-01-30</td><td>Poorvi Mehta</td><td>fashion tech (early-stage)</td><td class="theme-cell"><span class="theme-pill">Feedback — expectations gap</span></td><td class="quote"><div class="quote-text">"It's more just getting access to people... maybe they help you, maybe they don't, maybe they charge you, maybe they don't" — expected 1:1 mentorship on KPIs/financials/pitch deck from the accelerator, found group mastermind format instead.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>See full response noted in the quote card above — clarified format, pointed to free 1:1 alternatives via special offers/service provider board and the town hall, flagged the pitch deck competition, booked a follow-up call.</div></div></td></tr>
-          <tr><td>2026-01-13</td><td>Alejandra Jaimes</td><td>Estellar Coffee</td><td class="theme-cell"><span class="theme-pill">Feedback — network gap</span></td><td class="quote"><div class="quote-text">Noted her existing network skews toward male tech/software founders and said she's seeking "more relevant peer connections" through the community, describing the search as feeling "lonely."<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>Recommended she reintroduce herself in the "Say Hello" and Partnerships/Collaborations/Gifting spaces, pointed her to monthly cross-industry huddles including the new Community Builders Huddle, gave her complimentary access to the Founder's Operating Manual, connected her to The North for fundraising-stage advisory, and booked a check-in call for a few weeks out.</div></div></td></tr>
-          <tr><td>2025-12-22</td><td>Keanna O'Quinn</td><td>Sonic Sommelier</td><td class="theme-cell"><span class="theme-pill">Feedback — platform gap</span></td><td class="quote"><div class="quote-text">"It's been a challenge to really find my footing within the community" — cited a confusing Weekly Digest, irrelevant content for her industry, and a huddle she signed up for but couldn't join, with no follow-up ad since.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>See full response noted in the quote card above — proposed co-hosting a revived wedding/events huddle and followed up on a Female Founders Day sponsorship idea.</div></div></td></tr>
-          <tr><td>2025-12-22</td><td>Tina Yau</td><td>Tivy</td><td class="theme-cell"><span class="theme-pill">Onboarding</span></td><td class="quote"><div class="quote-text">Brand new (launched Oct 2025); exploring product donations, co-working-space events, and a possible panel with another member.</div></td></tr>
-          <tr><td>2025-12-22</td><td>Natalie Amoils</td><td>NLA Collection</td><td class="theme-cell"><span class="theme-pill">Discovery story</span></td><td class="quote"><div class="quote-text">Discovered FFC through a member referral — met Rebecca at a Santa Monica book signing — and joined specifically for the Accessories Council.</div></td></tr>
-          <tr><td>2025-12-22</td><td>Nkosi Harvey</td><td>Rympok</td><td class="theme-cell"><span class="theme-pill">Testimonial + churn-risk</span></td><td class="quote"><div class="quote-text">"I found that the live events are really where the value in the Female Founders Collective is" — but considering canceling since relocating to Atlanta, where FFC has limited in-person presence.<div class="fb-fix" style="margin-top:6px;"><strong>How Avery responded</strong>Confirmed she'd keep full access to the Founder's Operating Manual as a current member regardless, connected her to the job board and a North advisor for her marketing-hire question, and encouraged her to become an Atlanta city-session host (member-led, FFC covers costs via ticket reimbursement) to help build a local presence.</div></div></td></tr>
-          <tr><td>2025-12-18</td><td>Nina Harrell</td><td>Thryve</td><td class="theme-cell"><span class="theme-pill">Positive engagement</span></td><td class="quote"><div class="quote-text">Attended the FFC Tampa event; actively co-planning an International Women's Day event and a World Cup pop-up activation with FFC for 2026.</div></td></tr>
-          <tr><td>2025-12-15</td><td>Shlesha</td><td>Banyan Agency</td><td class="theme-cell"><span class="theme-pill">Renewal / life circumstances</span></td><td class="quote"><div class="quote-text">Requested a renewal extension after a difficult year (death of someone close); re-engaging now and interested in the service-provider board and a speaking slot.</div></td></tr>
-        </tbody>
-      </table>
+    <div class="fb-section-head"><h2>Detailed 1:1 call notes</h2><span class="fb-count-badge">31 calls</span></div>
+    <div class="fb-sub">Most recent first. Member calls carry a moss-green left edge; brand/partner calls carry a gold left edge.</div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Ashley</span><span class="call-card-business"> — The Conscious Publicist</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Huddle host + lifetime membership</span><span class="fb-source">Jul 23, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>10-year entrepreneur, currently a stay-at-home mom about 6 months postpartum; had planned to launch a new venture named after her daughter but paused it for motherhood.</li>
+          <li>PR / thought-leadership background; writes motherhood content and hosts her own podcast.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Huddle opportunity</div><ul>
+          <li>Open to hosting a monthly huddle on motherhood + entrepreneurship — kickoff call first, then prompt-based monthly topics (e.g. scaling while kids are at school, childcare).</li>
+          <li>Wants it fully accessible: video-off okay, kids/breastfeeding welcome, 35–60 min, ideally 1–4pm ET around school pickup.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Lifetime membership</div><ul>
+          <li>Wasn't aware of the lifetime option at signup. Standard price is $2,500; Avery offered $1,500 as a thank-you for the call.</li>
+          <li>Includes lifetime Circle access, a strategy session with Ali or Rebecca, priority brand features, 20% off paid programming, priority pitch/demo day access, and 1:1 founder intros via Carli Roth. Offer valid through the following week.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends the huddle host application and the lifetime membership offer details (valid 1 week).</li>
+          <li>Avery shares the community tour video link.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card partner">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Nodira Khoussainova</span><span class="call-card-business"> — Focused Space (brand partner)</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Partnership</span><span class="fb-source">Jun 25, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">About Focused Space</div><ul>
+          <li>Online body-doubling / coworking platform, 70–80% women — entrepreneurs, freelancers, and creatives, with a strong neurodivergent (ADHD/autistic) community; partners with ADHD coaches and therapists.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Partnership framework</div><ul>
+          <li>Standard in-kind 50/50 promo: 2 newsletter placements each, 1 IG feed post + 1 story each, a Circle event listing, shared registration list.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Collaboration ideas</div><ul>
+          <li>Joint online coworking / focus session (theme ideas: navigating AI together, financial modeling/business planning).</li>
+          <li>Longer-term: a 3-month pilot tied to the FFC accelerator (Founder's Operating Manual) weekly planning sessions, plus membership crossover/discount codes.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends partnership + brand decks; Nodira shares late Aug/early Sep dates.</li>
+          <li>Book a part-two call; connect Nodira with Avery Bradford (head of programming) re: weekly planning sessions.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Sarah Joy Gaines</span><span class="call-card-business"> — The Morning Movement Show</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Re-engagement — platform tour</span><span class="fb-source">May 28, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Joined about 6 months ago during a role transition and move, with minimal engagement since. Goal: more intentional participation and strategic connections.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Platform walkthrough</div><ul>
+          <li>Full tour of the Member Directory (location/online-status filters, LinkedIn-style connection requests), the Founder Give &amp; Get space (highest-traffic space — one member seeking 3-month corporate clients got 11 connections from a single post), the Event Replay Library, and monthly cohort huddles (most popular: Marketing &amp; Communications, Accounting &amp; Financial Management, Technology).</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Immediate action plan</div><ul>
+          <li>Message 3 founders from the directory that day, RSVP to the next huddle, post a reintroduction in "Start Here" tagging relevant members, and explore the Partnerships/Gifting/Collaboration space.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery creates a Circle DM thread for ongoing support and sends engagement tips same day; follow-up call scheduled for June to assess progress.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Chasidy Dey</span><span class="call-card-business"> — Noire Essentials</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Renewal risk — niche fit gap</span><span class="fb-source">May 27, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Renewal discussion</div><ul>
+          <li>Membership was expiring the next day; leaning toward not renewing over financial constraints, a geographic mismatch (community events skew East Coast, she's West Coast), and content not aligned with her fragrance/home-fragrance niche in a community that skews skincare and tech.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Alumni program offered</div><ul>
+          <li>$199/year — keeps Circle access and a searchable profile, one quarterly town hall (vs. two on full membership), online focus events/huddles, resource library, and newsletter access, plus 10% off the annual NYC event. Excludes Founder's Operating Manual access.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Timeline pressure</div><ul>
+          <li>Account would cancel the next morning at 8am without action; Alumni payment needed same day to avoid profile deletion.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Membership team follows up same day with options; Chasidy decides between Alumni vs. full cancellation.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Lorrie King</span><span class="call-card-business"> — Caire Beauty</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Positive engagement + FOM enrollment</span><span class="fb-source">May 18, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business</div><ul>
+          <li>Proprietary perimenopause/menopause skincare brand, 5 years in and close to breakeven (Lorrie takes no salary); currently on QVC; smaller molecular formulations are her key differentiator.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Growth goals</div><ul>
+          <li>Improve website conversion across age segments, expand retail beyond major chains (in talks with Credo, needs a Detox Market introduction), access working-capital financing, and grow her speaking platform — "Marvelous Missus Menopause," a 5th-annual event with Let's Talk Menopause planned for October at The Luminary featuring Stacy London, Carla Hall, and Tamsen Fadal.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Founder's Operating Manual</div><ul>
+          <li>Enrolled in the 8-week program starting that week, covering founder vision/focus, KPIs, financial foundations, and growth/distribution.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends the program overview and orientation recording; Lorrie RSVP'd to all live FOM sessions on the call; part-two call in a couple of weeks.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card partner">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Toye Penny</span><span class="call-card-business"> — Rooted in the Kitchen (event host)</span></div>
+        <div class="call-card-meta"><span class="theme-pill">National event-series partnership</span><span class="fb-source">May 11, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Rooted in the Kitchen</div><ul>
+          <li>New 2026 event series bringing leaders into a luxury kitchen setting to cook together while discussing leadership — food breaks down barriers. First Dallas event drew 13 people and felt crowded; targeting 6–8 for intimacy going forward.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">National tour</div><ul>
+          <li>9 states planned for the rest of 2026, 2 events per state. Confirmed: NY (May 23, Jun 6); Atlanta & DC TBD; considering NC and NV.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">FFC support strategy</div><ul>
+          <li>Post events with 1 month's notice, tag local members, add to the FFC events calendar with Toye as co-host, and use the new member-directory location search + connection requests (launched that week).</li>
+          <li>FFC can reimburse event costs via accounting once Toye fills out the city session form.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Toye sends event details/dates and fills out the city session form.</li>
+          <li>Avery posts the May 23 NYC event immediately and shares a connection-request example.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Kelley Williamson</span><span class="call-card-business"> — Kelley Kouture</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Renewal + launch success</span><span class="fb-source">Apr 21, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business update</div><ul>
+          <li>Launched the Kelley Kouture shoe line — 3 factories in Italy, VA warehouse, pre-orders fulfilling well. Vital Voices panel with a Spanx board member and an Ammo exec both sent positive feedback after receiving shoes.</li>
+          <li>Upcoming Forbes piece, scheduled for the Cass Cross podcast; deliberately chose diverse models (Laken, Kia) and rescheduled a shoot for representation.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Renewal discussion</div><ul>
+          <li>Wants to renew. Missed a Metamorphosis event after buying a VIP ticket and couldn't attend — requested credit toward renewal. Avery is building a credit system, looping in the CMO, response by end of week.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Community engagement</div><ul>
+          <li>Wants to announce the launch in the newsroom and consider a member discount code; floated fall event-calendar, raffle, and gifting-partnership ideas.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Kelley posts the press release in the newsroom.</li>
+          <li>Avery follows up on the credit system by end of week, tags Kelley in partnership opportunities, sends the fall FFD speaker application, and schedules a part-two call after renewal.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Mahika Hari</span><span class="call-card-business"> — Center (social wellness app)</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Beta acquisition + partnership</span><span class="fb-source">Apr 14, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">About Center</div><ul>
+          <li>A social wellness app using psychology/behavioral science for intentional friendships (not friend-matching or phone-reduction) — calendar sync, trip/group planning, a "friendship CRM" (contacts + notes, nudges, future AI recs), and social wellness tracking with monthly "social era" summaries.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Goals for FFC</div><ul>
+          <li>Beta launch 1 month out with ~200 testers already (friends of friends) — wants unbiased FFC testers. Bootstrapped but willing to spend on partnerships (CPG goodie bags, fitness studios, stationery/friendship cards). Based NYC/Chicago.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">FFC resources offered</div><ul>
+          <li>Industry Focus Huddles (Wed/Fri) to recruit beta testers, City Sessions in NYC + Chicago, the fundraising/deal-flow space, the annual pitch day, the media contact library, and the partnerships/gifting space.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends resource links + huddle details; Mahika decides on huddle participation.</li>
+          <li>Part-two call planned for early June; Avery creates a Circle thread for ongoing tagging.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Alyson Iarrusso</span><span class="call-card-business"> — Cove Fine Jewelry</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Testimonial — real platform connections</span><span class="fb-source">Apr 8, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business</div><ul>
+          <li>Cove Fine Jewelry approaching 7-figure revenue — America 250 collection gaining national attention, a new engagement ring collection, corporate gifting with Johnson &amp; Johnson, and hotel/resort partnerships. Bootstrapped while managing family responsibilities.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Platform wins</div><ul>
+          <li>Found a "perfect match" PR specialist through a 10th House recommendation, and separately connected with her bookkeeper through the network — both real hires credited directly to the community.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Current challenge</div><ul>
+          <li>Feels overwhelmed by the number of platform options and has difficulty finding members at a similar 6–7 figure stage; catches up on Founder's Operating Manual replays since she misses live sessions.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends direct resource links; Alyson to host a fashion/accessories huddle in May for founders at a similar 2M+ revenue stage; follow-up call in 1 month; Avery tags her in high-end opportunities.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Jennifer Smiga</span><span class="call-card-business"> — Ultraviolet Agency / Ultra Collective</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Positive engagement + huddle host</span><span class="fb-source">Mar 25, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business updates</div><ul>
+          <li>Ultra Collective: an "anti-influencer" platform, LinkedIn-style for experts (vs. follower count) so brands can find specialists — beta testing ~100 users soon.</li>
+          <li>Ultraviolet Agency: high demand for SEO-driven redesigns and AI-search-optimization work; recent win — 8 events in 2 months generated strong leads, including a client met at High Point Market.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">FFC engagement</div><ul>
+          <li>Positive Founder's Day experience — brought a friend likely to join, connected with Angela's funding group (interested in Jen's platform). Noted low activity in the home-industry group despite High Point Market timing.</li>
+          <li>Plans to start her own huddle in early May, likely in the home industry.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Home industry programming ideas</div><ul>
+          <li>High Point Market presence, a networking gap for younger designers, a possible FFC panel at industry events, and NYC-area event interest (May Design events).</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends huddle host forms + community conversation guidelines same day.</li>
+          <li>Follow up on home-industry programming; Jen reviews materials ahead of an early-May huddle launch.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Ana Maria Moreno</span><span class="call-card-business"> — The Copal</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Testimonial + re-engagement</span><span class="fb-source">Feb 13, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Quote</div><ul>
+          <li>"The women that I met were honestly so incredible, and I'm so grateful. I really enjoyed hosting the community conversations. I felt like I got a lot of value from it, and I also really enjoyed just sharing what I know and what I've learned through my career."</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Returning after a year of maternity leave; was previously very active, regularly hosting community conversations; now revamping The Copal.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Re-engagement plan</div><ul>
+          <li>Reactivating at her current membership level. New hosting format offers a 15–20 min presentation + Q&amp;A or a looser open Q&amp;A; Ana prefers a 4-week weekly series (her prior successful format). Floated a host-for-membership exchange after her first 4 sessions.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends the community-conversation hosting form; first session targeted for March; monthly 1:1 check-ins between Ana and Avery.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Sarah Ghabbour</span><span class="call-card-business"> — Loved Twice Bridal</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Feedback — niche fit gap</span><span class="fb-source">Feb 11, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Feedback</div><ul>
+          <li>Felt the fashion/accessory cohort "isn't tailored enough" for her service-based bridal brokerage.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">How Avery responded</div><ul>
+          <li>Confirmed a Business Services cohort is launching in the next few months with automatic access as a current member; proposed reviving the dormant bridal-industry huddle (previously run 1–2x monthly) with Sarah as co-host; named specific bridal-space members to connect with — Jess Zeldner (Rescue Kit), Nimmy (Centeel candles), and Julie Cronin.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends the huddle hosting form and follows up when the Business Services cohort opens; Sarah considers co-hosting.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Lisa Westhafer</span><span class="call-card-business"> — True Beauty Corporate</span></div>
+        <div class="call-card-meta"><span class="theme-pill">New-member onboarding</span><span class="fb-source">Feb 11, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Beauty brand owner for 6 years, building facial-recognition lash-matching technology (computer vision matching lashes to eye shape); transitioning from a CPG company to a tech company, mid-launch.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Membership options reviewed</div><ul>
+          <li>Three tiers: Basic (accelerator-only, 4 weeks), Annual (full year + accelerator), Lifetime ($999 one-time); full access to all cohorts regardless of entry point.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Timeline</div><ul>
+          <li>Founder's Operating Manual application deadline was that night; orientation the next day.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Lisa completed her application on the call; Avery sends detailed membership info by email; 1:1 catch-up offered since she's traveling to Miami that weekend and may miss orientation.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Megan</span><span class="call-card-business"> — Trudie</span></div>
+        <div class="call-card-meta"><span class="theme-pill">New-member onboarding — growth story</span><span class="fb-source">Feb 11, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business</div><ul>
+          <li>Runs Trudie, a small CPG business she's grown part-time; more than doubled sales last year and on track for further growth; considering going full-time.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Membership reviewed</div><ul>
+          <li>Lifetime membership (24/7 access), the Founder's Operating Manual (4-week, 1.5-hour sessions on scale/financial modeling/networking for CPG), 200+ hours of workshops, and quarterly town halls with Rebecca Minkoff and Ali Wyatt.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery follows up with key details before the Beauty Cohort deadline (Feb 12); Megan weighing membership as her next growth step.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Nicole Pearl</span></div>
+        <div class="call-card-meta"><span class="theme-pill">New-member onboarding</span><span class="fb-source">Feb 10, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business</div><ul>
+          <li>PR and visibility consultant for beauty, wellness, fashion, and lifestyle brands; journalist background; runs a "done with you" model (clients keep ownership of their own contacts/relationships) as an alternative to $20–30K PR agencies.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Beauty Cohort reviewed</div><ul>
+          <li>Industry-specific mini-accelerator, orientation Feb 20, applications close Feb 12; includes the Founder's Operating Manual and monthly community-conversation hosting opportunities.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Pricing</div><ul>
+          <li>Monthly ($68/mo + $199 initiation, 1-yr contract), Annual ($698 upfront), Lifetime ($999); 10% discount offered for signing up immediately.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends recap and the application by email; decision needed by Feb 12 for the current cohort or the waitlist.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Anjali Purohit</span><span class="call-card-business"> — Studio Variously</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Onboarding + collaboration interest</span><span class="fb-source">Feb 10, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Sustainable textiles company (MI-based), works with artisans in India/Nepal on home decor and fashion accessories — handcrafted, ethically made, certified. Live in Nordstrom and Lulu and Georgia since last year. Pivoting from wholesale to D2C, targeting interior designers and retail/showroom owners.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Founder's Operating Manual</div><ul>
+          <li>New Penthouse-member program — a 4-week live expert curriculum (orientation Feb 19) for pre-revenue to $2M consumer founders, covering GTM strategy, ops scaling, and pitching.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Collaboration interests</div><ul>
+          <li>Interior designers for projects/custom development/sustainable sourcing, retail/showroom connections, and peer learning from other consumer-product founders.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends collab-space info, huddle schedule, and Founder's Operating Manual details.</li>
+          <li>Anjali attends the Feb 19 orientation; follow-up call in ~2 weeks.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Bianca Paggi</span><span class="call-card-business"> — It's Branding with B</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Community conversation host</span><span class="fb-source">Feb 4, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Branding specialist for product-based founders (product development, production, wholesale, marketing); strong track record with educational, actionable content.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Community Conversation proposal</div><ul>
+          <li>Monthly/bimonthly 30-min sessions (15-min presentation + 15-min Q&amp;A, capped at 30 attendees) on pre-launch-to-launch branding strategy — modeled on a prior Bianca/Mika collaboration that was one of the highest-turnout sessions on record.</li>
+          <li>Also floated a 1-hour structured workshop as a traditional-branding-fundamentals complement to Robin Young's AI-focused branding series.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Female Founders Day</div><ul>
+          <li>Conference was fully booked for speakers as of that week; Bianca submitted a speaker application anyway.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends the community conversation and workshop forms same day; first session targeted for March/April 2026.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Christina</span><span class="call-card-business"> — Medical aesthetics practice</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Feedback — niche fit gap</span><span class="fb-source">Feb 2, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Owns a brick-and-mortar medical aesthetics practice; looking for networking, mentorship, and business-development connections.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Feedback</div><ul>
+          <li>Unsure the beauty cohort was the right fit since it reads as CPG-focused and her practice is service-based/medical.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">How Avery responded</div><ul>
+          <li>Pointed her to the Service Provider Board, explained The North's 1:1 mentorship platform (matched by industry/stage/goals) as a better fit than the group accelerator, and offered to find her a mentor with medical-practice experience; shared the free public NYC networking calendar (open to non-members, next session Feb 28) as a lower-commitment starting point.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery connects Christina with The North team for mentor matching and sends pricing info.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Poorvi Mehta</span><span class="call-card-business"> — fashion tech (early-stage)</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Feedback — expectations gap</span><span class="fb-source">Jan 30, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Feedback</div><ul>
+          <li>"It's more just getting access to people... maybe they help you, maybe they don't, maybe they charge you, maybe they don't" — expected the 4-week growth program to include 1:1 sessions on marketing, KPIs, and financials; found a group-mastermind format instead. Questioned what membership provides beyond directory access, noting even fellow members charge for services and The North's 1:1 rate ($150/hr) is out of budget while bootstrapping.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Specific needs</div><ul>
+          <li>Pitch deck review, financial modeling help (admittedly "pulling numbers out of air"), and fashion-tech-specific marketing strategy.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">How Avery responded</div><ul>
+          <li>Clarified the accelerator's group format upfront, pointed to free alternatives — the special-offers/service-provider board (member-given complimentary consultations), the quarterly pitch deck competition, and submitting a question for the town hall for direct time with Rebecca and Ali.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery follows up via Circle DM with relevant links; booked a part-two call once she'd reviewed them.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Kristen Hillman</span><span class="call-card-business"> — Viticula Financial</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Re-engagement — service-provider visibility</span><span class="fb-source">Jan 29, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business</div><ul>
+          <li>Financial advisory for service-based businesses (not inventory-based) — clients range from professional organizers to 8-figure businesses, professors, and health/wellness advisors.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Re-engagement plan</div><ul>
+          <li>Reintroduce in "Say Hello," refresh her Service Provider Board listing (shared in the newsletter to 20,000+ women), join cross-industry huddles outside her home cohort, and use the member directory's location/industry/stage filters for direct outreach.</li>
+          <li>Starting with 5 key activities at under 30 minutes a week to keep it sustainable.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery follows up with all links via email and creates a Circle thread for ongoing support; check-in call in 2–4 weeks.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Yvonne Georgi</span><span class="call-card-business"> — Tomorrow in a Year</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Re-engagement</span><span class="fb-source">Jan 20, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business status</div><ul>
+          <li>Solid online sales base, confirmed target-customer fit, ready to scale online. Physical retail expansion in progress (market testing, next round in April). Budget constraints limiting advisory support — weighing group vs. 1:1.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Founder's Operating Manual</div><ul>
+          <li>4-week CPG-focused curriculum starting Feb, included in membership — covering founder vision/focus, KPI strategy, financial forecasting/pricing/investor pitching (led by an ex-GOOP CFO), and growth/distribution/wholesale. Orientation Feb 12.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Re-engagement</div><ul>
+          <li>Acknowledged a quiet year while testing her business model, now ready to re-engage. Recommended reintroducing herself in the partnerships space and targeting the LA market for boutique connections/pop-ups.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery follows up via Circle DM with 1:1 mentorship options, program links, and a partnerships-space intro; post-orientation check-in planned.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Julianne Collins</span><span class="call-card-business"> — Giovanna (home furnishing/staging)</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Re-engagement — business pivot</span><span class="fb-source">Jan 16, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Stepping away from her interior design firm (commercial design market is slow) to focus on a new home-furnishing/staging/styling venture, "Giovanna," after 1.5 years of travel; now based upstate NY.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Re-engagement plan</div><ul>
+          <li>Update her member-directory profile and location, post a reintroduction in the newsroom and "Say Hello" sharing her pivot story, join relevant industry huddles, and consider the Partnerships/Collaborations/Gifting space.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Growth opportunities</div><ul>
+          <li>Discussed hosting a low-lift huddle, and an in-person upstate NY event (many FFC members are based there) — either a small coffee meetup or a larger structured event.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Julianne updates her profile and location; Avery sends resource links and the event schedule and tags her once her new profile is live; check-in call in a couple weeks.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Susana Colina</span><span class="call-card-business"> — The Sum Edit</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Event host — home mingle</span><span class="fb-source">Jan 16, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Event hosting decision</div><ul>
+          <li>Considered hosting an FFC mingle at an external venue first (to test RSVP interest) vs. at home; decided home hosting was more comfortable and practical, capped at ~15 people.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Venue economics</div><ul>
+          <li>A restaurant venue considered ($60/person minimum for 10–15+ people) was too high versus FFC's standard $10–20 ticket pricing (coffee shops, bookstores, light refreshments, happy-hour drop-in style).</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Vendor support</div><ul>
+          <li>FFC connects hosts with community members who donate products for events; process is to reach out 2–3 weeks ahead, CC Avery.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Susana sends her home address; event goes live the following week with a 15-person RSVP cap; Avery checks in a couple weeks before the event.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Patricia Perez</span><span class="call-card-business"> — Talaya Guides</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Rejoining — huddle host</span><span class="fb-source">Jan 15, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Rejoining the community after taking 2025 off; recently attended a member mingle at Playa Vista and met other founders there.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Huddle hosting opportunity</div><ul>
+          <li>Enthusiastic about hosting a Health &amp; Wellness huddle as her reintegration point — described it as feeling like "an invitation from the universe." Sees it as a chance for visibility, networking, and giving back to the community that's helped her.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends the huddle hosting form via Circle DM; Patricia lists preferred dates in late Feb/March; Avery co-facilitates and joins 5 minutes early; follow-up call planned post-event.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Alejandra Jaimes</span><span class="call-card-business"> — Estellar Coffee</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Growth strategy + peer-network gap</span><span class="fb-source">Jan 13, 2026</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business update</div><ul>
+          <li>Soft-launched 2 years ago, now in a year-two growth push. Ex-JPMorgan finance background (sustainability focus); pivoted from coffee experiences to wholesale; just secured her first hotel client; sources directly from Colombian farmers.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Growth &amp; product</div><ul>
+          <li>Rebranding/relaunch after the soft-launch phase, wholesale expansion as primary focus, a second product in development (a coffee concentrate for cocktails), and a raise in planning. Partnership talks with an executive supper club and a private membership club.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Challenges</div><ul>
+          <li>Refining brand voice in a commodity market and building lifestyle-brand positioning; her existing network skews toward male tech/software founders, and she's seeking "more relevant peer connections," describing the search as feeling "lonely."</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends Circle links, recommends reintroducing in "Say Hello" and Partnerships/Collaborations/Gifting spaces, points to monthly cross-industry huddles including the new Community Builders Huddle.</li>
+          <li>Complimentary access to the Founder's Operating Manual granted; connected to The North for fundraising-stage advisory; check-in call booked for a few weeks out.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Keanna O'Quinn</span><span class="call-card-business"> — Sonic Sommelier</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Feedback — platform gap</span><span class="fb-source">Dec 22, 2025</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business</div><ul>
+          <li>Music curation/sound-design boutique for luxury private events — sonic environment complements menu/venue/design. Core focus is weddings, expanding into corporate clientele (her preference), plus brand activations and private gatherings.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Feedback</div><ul>
+          <li>"It's been a challenge to really find my footing within the community" — found the platform/Weekly Digest hard to navigate, limited relevant content for her niche, and signed up for a wedding huddle she couldn't join with no follow-up since.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">How Avery responded</div><ul>
+          <li>Proposed co-hosting a revived wedding-industry huddle with Keanna (target early Feb 2026), connecting her with other bridal-space founders, and using the partnerships/gifting space plus the service-provider board.</li>
+          <li>Followed up on Keanna's Female Founders Day (Mar 2026 NYC) sponsorship idea — a sound/amplification partnership — and asked her to send a deck to the production team. Also shared the LA city-session hosting form.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery shares the wedding-huddle hosting form, FFD partnership contact, and LA city-session form; Keanna preps her deck.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Tina Yau</span><span class="call-card-business"> — Tivy</span></div>
+        <div class="call-card-meta"><span class="theme-pill">New brand — collaboration interest</span><span class="fb-source">Dec 22, 2025</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Tivy launched Oct 1, 2025 — very new, fashion/accessories. Currently doing collabs, partnerships, events, and holiday markets; looking for 2026 collaboration opportunities.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Ideas discussed</div><ul>
+          <li>Product donations for FFC events, a newsroom post about the launch, partnerships/gifting-space posting, and hosting a fashion/accessories huddle. She's also a Luminary coworking member — a possible event venue. A panel idea with another member (a lawyer) is at an early conceptual stage.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery shares Circle links + event-hosting form and tags Tina in collab opportunities; Tina posts her launch announcement in the newsroom; both sync in Jan/Feb on joint events.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Natalie Amoils</span><span class="call-card-business"> — NLA Collection</span></div>
+        <div class="call-card-meta"><span class="theme-pill">New-member signup</span><span class="fb-source">Dec 22, 2025</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Founder of NLA Collection (handbags/accessories), 3 years in business, LA-based. Met Rebecca at a Santa Monica book signing and got the FFC recommendation. Small team, cost-conscious.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Membership decision</div><ul>
+          <li>Compared annual ($599, or $525 with the 10% Accessories Council discount) vs. monthly ($60/mo + initiation fee) — leaning monthly plus the discount code. Reviewed the Founder's Operating Manual, 24/7 community access, industry cohorts, monthly huddles, in-person LA events, and the archived workshop library.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Natalie completes her application same day; Avery sends the events calendar and pre-orientation zoom links (orientation Jan 9).</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Nkosi Harvey</span><span class="call-card-business"> — Rympok</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Testimonial + churn-risk</span><span class="fb-source">Dec 22, 2025</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Quote</div><ul>
+          <li>"I found that the live events are really where the value in the Female Founders Collective is" — but considering canceling since relocating from LA to Atlanta, where FFC has limited in-person presence.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Founder's Operating Manual</div><ul>
+          <li>Automatic access confirmed for current members regardless of relocation — 4-session curriculum (founder vision, KPIs, financial foundations with an ex-Goop CFO, growth/distribution) starting with orientation Feb 12.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">How Avery responded</div><ul>
+          <li>Connected her to the job board and a North advisor for her marketing-director hiring question, and encouraged her to become an Atlanta city-session host (member-led, FFC covers costs via ticket reimbursement) to help build a local presence.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery follows up with city-session hosting info and a North advisor intro; Q1 virtual coffee planned.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Nina Harrell</span><span class="call-card-business"> — Thryve</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Positive engagement — event co-planning</span><span class="fb-source">Dec 18, 2025</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Background</div><ul>
+          <li>Community Manager at Thryve, SW Florida (Tampa Bay area); attended the FFC Tampa event in October.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Events in progress</div><ul>
+          <li>Co-planning an intimate International Women's Day event in Naples, FL (50–60 people, conversational-panel format), plus a major World Cup pop-up initiative for H1 2026 — Miami confirmed with Nina heavily involved, potential Atlanta and LA expansion.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery shares upcoming events on Circle and follows up on Nina's city-session hosting form; Nina sends live-event links and finalized details.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="call-card">
+      <div class="call-card-head">
+        <div><span class="call-card-name">Shlesha</span><span class="call-card-business"> — Banyan Agency</span></div>
+        <div class="call-card-meta"><span class="theme-pill">Renewal + service-provider visibility</span><span class="fb-source">Dec 15, 2025</span></div>
+      </div>
+      <div class="call-card-body">
+        <div class="call-section"><div class="call-section-label">Business</div><ul>
+          <li>Runs an email/SMS marketing agency for 7-figure+ ecommerce brands, retention-marketing focused; recently hired new strategists and is scaling the team.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Goals &amp; opportunities</div><ul>
+          <li>Primary goal is acquiring more aligned clients — pointed to the service-provider board (amplified via FFC's IG) and the job board. FFC is also seeking Toronto city-session hosts, where she has a strong existing community.</li>
+          <li>Interested in a community-conversation speaking slot on email marketing, potentially a full workshop later.</li>
+        </ul></div>
+        <div class="call-section"><div class="call-section-label">Renewal</div><ul>
+          <li>Requested a renewal extension after a difficult year (death of someone close); re-engaging now.</li>
+        </ul></div>
+        <div class="call-next-steps"><strong>Next steps</strong><ul>
+          <li>Avery sends recap + resource links (service-provider board, Toronto hosting form, community-conversation proposal); follow-up call planned for Q1/Q2.</li>
+        </ul></div>
+      </div>
     </div>
   </div>
 
-  <div class="footer-note">Source: Granola "1:1 Member Calls" folder (10 notes) plus a wider review of all 113 meetings in Avery's Granola account as of 2026-07-22, with extra weight given to 2026 calls. This is a manually-curated one-time pull, not on the daily auto-refresh yet — ask to have it added to the daily testimonials task if you want it kept current automatically. Most of Avery's historical 1:1 call bookings do not have a Granola transcript on file; only calls actually recorded via Granola appear here.</div>
+
+  <div class="footer-note">Source: Granola "1:1 Member Calls" folder (9 of 10 notes; Charlotte Bell excluded — unrelated personal/property topics), 6 additional calls Avery flagged directly (incl. 2 brand-partner conversations), and a deeper sweep of all ~84 of Avery's 2026 Granola meetings that surfaced 16 more genuine member calls, now all written up in full — as of 2026-07-26. Internal team syncs, huddles (group sessions with no individual notes), and pure vendor/agency business-development calls were excluded throughout. This is a manually-curated pull, not on the daily auto-refresh yet — ask to have it added to the daily testimonials task if you want it kept current automatically.</div>
+</div>
+
+<div id="viewSurveys" style="display:none;">
+  <div class="quick-take">
+    <h2>Surveys</h2>
+    <div class="fb-sub" style="margin-bottom:0;">All 5 Google Forms surveys found in Avery's Drive (these live in Google Forms, not HubSpot — HubSpot's native Feedback Surveys tool isn't in use). Status is based on how recently each has received a response: 3 are actively live, 1 has gone quiet, and 1 is dormant/closed out. Response and completion <em>rates</em> aren't shown — Google Forms doesn't expose view/impression counts through this connection, only actual submissions — so what's below is response counts and dates, not a rate.</div>
+  </div>
+
+  <div class="fb-section">
+    <div class="fb-section-head"><h2>All surveys</h2><span class="fb-count-badge">5 forms</span></div>
+    <div class="fb-sub">Categorized by activity, most recent first within each group.</div>
+
+    <div class="survey-group-head">Live — active this month</div>
+
+    <div class="survey-card">
+      <div class="survey-head">
+        <span class="survey-name">10th House Founder Spotlight Submission</span>
+        <span class="survey-status live">Live</span>
+      </div>
+      <div class="survey-desc">Ongoing intake so members can submit their business for a Founder Spotlight/newsletter feature — business snapshot, current ask, and what they can offer fellow founders.</div>
+      <div class="survey-stats">
+        <div class="survey-stat"><strong>2</strong>responses</div>
+        <div class="survey-stat"><strong>Jul 17 &amp; Jul 23, 2026</strong>most recent</div>
+        <div class="survey-stat"><strong>Rolling</strong>no fixed close date</div>
+      </div>
+      <div class="survey-links">
+        <a href="https://docs.google.com/forms/d/1V4dIFJ5uj5Nrp9Jqk5bq1KvDeA3iCMZroO0aLncq47s/edit" target="_blank">Open form</a>
+        <a class="secondary" href="https://docs.google.com/spreadsheets/d/13vhnuPROd-AX68Vvup_5LrOGG3GYMXv6ip9ehySsKUE/edit" target="_blank">View responses</a>
+      </div>
+    </div>
+
+    <div class="survey-card">
+      <div class="survey-head">
+        <span class="survey-name">5-Question Member Survey — Outcomes, Results, and Wins</span>
+        <span class="survey-status live">Live</span>
+      </div>
+      <div class="survey-desc">Rolling survey capturing tangible outcomes and milestones members credit to their 10th House membership — built with testimonial/marketing use in mind (it explicitly asks permission to share the response).</div>
+      <div class="survey-stats">
+        <div class="survey-stat"><strong>4</strong>responses</div>
+        <div class="survey-stat"><strong>Jul 16–22, 2026</strong>response window</div>
+        <div class="survey-stat"><strong>3 of 4</strong>opted in to share</div>
+      </div>
+      <div class="survey-links">
+        <a href="https://docs.google.com/forms/d/1LGD0RGD-bx4HyWMSkl6Gw6UVSyxWGFNDk1RVC4_BcTU/edit" target="_blank">Open form</a>
+        <a class="secondary" href="https://docs.google.com/spreadsheets/d/19GbDhFWcPpXzZmpLAbapbfwLKorhADHI3-pP6usuFSE/edit" target="_blank">View responses</a>
+      </div>
+    </div>
+
+    <div class="survey-card">
+      <div class="survey-head">
+        <span class="survey-name">10th House: Member Appreciation Inclusion Form</span>
+        <span class="survey-status live">Live (recurring)</span>
+      </div>
+      <div class="survey-desc">Recurring monthly inclusion form used to gather founder highlights (biggest learning, a trend prediction, headshot) for the Member Appreciation digest. The form itself was last edited Jul 15, 2026, so it's actively in rotation.</div>
+      <div class="survey-links">
+        <a href="https://docs.google.com/forms/d/1UaQ46UEQpz9L7vXntL0Hp3eWnE6NBC0_Q9GgPlae1yQ/edit" target="_blank">Open form</a>
+        <a class="secondary" href="https://docs.google.com/spreadsheets/d/1ip7StSYCRPznhvnXMJYH_Wx_LPj9exkNWHH7GdvK3YQ/edit" target="_blank">View responses</a>
+      </div>
+    </div>
+
+    <div class="survey-group-head">Gone quiet</div>
+
+    <div class="survey-card quiet">
+      <div class="survey-head">
+        <span class="survey-name">Q4 Founder Holiday Pulse Check</span>
+        <span class="survey-status quiet">Gone quiet</span>
+      </div>
+      <div class="survey-desc">Pulse check on Q4 priorities, biggest obstacles, and what support/resources would help most heading into the holiday season; also captures tech-stack and AI-tool usage.</div>
+      <div class="survey-stats">
+        <div class="survey-stat"><strong>4</strong>responses</div>
+        <div class="survey-stat"><strong>Jul 13–14, 2026</strong>response window</div>
+        <div class="survey-stat"><strong>14 days</strong>since last response</div>
+      </div>
+      <div class="survey-links">
+        <a href="https://docs.google.com/forms/d/1yGCuY0TDVrad2OWKHdxKtngGkFkQ5kh1ejb_n8UKsB8/edit" target="_blank">Open form</a>
+        <a class="secondary" href="https://docs.google.com/spreadsheets/d/1VEt-Dj89-NzE73ysVvWWJQeZIdC9o-gTEvb6meQ6_6E/edit" target="_blank">View responses</a>
+      </div>
+    </div>
+
+    <div class="survey-group-head">Dormant</div>
+
+    <div class="survey-card dormant">
+      <div class="survey-head">
+        <span class="survey-name">10th House Membership Testimonials</span>
+        <span class="survey-status dormant">Dormant</span>
+      </div>
+      <div class="survey-desc">Testimonial collection tied to the 2025 Fashion Cohort. All 3 responses are already folded into the main Testimonials tab (Saadia Khan, Elizabeth Goodwin Welborn, cynthia/Ondine).</div>
+      <div class="survey-stats">
+        <div class="survey-stat"><strong>3</strong>responses (all-time)</div>
+        <div class="survey-stat"><strong>Oct 19–20, 2025</strong>last activity</div>
+        <div class="survey-stat"><strong>~9 months</strong>since last response</div>
+      </div>
+      <div class="survey-links">
+        <a href="https://docs.google.com/forms/d/1c6rbqWATD4Y-WQtoHEWy8TQ8x65IFe2C0lCOG7jXtbs/edit" target="_blank">Open form</a>
+        <a class="secondary" href="https://docs.google.com/spreadsheets/d/1DGuRkIjZRbl3C9UJtcnhX-bZncgyaYBJLT967DobCoE/edit" target="_blank">View responses</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">Source: Google Drive search for Google Forms owned by avery.bell@femalefoundercollective.com, cross-referenced with each form's linked response spreadsheet, as of 2026-07-28. This tab pulls from Drive directly, so — unlike the Circle DM idea and native HubSpot Surveys — it can realistically join the 6am daily auto-refresh; ask to have it added to the daily task if you want it kept current automatically.</div>
 </div>
 
 <script>
@@ -1376,11 +2154,13 @@ function switchTab(tab) {
   document.getElementById('viewActive').style.display = tab === 'active' ? '' : 'none';
   document.getElementById('viewGotos').style.display = tab === 'gotos' ? '' : 'none';
   document.getElementById('viewGranola').style.display = tab === 'granola' ? '' : 'none';
+  document.getElementById('viewSurveys').style.display = tab === 'surveys' ? '' : 'none';
   document.getElementById('tabBtnTestimonials').classList.toggle('active', tab === 'testimonials');
   document.getElementById('tabBtnFeedback').classList.toggle('active', tab === 'feedback');
   document.getElementById('tabBtnActive').classList.toggle('active', tab === 'active');
   document.getElementById('tabBtnGotos').classList.toggle('active', tab === 'gotos');
   document.getElementById('tabBtnGranola').classList.toggle('active', tab === 'granola');
+  document.getElementById('tabBtnSurveys').classList.toggle('active', tab === 'surveys');
   if (tab === 'feedback' && !feedbackRendered) {
     renderFeedbackTab();
     feedbackRendered = true;

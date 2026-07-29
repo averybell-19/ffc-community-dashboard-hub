@@ -174,16 +174,16 @@
 const MAROON="#3F0213", RUST="#4A4F16", ORANGE="#D58E32", LAVENDER="#EAB8E9", BURNT="#EAB8E9";
 
 const months = ["Jan 2025","Feb 2025","Mar 2025","Apr 2025","May 2025","Jun 2025","Jul 2025","Aug 2025","Sep 2025","Oct 2025","Nov 2025","Dec 2025","Jan 2026","Feb 2026","Mar 2026","Apr 2026","May 2026","Jun 2026","Jul 2026*"];
-const total    = [1168,1149,1228,1133,1140,1097,1137,1115,1132,1118,1122,1178,1182,1202,1171,1218,1246,1221,1191];
-const mau      = [383,372,436,411,401,393,438,452,458,447,403,386,446,432,405,525,609,516,408];
-const mauPct   = [0.328,0.324,0.355,0.363,0.352,0.358,0.385,0.405,0.405,0.400,0.359,0.328,0.377,0.359,0.346,0.431,0.489,0.423,0.343];
-const posts    = [191,161,190,183,153,146,177,173,211,148,125,68,134,86,95,131,235,108,62];
-const comments = [748,400,580,736,500,475,585,639,598,393,304,180,411,284,258,510,1012,424,224];
+const total    = [1168,1149,1228,1133,1140,1097,1137,1115,1132,1118,1122,1178,1182,1202,1171,1218,1246,1221,1186];
+const mau      = [383,372,436,411,401,393,438,452,458,447,403,386,446,432,405,525,609,516,427];
+const mauPct   = [0.328,0.324,0.355,0.363,0.352,0.358,0.385,0.405,0.405,0.400,0.359,0.328,0.377,0.359,0.346,0.431,0.489,0.423,0.360];
+const posts    = [191,161,190,183,153,146,177,173,211,148,125,68,134,86,95,131,235,108,76];
+const comments = [748,400,580,736,500,475,585,639,598,393,304,180,411,284,258,510,1012,424,262];
 
 const CUR = months.length - 1;
 const PREV = CUR - 1;
 
-document.getElementById('updated-badge').textContent = "Updated Jul 23, 2026";
+document.getElementById('updated-badge').textContent = "Updated Jul 28, 2026";
 
 function pillHtml(delta, suffix){
   const up = delta >= 0;
@@ -250,7 +250,7 @@ const yoy = [
   { m:"Apr", t25:1133, t26:1218, mau25:411, mau26:525, p25:183, p26:131 },
   { m:"May", t25:1140, t26:1246, mau25:401, mau26:609, p25:153, p26:235 },
   { m:"Jun", t25:1097, t26:1221, mau25:393, mau26:516, p25:146, p26:108 },
-  { m:"Jul*", t25:1137, t26:1191, mau25:438, mau26:408, p25:177, p26:62 },
+  { m:"Jul*", t25:1137, t26:1186, mau25:438, mau26:427, p25:177, p26:76 },
 ];
 document.getElementById('yoyTable').innerHTML = `
   <tr><th>Month</th><th class="num">Total '25</th><th class="num">Total '26</th><th class="num">MAU '25</th><th class="num">MAU '26</th><th class="num">Posts '25</th><th class="num">Posts '26</th></tr>
@@ -259,12 +259,12 @@ document.getElementById('yoyTable').innerHTML = `
 
 // Records table
 const records = [
-  { metric:"Peak MAU Rate", value:"48.9%", month:"May 2026", current:"34.3%" },
-  { metric:"Most Active Members (MAU)", value:"609", month:"May 2026", current:"408" },
+  { metric:"Peak MAU Rate", value:"48.9%", month:"May 2026", current:"36.0%" },
+  { metric:"Most Active Members (MAU)", value:"609", month:"May 2026", current:"427" },
   { metric:"Most New Members", value:"78", month:"Apr 2026", current:"5" },
-  { metric:"Most Posts", value:"235", month:"May 2026", current:"62" },
-  { metric:"Most Comments", value:"1,012", month:"May 2026", current:"224" },
-  { metric:"Peak Total Members", value:"1,246", month:"May 2026", current:"1,191" },
+  { metric:"Most Posts", value:"235", month:"May 2026", current:"76" },
+  { metric:"Most Comments", value:"1,012", month:"May 2026", current:"262" },
+  { metric:"Peak Total Members", value:"1,246", month:"May 2026", current:"1,186" },
 ];
 document.getElementById('recordsTable').innerHTML = `
   <tr><th>Metric</th><th class="num">Record</th><th>Month</th><th class="num">Jul 2026 (to date)</th></tr>
