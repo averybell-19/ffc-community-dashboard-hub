@@ -1,0 +1,309 @@
+<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Community Social Content Hub Static Snapshot",
+  "schemaVersion": 1,
+  "description": "Static snapshot of the Community x Social Content Dashboard (real Circle + HubSpot + Content Calendar + Job Board data as of Aug 3, 2026) for the public site — a static counterpart to the live 'community-social-content-hub' Cowork artifact, since the live one requires window.cowork and can't run outside Cowork. Re-generate from Cowork and redeploy when you want fresher data."
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Community x Social Content Hub</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #fcf3ed;
+    color: #1a1a1a;
+    padding: 20px 24px 60px;
+  }
+  h1 { font-size: 22px; margin: 0 0 6px; font-weight: 800; letter-spacing: -0.01em; color: #3f0213; }
+  .subtitle { color: #6b573a; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
+  .stats-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .stat-card {
+    background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px;
+    padding: 14px 18px; min-width: 140px;
+    box-shadow: 0 1px 3px rgba(85, 61, 1, 0.06);
+    border-top: 3px solid #3f0213;
+  }
+  .stat-card .num { font-size: 25px; font-weight: 800; letter-spacing: -0.02em; color: #3f0213; }
+  .stat-card .label { font-size: 11.5px; color: #7a6a4a; margin-top: 3px; }
+  .tab-nav { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 1px solid #e2cec3; flex-wrap: wrap; }
+  .tab-btn {
+    appearance: none; border: none; background: none; cursor: pointer;
+    font-size: 12.5px; font-weight: 700; padding: 9px 13px; color: #8a7a5c;
+    border-bottom: 3px solid transparent; margin-bottom: -1px; font-family: inherit;
+  }
+  .tab-btn.active { color: #3f0213; border-bottom-color: #4a4f16; }
+  .tab-btn:hover:not(.active) { color: #4a4f16; }
+  .quick-take { background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px; padding: 16px 18px; margin-bottom: 22px; box-shadow: 0 1px 3px rgba(85, 61, 1, 0.05); }
+  .quick-take h2 { font-size: 13px; margin: 0 0 10px; color: #3f0213; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+  .quick-take .fb-sub { font-size: 12px; color: #8a7a5c; margin-bottom: 10px; line-height: 1.5; }
+  .fb-section { margin-bottom: 30px; }
+  .fb-section-head { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; flex-wrap: wrap; }
+  .fb-section h2 { font-size: 15px; margin: 0; color: #3f0213; font-weight: 800; }
+  .fb-count-badge { font-size: 10.5px; font-weight: 700; background: #ececf1; color: #4a4a52; padding: 2px 8px; border-radius: 10px; }
+  .fb-section .fb-sub { font-size: 12px; color: #8a7a5c; margin-bottom: 12px; line-height: 1.5; }
+  .fb-stack { display: flex; flex-direction: column; gap: 9px; }
+  .cc-card { background: #fffef7; border: 1px solid #e2cec3; border-radius: 10px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(85, 61, 1, 0.05); border-left: 4px solid #4a4f16; }
+  .cc-title { font-weight: 800; color: #3f0213; font-size: 13.5px; margin-bottom: 4px; }
+  .cc-snippet { font-size: 12.5px; color: #4a4a52; line-height: 1.5; margin-bottom: 7px; }
+  .cc-meta { font-size: 10.5px; color: #8a7a5c; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .cc-cat-tag { font-size: 9.5px; font-weight: 700; background: #ececf1; color: #4a4a52; padding: 2px 7px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .cc-idea { margin: 2px 0 7px; background: rgba(234, 184, 233, 0.22); border-left: 3px solid #eab8e9; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #3f0213; line-height: 1.5; }
+  .cc-idea strong { text-transform: uppercase; font-size: 9.5px; letter-spacing: 0.03em; color: #a33920; margin-right: 5px; }
+  .source-tag { display: inline-block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 3px 9px; border-radius: 6px; background: rgba(244, 72, 1, 0.13); color: #a33920; }
+  .source-tag.hubspot { background: rgba(213, 142, 50, 0.18); color: #a35f0e; }
+  .source-tag.jobsheet { background: rgba(74, 79, 22, 0.14); color: #4a4f16; }
+  .source-tag.calendar { background: rgba(106,156,31,0.15); color: #3f5a1f; }
+  a.item-link { color: #a33920; text-decoration: none; font-size: 12px; font-weight: 600; }
+  a.item-link:hover { text-decoration: underline; }
+  .gap-box { background: rgba(213, 142, 50, 0.1); border-left: 3px solid #d58e32; border-radius: 7px; padding: 9px 12px; font-size: 12px; color: #6b4a12; margin-bottom: 12px; line-height: 1.55; }
+  .gap-box strong { text-transform: uppercase; font-size: 10px; letter-spacing: 0.03em; display: block; margin-bottom: 3px; color: #a35f0e; }
+  .timing-item { background: #fffdf0; border: 1px solid #e2cec3; border-radius: 8px; padding: 9px 11px; font-size: 12px; color: #2a2a2e; line-height: 1.5; margin-top: 8px; }
+  .timing-item strong { color: #4a4f16; display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; }
+  .timing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 640px) { .timing-grid { grid-template-columns: 1fr; } .stats-row { flex-direction: column; } }
+  .churn-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .churn-row { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+  .churn-label { width: 210px; flex-shrink: 0; color: #2a2a2e; }
+  .churn-bar-track { flex: 1; background: #f5efd5; border-radius: 6px; height: 16px; overflow: hidden; }
+  .churn-bar-fill { background: #4a4f16; height: 100%; border-radius: 6px; }
+  .churn-count { width: 34px; text-align: right; font-weight: 700; color: #4a4f16; flex-shrink: 0; }
+  .steps-list { display: flex; flex-direction: column; gap: 8px; }
+  .step-item { font-size: 12.5px; color: #2a2a2e; background: #fffdf0; border: 1px solid #e2cec3; border-radius: 8px; padding: 9px 12px; line-height: 1.5; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .step-item .step-owner { font-weight: 700; color: #4a4f16; white-space: nowrap; font-size: 11px; }
+  .empty-msg { color: #8a7a5c; font-size: 13px; padding: 8px 2px; }
+  .footer-note { font-size: 11px; color: #8a7a5c; margin-top: 10px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div id="ffc-gate" style="position:fixed;inset:0;background:#fcf3ed;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <div style="background:#fff;border:1px solid #e2cec3;border-radius:14px;padding:32px 36px;max-width:340px;width:90%;box-shadow:0 4px 18px rgba(63,2,19,0.12);text-align:center;">
+    <div style="font-size:15px;font-weight:800;color:#3f0213;margin-bottom:6px;">FFC Team Access</div>
+    <div style="font-size:12.5px;color:#6b573a;margin-bottom:16px;">This dashboard is for internal team use. Enter the password to continue.</div>
+    <input id="ffc-gate-input" type="password" placeholder="Password" style="width:100%;padding:9px 12px;border:1px solid #e2cec3;border-radius:8px;font-size:14px;margin-bottom:10px;box-sizing:border-box;">
+    <button id="ffc-gate-btn" style="width:100%;background:linear-gradient(135deg,#eab8e9,#d58e32);border:none;color:#3f0213;font-weight:700;font-size:13.5px;padding:10px;border-radius:8px;cursor:pointer;">Enter</button>
+    <div id="ffc-gate-err" style="color:#9c4a22;font-size:12px;margin-top:8px;display:none;">Incorrect password, try again.</div>
+  </div>
+</div>
+<script>
+(function(){
+  var PASS = "10thhouse2026";
+  if (localStorage.getItem('ffc_gate_ok') === '1') {
+    var g = document.getElementById('ffc-gate'); if (g) g.remove();
+  } else {
+    document.documentElement.style.overflow = 'hidden';
+    function tryUnlock(){
+      var val = document.getElementById('ffc-gate-input').value;
+      if (val === PASS) {
+        localStorage.setItem('ffc_gate_ok','1');
+        document.getElementById('ffc-gate').remove();
+        document.documentElement.style.overflow = '';
+      } else {
+        document.getElementById('ffc-gate-err').style.display = 'block';
+      }
+    }
+    document.getElementById('ffc-gate-btn').addEventListener('click', tryUnlock);
+    document.getElementById('ffc-gate-input').addEventListener('keydown', function(e){ if(e.key==='Enter') tryUnlock(); });
+  }
+})();
+</script>
+
+<h1>Community x Social Content Hub</h1>
+<div class="subtitle">Static snapshot batching Circle community conversations and form submissions into the 8 content categories from Avery &amp; Katryna's workflow, for the team to browse between Monday recaps.<br><strong style="color:#3f0213;">Data as of August 3, 2026 &mdash; this page won't auto-update; re-generate from Cowork and redeploy for fresher data.</strong></div>
+
+<div class="tab-nav" id="tabNav"></div>
+<div id="tabPanels"></div>
+
+<script>
+var DATA = {
+  digestStats: { categories: 8, itemsPulled: 34, newLast7: 11, gapCount: 2 },
+  categories: [
+    { key:"fundraising", label:"Fundraising & Launches", color:"#3f0213",
+      desc:"Fundraising announcements, product launches, and partnership news from members.",
+      timing:"Evergreen &mdash; schedule strategically to align with broader content campaigns.",
+      items:[
+        { title:"Fundraising Connections", snippet:"I'm looking for fundraising resources and connections. My ideal next/new investor would offer strategic connections in the drink space.", author:"Monica Epstein", date:"2025-09-30", source:"circle", sourceLabel:"Circle · Fundraising Center", url:"https://community.the10thhouse.co/c/deal-flow/fundraising-connections" },
+        { title:"Cristina Garcia submitted the Fundraising Form", snippet:"Submitted the \"Fundraising Form\" (cristina@contentbar.co).", author:"Cristina Garcia", date:"2026-07-17", source:"hubspot", sourceLabel:"HubSpot · Fundraising Form", idea:"DM Cristina for a quick raise update &mdash; a 2-3 sentence founder quote on what she's raising for could anchor a Fundraising Center feed post this week." },
+        { title:"Marilynn Joyner submitted the Fundraising Form", snippet:"Submitted the \"Fundraising Form\" (marilynn@fundhernetwork.com).", author:"Marilynn Joyner", date:"2026-06-23", source:"hubspot", sourceLabel:"HubSpot · Fundraising Form", url:"" },
+        { title:"Farelle Christine Bikoro submitted Recent Launch", snippet:"Évoque Mode is a newly launched luxury fashion destination offering curated designer fashion...", author:"Farelle Christine Bikoro", date:"2026-06-02", source:"hubspot", sourceLabel:"HubSpot · Recent Launch", idea:"Feature Évoque Mode's launch as a Recent Launch spotlight &mdash; ask Farelle for 2-3 product photos and a founder quote for a carousel post." }
+      ] },
+    { key:"press", label:"Press & Media", color:"#4a4f16",
+      desc:"Member press hits, media features, and coverage worth amplifying.",
+      timing:"Time-sensitive &mdash; share same day or the following day to maintain momentum.",
+      gapNote:"No dedicated HubSpot intake form for press mentions yet &mdash; these currently surface only if a member posts in the feed or emails Katryna directly. Worth building a \"Share Press Coverage\" form.",
+      items:[
+        { title:"Press Kit", snippet:"I need help creating a press kit. Any samples or recommendations?", author:"TyeBarrett", date:"2024-02-16", source:"circle", sourceLabel:"Circle · Consumer Products", url:"https://community.the10thhouse.co/c/consumer-products/press-kit" },
+        { title:"Press Contacts", snippet:"Does anyone have a recommendation for the best service to use to send out industry-specific press releases?", author:"(member)", date:"2021-09-08", source:"circle", sourceLabel:"Circle · Ask the Community", url:"https://community.the10thhouse.co/c/ask-a-question/press-contacts" }
+      ] },
+    { key:"hiring", label:"Hiring & Job Board", color:"#a33920",
+      desc:"Member job openings for the monthly Hiring/Job Board series.",
+      timing:"Recurring monthly series &mdash; batch openings into one roundup post.",
+      calendarNote:"\"Job Board x Hiring Series\" already posted to Instagram Jul 8, 2026 (Katryna).",
+      items:[
+        { title:"Sponsorship Manager at Mysha Pods", snippet:"Premium referral-based membership community for modern mothers hiring a Sponsorship Manager to own revenue across flagship events.", author:"Mysha Pods", date:"2026-06-23", source:"jobsheet", sourceLabel:"Job Board Intake", url:"https://airtable.com/apposOjZE7IXXtrCj/pagKrM4R8kUCiDguL/form", idea:"Good roundup entry: sales-led, remote-friendly, part-time role at a fast-growing mom-focused membership brand." },
+        { title:"Social Media Strategist & Content Creator at Golden Steer", snippet:"Own video storytelling end-to-end for a seasonings line and two NYC/Vegas restaurants.", author:"Golden Steer", date:"2026-06-24", source:"jobsheet", sourceLabel:"Job Board Intake", url:"https://www.linkedin.com/jobs/view/4431864175/" },
+        { title:"Lead Designer at Still Here", snippet:"Own day-to-day design execution across denim, RTW, and knits for a fashion brand; reports to the Creative Director.", author:"Still Here", date:"2026-06-30", source:"jobsheet", sourceLabel:"Job Board Intake", url:"mailto:sonia@stillhere.nyc" },
+        { title:"Hiring", snippet:"We are currently hiring for roles in Content Marketing, Marketing Ops/HubSpot, Social Media, Customer Success, Digital Marketing, HR.", author:"Carolyn", date:"2023-10-07", source:"circle", sourceLabel:"Circle · Hiring Advice", url:"https://community.the10thhouse.co/c/hiring-help/hiring" }
+      ] },
+    { key:"resource", label:"Resource Library", color:"#d58e32",
+      desc:"Tools, templates, and recommendations members share or request.",
+      timing:"Evergreen &mdash; batch into Resource Library roundups.",
+      items:[
+        { title:"Recommended Resources", snippet:"The power of community truly lies in the space where you share resources that help with efficiency, saving money, and getting things done.", author:"Carli Roth", date:"2023-05-23", source:"circle", sourceLabel:"Circle · Resource Library", url:"https://community.the10thhouse.co/c/community-resources/recommended-resources" },
+        { title:"Miri downloaded a Resource lead magnet", snippet:"\"Building a Brand That Drives Demand (Not Just Traffic)\" playbook opt-in.", author:"Miri", date:"2026-08-03", source:"hubspot", sourceLabel:"HubSpot · Resource", idea:"Fresh opt-in today &mdash; good sign this brand/PR playbook resource is resonating; consider a Resource Library post pointing back to it." },
+        { title:"Cheyanne Skogen downloaded a Resource lead magnet", snippet:"\"Scaling DTC — From First Sale to Sustainable Growth\" opt-in.", author:"Cheyanne Skogen", date:"2026-08-01", source:"hubspot", sourceLabel:"HubSpot · Resource" }
+      ] },
+    { key:"engagement", label:"Engagement Series", color:"#3f0213",
+      desc:"Giveaways and always-on engagement plays, e.g. the Summer CEO Giveaway.",
+      timing:"Recurring series &mdash; keep a running tally of entries for reposts/winner picks.",
+      gapNote:"No dedicated HubSpot form for giveaway entries &mdash; entries are tracked via Instagram/LinkedIn comments and DMs, not a form.",
+      calendarNote:"\"This is my office GIVEAWAY\" (CEO Club Giveaway) already posted to Instagram + LinkedIn Jul 16, 2026 (Katryna) &mdash; runs through Jul 31.",
+      items:[
+        { title:"Wellness Giveaway — 100+ prizes worth ~$15,000", snippet:"Nearly 30 member entrepreneurs bundled together for a wellness giveaway to celebrate a platform launch.", author:"Alenka Kyslik", date:"2024-12-05", source:"circle", sourceLabel:"Circle · Member Offers", url:"https://community.the10thhouse.co/c/special-discounts/when-women-collaborate-incredible-things-happen-wellness-giveaway-over-100-prizes-worth-almost-15-000", idea:"Great model for a future multi-member giveaway collab — worth referencing when planning the next Engagement Series push after the Summer CEO Giveaway wraps." },
+        { title:"Website Giveaway", snippet:"Giving away a premium Showit website template (worth $450) to one lucky winner.", author:"Aubre Walther", date:"2023-11-08", source:"circle", sourceLabel:"Circle · Member Offers", url:"https://community.the10thhouse.co/c/special-discounts/website-giveaway-time" }
+      ] },
+    { key:"revenue", label:"Revenue Milestones", color:"#4a4f16",
+      desc:"Member wins, revenue milestones, and spotlight-worthy moments &mdash; also feeds the newsletter's Member Spotlight and Member Milestones sections.",
+      timing:"Evergreen &mdash; schedule to align with campaigns; also route to the newsletter team.",
+      items:[
+        { title:"A Shining Moment", snippet:"Moving through the Nasdaq Entrepreneurial Center's Milestone Makers summer cohort — their first all-female cohort.", author:"Kelly Barnett", date:"2023-07-19", source:"circle", sourceLabel:"Circle · Celebrate Your Wins", url:"https://community.the10thhouse.co/c/news-room/a-shining-moment" },
+        { title:"Kait Fontenot submitted a Member Spotlight", snippet:"Submitted the Member Spotlight Form (hi@lovekait.com).", author:"Kait Fontenot", date:"2026-04-20", source:"hubspot", sourceLabel:"HubSpot · Member Spotlight Form", idea:"Route to the newsletter team for the Member Spotlight section, and pull one line for a social spotlight post too." },
+        { title:"Celia Fern submitted Share your Wins", snippet:"Submitted the \"Share your Wins\" form (celiafern17@gmail.com).", author:"Celia Fern", date:"2026-04-19", source:"hubspot", sourceLabel:"HubSpot · Share your Wins" },
+        { title:"Keri O'Brien-Wytrwal submitted Share your Wins", snippet:"Submitted the \"Share your Wins\" form (keri@shipologyus...).", author:"Keri O'Brien-Wytrwal", date:"2025-09-04", source:"hubspot", sourceLabel:"HubSpot · Share your Wins" }
+      ] },
+    { key:"support", label:"Beta Requests & Member Support", color:"#a33920",
+      desc:"Member-to-member help requests and beta/product feedback asks.",
+      timing:"Group into roundup content or Stories unless there's a strong reason for a dedicated post.",
+      items:[
+        { title:"eBook Help", snippet:"Trying to write an SEO ebook and need help — has anyone had experience writing one or know someone who could help?", author:"Stephanie Long", date:"2024-02-18", source:"circle", sourceLabel:"Circle · Ask the Community", url:"https://community.the10thhouse.co/c/ask-a-question/ebook-help" },
+        { title:"Angela Acosta submitted a Community Conversation", snippet:"Submitted \"Submit a Community Conversation\" (info@angelaatelier.com).", author:"Angela Acosta", date:"2026-06-28", source:"hubspot", sourceLabel:"HubSpot · Community Conversation" },
+        { title:"Ana Maria Moreno submitted a Community Conversation", snippet:"Submitted \"Submit a Community Conversation.\"", author:"Ana Maria Moreno", date:"2026-03-02", source:"hubspot", sourceLabel:"HubSpot · Community Conversation", idea:"Good candidate for a member-to-member support roundup or a Story quote — batch with the other Community Conversation submissions this month." }
+      ] },
+    { key:"events", label:"Community Experiences & Events", color:"#d58e32",
+      desc:"City Sessions, huddles, and virtual/in-person event highlights &mdash; launches, reminders, spotlights, and recaps.",
+      timing:"Promote at key milestones: launch announcement, reminder, speaker/member spotlight, post-event recap.",
+      calendarNote:"\"City Session Series\" already posted to Instagram Jul 2, 2026 (Katryna); a Chapter Leads x Posting Guidelines asset for City Sessions is in progress in Canva.",
+      items:[
+        { title:"No new live Circle event-space matches this pull", snippet:"The 10th House Events space had no fresh keyword matches on this pull — event highlights are currently coming through Huddle submissions instead.", author:"", date:"", source:"circle", sourceLabel:"Circle · 10th House Events", url:"" },
+        { title:"Anna Anisin submitted a Huddle", snippet:"Submitted a Huddle Submission (anna@formulatedby.com).", author:"Anna Anisin", date:"2026-07-31", source:"hubspot", sourceLabel:"HubSpot · Huddle Submission", idea:"Newest huddle submission — confirm topic/date with Anna, then plan a launch-announcement post per the events timing rule." },
+        { title:"Melaina Balbo submitted a Huddle", snippet:"Submitted a Huddle Submission (melaina@eatbis.com).", author:"Melaina Balbo", date:"2026-07-09", source:"hubspot", sourceLabel:"HubSpot · Huddle Submission" }
+      ] }
+  ],
+  calendarHighlights: [
+    { date:"2026-07-02", owner:"Katryna", status:"Posted + Live", platform:"Instagram", series:"City Session Series" },
+    { date:"2026-07-08", owner:"Katryna", status:"Posted + Live", platform:"Instagram", series:"Job Board x Hiring Series" },
+    { date:"2026-07-16", owner:"Katryna", status:"Posted + Live", platform:"LinkedIn, Instagram", series:"This is my office GIVEAWAY" },
+    { date:"(in progress)", owner:"Katryna", status:"In Progress", platform:"Instagram", series:"Chapter Leads x Posting Guidelines Asset (City Sessions)" }
+  ]
+};
+
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function fmtDate(iso){ if(!iso) return "&mdash;"; var d=new Date(iso); if(isNaN(d)) return iso; return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function isNew(iso){ if(!iso) return false; var d=new Date(iso); if(isNaN(d)) return false; return (new Date('2026-08-03').getTime()-d.getTime()) < 7*24*3600*1000; }
+
+function statusPill(status){
+  var cls = /posted|live/i.test(status||'') ? 'calendar' : '';
+  return '<span class="source-tag ' + cls + '">' + esc(status||'') + '</span>';
+}
+
+function cardHtml(item){
+  var badgeClass = item.source === 'hubspot' ? 'hubspot' : (item.source === 'jobsheet' ? 'jobsheet' : '');
+  var link = item.url ? '<a class="item-link" href="'+esc(item.url)+'" target="_blank" rel="noopener">Open &rarr;</a>' : '';
+  var idea = item.idea ? '<div class="cc-idea"><strong>Post idea</strong>'+item.idea+'</div>' : '';
+  return '<div class="cc-card">' +
+    '<div class="cc-title">'+esc(item.title)+(isNew(item.date)?' <span class="fb-count-badge">New</span>':'')+'</div>' +
+    (item.snippet ? '<div class="cc-snippet">'+esc(item.snippet)+'</div>' : '') +
+    idea +
+    '<div class="cc-meta"><span class="source-tag '+badgeClass+'">'+esc(item.sourceLabel||"")+'</span>' +
+    '<span>' + fmtDate(item.date) + (link ? ' &middot; ' + link : '') + '</span></div>' +
+    '</div>';
+}
+
+function buildShell(){
+  var nav = '<button class="tab-btn active" id="tabBtn_digest" onclick="switchTab(\'digest\')">Weekly Digest</button>';
+  DATA.categories.forEach(function(c){ nav += '<button class="tab-btn" id="tabBtn_'+c.key+'" onclick="switchTab(\''+c.key+'\')">'+esc(c.label)+'</button>'; });
+  document.getElementById('tabNav').innerHTML = nav;
+  var panels = '<div id="panel_digest"></div>';
+  DATA.categories.forEach(function(c){ panels += '<div id="panel_'+c.key+'" style="display:none;"></div>'; });
+  document.getElementById('tabPanels').innerHTML = panels;
+}
+
+window.switchTab = function(key){
+  var all = ['digest'].concat(DATA.categories.map(function(c){return c.key;}));
+  all.forEach(function(k){
+    document.getElementById('panel_'+k).style.display = (k===key) ? '' : 'none';
+    document.getElementById('tabBtn_'+k).classList.toggle('active', k===key);
+  });
+};
+
+function renderCategory(cat){
+  var html = '<div class="stats-row">' +
+    '<div class="stat-card" style="border-top-color:'+cat.color+';"><div class="num">'+cat.items.length+'</div><div class="label">Items in this snapshot</div></div>' +
+    '<div class="stat-card" style="border-top-color:'+cat.color+';"><div class="num">'+cat.items.filter(function(i){return isNew(i.date);}).length+'</div><div class="label">New in last 7 days</div></div>' +
+    '</div>';
+  html += '<div class="quick-take"><h2>'+esc(cat.label)+'</h2><div class="fb-sub">'+cat.desc+'</div><div class="timing-item"><strong>Timing rule</strong>'+cat.timing+'</div></div>';
+  if (cat.gapNote) html += '<div class="gap-box"><strong>Gap to close</strong>'+cat.gapNote+'</div>';
+  if (cat.calendarNote) html += '<div class="gap-box" style="background:rgba(106,156,31,0.1);border-left-color:#6a9c1f;"><strong>Already on the calendar</strong>'+cat.calendarNote+'</div>';
+  html += '<div class="fb-section-head"><h2>Items to review</h2><span class="fb-count-badge">'+cat.items.length+'</span></div>';
+  html += '<div class="fb-stack">' + cat.items.map(cardHtml).join('') + '</div>';
+  html += '<div class="footer-note">Snapshot captured Aug 3, 2026 from the live Circle feed, HubSpot form-submission contacts, and Job Board intake sheet. Pink "Post idea" lines are Claude-suggested starting points — review and edit before publishing.</div>';
+  document.getElementById('panel_'+cat.key).innerHTML = html;
+}
+
+function renderDigest(){
+  var allItems = [];
+  DATA.categories.forEach(function(c){ c.items.forEach(function(i){ allItems.push(Object.assign({categoryLabel:c.label, categoryColor:c.color}, i)); }); });
+  var s = DATA.digestStats;
+  var html = '<div class="stats-row">' +
+    '<div class="stat-card"><div class="num">'+s.categories+'</div><div class="label">Categories tracked</div></div>' +
+    '<div class="stat-card"><div class="num">'+allItems.length+'</div><div class="label">Items in this snapshot</div></div>' +
+    '<div class="stat-card"><div class="num">'+allItems.filter(function(i){return isNew(i.date);}).length+'</div><div class="label">New in last 7 days</div></div>' +
+    '<div class="stat-card"><div class="num">'+s.gapCount+'</div><div class="label">Categories missing a form</div></div>' +
+    '</div>';
+
+  html += '<div class="quick-take"><h2>Highlights from this snapshot</h2><div class="fb-sub">Pulled Aug 3, 2026 across all 8 categories &mdash; vet these first before drafting the Monday recap.</div><div class="fb-stack">';
+  allItems.filter(function(i){return i.idea;}).slice(0,6).forEach(function(i){
+    html += '<div class="cc-card" style="border-left-color:'+i.categoryColor+';"><div class="cc-title">'+esc(i.title)+' <span class="cc-cat-tag">'+esc(i.categoryLabel)+'</span></div>' +
+      (i.snippet ? '<div class="cc-snippet">'+esc(i.snippet)+'</div>' : '') +
+      '<div class="cc-idea"><strong>Post idea</strong>'+i.idea+'</div>' +
+      '<div class="cc-meta"><span class="source-tag '+(i.source==='hubspot'?'hubspot':(i.source==='jobsheet'?'jobsheet':''))+'">'+esc(i.sourceLabel||'')+'</span><span>'+fmtDate(i.date)+'</span></div></div>';
+  });
+  html += '</div></div>';
+
+  html += '<div class="fb-section"><div class="fb-section-head"><h2>Already on the content calendar</h2></div><div class="fb-stack">';
+  DATA.calendarHighlights.forEach(function(r){
+    html += '<div class="cc-card" style="border-left-color:#6a9c1f;"><div class="cc-meta"><span><strong>'+esc(r.series)+'</strong></span>'+statusPill(r.status)+'</div>' +
+      '<div class="cc-snippet">'+esc(r.owner)+' &middot; '+esc(r.platform)+' &middot; '+esc(r.date)+'</div></div>';
+  });
+  html += '</div></div>';
+
+  html += '<div class="fb-section"><div class="fb-section-head"><h2>Gaps &amp; opportunities</h2></div>';
+  DATA.categories.filter(function(c){return c.gapNote;}).forEach(function(c){
+    html += '<div class="gap-box"><strong>'+esc(c.label)+'</strong>'+c.gapNote+'</div>';
+  });
+  html += '</div>';
+
+  html += '<div class="fb-section"><div class="fb-section-head"><h2>Content timing rules</h2></div><div class="timing-grid">' +
+    '<div class="timing-item"><strong>Time-sensitive</strong>News, anniversaries, event announcements &mdash; post same day or the following day.</div>' +
+    '<div class="timing-item"><strong>Evergreen</strong>Fundraising, launches, partnerships, milestones &mdash; schedule strategically with campaigns.</div>' +
+    '<div class="timing-item"><strong>Events</strong>Promote at launch, reminder, speaker/member spotlight, and post-event recap milestones.</div>' +
+    '<div class="timing-item"><strong>Form submissions</strong>Group into roundups or Stories unless there&#39;s a strong reason for a dedicated post.</div>' +
+    '</div></div>';
+
+  html += '<div class="footer-note">This is a static, point-in-time snapshot generated from the live Cowork dashboard on Aug 3, 2026. For a version that re-checks Circle, HubSpot, and the calendar every time you open it, use the live "Community Social Content Hub" artifact in Cowork.</div>';
+
+  document.getElementById('panel_digest').innerHTML = html;
+}
+
+buildShell();
+renderDigest();
+DATA.categories.forEach(renderCategory);
+</script>
+</body>
+</html>
