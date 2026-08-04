@@ -2,7 +2,7 @@
 {
   "name": "Community Social Content Hub Static Snapshot",
   "schemaVersion": 1,
-  "description": "Static snapshot of the Community x Social Content Dashboard (real Circle + HubSpot + Content Calendar + Job Board data as of Aug 3, 2026) for the public site — a static counterpart to the live 'community-social-content-hub' Cowork artifact, since the live one requires window.cowork and can't run outside Cowork. Re-generate from Cowork and redeploy when you want fresher data."
+  "description": "Static snapshot of the Community x Social Content Dashboard (real Circle + HubSpot + Content Calendar + Job Board data as of Aug 4, 2026) for the public site — a static counterpart to the live 'community-social-content-hub' Cowork artifact, since the live one requires window.cowork and can't run outside Cowork. Re-generate from Cowork and redeploy when you want fresher data."
 }
 </script>
 <html lang="en">
@@ -115,84 +115,97 @@
 </script>
 
 <h1>Community x Social Content Hub</h1>
-<div class="subtitle">Static snapshot batching Circle community conversations and form submissions into the 8 content categories from Avery &amp; Katryna's workflow, for the team to browse between Monday recaps.<br><strong style="color:#3f0213;">Data as of August 3, 2026 &mdash; this page won't auto-update; re-generate from Cowork and redeploy for fresher data.</strong></div>
+<div class="subtitle">Static snapshot batching Circle community conversations and form submissions into the 8 content categories from Avery &amp; Katryna's workflow, for the team to browse between Monday recaps.<br><strong style="color:#3f0213;">Data as of August 4, 2026 &mdash; this page won't auto-update; re-generate from Cowork and redeploy for fresher data.</strong></div>
 
 <div class="tab-nav" id="tabNav"></div>
 <div id="tabPanels"></div>
 
 <script>
 var DATA = {
-  digestStats: { categories: 8, itemsPulled: 34, newLast7: 11, gapCount: 2 },
+  digestStats: { categories: 8, itemsPulled: 38, newLast7: 4, gapCount: 2 },
   categories: [
     { key:"fundraising", label:"Fundraising & Launches", color:"#3f0213",
       desc:"Fundraising announcements, product launches, and partnership news from members.",
       timing:"Evergreen &mdash; schedule strategically to align with broader content campaigns.",
       items:[
-        { title:"Fundraising Connections", snippet:"I'm looking for fundraising resources and connections. My ideal next/new investor would offer strategic connections in the drink space.", author:"Monica Epstein", date:"2025-09-30", source:"circle", sourceLabel:"Circle · Fundraising Center", url:"https://community.the10thhouse.co/c/deal-flow/fundraising-connections" },
-        { title:"Cristina Garcia submitted the Fundraising Form", snippet:"Submitted the \"Fundraising Form\" (cristina@contentbar.co).", author:"Cristina Garcia", date:"2026-07-17", source:"hubspot", sourceLabel:"HubSpot · Fundraising Form", idea:"DM Cristina for a quick raise update &mdash; a 2-3 sentence founder quote on what she's raising for could anchor a Fundraising Center feed post this week." },
-        { title:"Marilynn Joyner submitted the Fundraising Form", snippet:"Submitted the \"Fundraising Form\" (marilynn@fundhernetwork.com).", author:"Marilynn Joyner", date:"2026-06-23", source:"hubspot", sourceLabel:"HubSpot · Fundraising Form", url:"" },
-        { title:"Farelle Christine Bikoro submitted Recent Launch", snippet:"Évoque Mode is a newly launched luxury fashion destination offering curated designer fashion...", author:"Farelle Christine Bikoro", date:"2026-06-02", source:"hubspot", sourceLabel:"HubSpot · Recent Launch", idea:"Feature Évoque Mode's launch as a Recent Launch spotlight &mdash; ask Farelle for 2-3 product photos and a founder quote for a carousel post." }
+        { title:"The mindful wardrobe fundraising", snippet:"Looking for fundraising opportunities or investment for a sustainable e-commerce fashion venture tackling waste in the industry.", author:"Patricia Rodrigues", date:"2026-07-26", source:"circle", sourceLabel:"Circle · Fundraising Center", url:"https://community.the10thhouse.co/c/deal-flow/the-mindful-wardrobe-fundraising", idea:"Patricia's mindful-wardrobe raise is the freshest ask in the Fundraising Center &mdash; a 2-3 sentence quote on her sustainable-fashion mission could open a founder-spotlight post this week." },
+        { title:"Cristina Garcia submitted the Fundraising Form", snippet:"Submitted the \"Fundraising Form\" (cristina@contentbar.co).", author:"Cristina Garcia", date:"2026-07-17", source:"hubspot", sourceLabel:"HubSpot · Fundraising Form" },
+        { title:"Marilynn Joyner submitted the Fundraising Form", snippet:"Submitted the \"Fundraising Form\" (marilynn@fundhernetwork.com).", author:"Marilynn Joyner", date:"2026-06-23", source:"hubspot", sourceLabel:"HubSpot · Fundraising Form" },
+        { title:"Farelle Christine Bikoro submitted Recent Launch", snippet:"Évoque Mode is a newly launched luxury fashion destination offering curated designer fashion.", author:"Farelle Christine Bikoro", date:"2026-06-02", source:"hubspot", sourceLabel:"HubSpot · Recent Launch", idea:"Feature Évoque Mode's launch as a Recent Launch spotlight &mdash; ask Farelle for 2-3 product photos and a founder quote for a carousel post." },
+        { title:"CPG Food and Bev Fundraising", snippet:"XO Marshmallow, a bootstrapped 10-year DTC gourmet marshmallow brand, is raising to scale into retail after grocery-chain interest outpaced cash on hand.", author:"LindziShanks", date:"2026-05-11", source:"circle", sourceLabel:"Circle · Fundraising Center", url:"https://community.the10thhouse.co/c/deal-flow/cpg-food-and-bev-fundraising" }
       ] },
     { key:"press", label:"Press & Media", color:"#4a4f16",
       desc:"Member press hits, media features, and coverage worth amplifying.",
       timing:"Time-sensitive &mdash; share same day or the following day to maintain momentum.",
       gapNote:"No dedicated HubSpot intake form for press mentions yet &mdash; these currently surface only if a member posts in the feed or emails Katryna directly. Worth building a \"Share Press Coverage\" form.",
       items:[
-        { title:"Press Kit", snippet:"I need help creating a press kit. Any samples or recommendations?", author:"TyeBarrett", date:"2024-02-16", source:"circle", sourceLabel:"Circle · Consumer Products", url:"https://community.the10thhouse.co/c/consumer-products/press-kit" },
-        { title:"Press Contacts", snippet:"Does anyone have a recommendation for the best service to use to send out industry-specific press releases?", author:"(member)", date:"2021-09-08", source:"circle", sourceLabel:"Circle · Ask the Community", url:"https://community.the10thhouse.co/c/ask-a-question/press-contacts" }
+        { title:"Leveraging press features?", snippet:"Featured in a few magazines this past quarter and asking how other members leverage press coverage.", author:"Gita Vellanki", date:"2025-10-03", source:"circle", sourceLabel:"Circle · Ask the Community", url:"https://community.the10thhouse.co/c/ask-a-question/leveraging-press-features" },
+        { title:"Press Release Help?", snippet:"Working on a press release for an NA drink brand, (parentheses), looking to break into mainstream outlets beyond earned media.", author:"Tawny Lara", date:"2024-04-25", source:"circle", sourceLabel:"Circle · Consumer Products", url:"https://community.the10thhouse.co/c/consumer-products/press-release-help" },
+        { title:"Press Kit", snippet:"Asking for help creating a press kit, plus samples or recommendations.", author:"TyeBarrett", date:"2024-02-16", source:"circle", sourceLabel:"Circle · Consumer Products", url:"https://community.the10thhouse.co/c/consumer-products/press-kit" },
+        { title:"Press Contacts", snippet:"INARA is launching its Sonic Parfums Collection and doing PR outreach solo &mdash; asking for press contacts.", author:"Elsa Bustamante", date:"2023-05-09", source:"circle", sourceLabel:"Circle · Beauty & Personal Care", url:"https://community.the10thhouse.co/c/beauty-personal-care/press-contacts" }
       ] },
     { key:"hiring", label:"Hiring & Job Board", color:"#a33920",
       desc:"Member job openings for the monthly Hiring/Job Board series.",
       timing:"Recurring monthly series &mdash; batch openings into one roundup post.",
       calendarNote:"\"Job Board x Hiring Series\" already posted to Instagram Jul 8, 2026 (Katryna).",
       items:[
-        { title:"Sponsorship Manager at Mysha Pods", snippet:"Premium referral-based membership community for modern mothers hiring a Sponsorship Manager to own revenue across flagship events.", author:"Mysha Pods", date:"2026-06-23", source:"jobsheet", sourceLabel:"Job Board Intake", url:"https://airtable.com/apposOjZE7IXXtrCj/pagKrM4R8kUCiDguL/form", idea:"Good roundup entry: sales-led, remote-friendly, part-time role at a fast-growing mom-focused membership brand." },
-        { title:"Social Media Strategist & Content Creator at Golden Steer", snippet:"Own video storytelling end-to-end for a seasonings line and two NYC/Vegas restaurants.", author:"Golden Steer", date:"2026-06-24", source:"jobsheet", sourceLabel:"Job Board Intake", url:"https://www.linkedin.com/jobs/view/4431864175/" },
-        { title:"Lead Designer at Still Here", snippet:"Own day-to-day design execution across denim, RTW, and knits for a fashion brand; reports to the Creative Director.", author:"Still Here", date:"2026-06-30", source:"jobsheet", sourceLabel:"Job Board Intake", url:"mailto:sonia@stillhere.nyc" },
-        { title:"Hiring", snippet:"We are currently hiring for roles in Content Marketing, Marketing Ops/HubSpot, Social Media, Customer Success, Digital Marketing, HR.", author:"Carolyn", date:"2023-10-07", source:"circle", sourceLabel:"Circle · Hiring Advice", url:"https://community.the10thhouse.co/c/hiring-help/hiring" }
+        { title:"Merchandising Director at Hunter Bell Inc.", snippet:"Fashion brand seeking a Director of Merchandising to own product buy strategy and assortment planning; reports to founder Hunter Bell.", author:"Hunter Bell Inc.", date:"2026-07-24", source:"jobsheet", sourceLabel:"Job Board Intake", url:"mailto:careers@hunterbellnyc.com" },
+        { title:"Line Cook at RITOS", snippet:"California-style breakfast burrito brand hiring a weekend line cook for its Manhattan ghost kitchen.", author:"RITOS", date:"2026-07-21", source:"jobsheet", sourceLabel:"Job Board Intake", url:"mailto:gianna@getritos.com" },
+        { title:"Associate Therapist at Jennifer Mann Therapy", snippet:"Remote, telehealth-based outpatient therapy practice in CT hiring a licensed therapist (LCSW/LPC/LMFT).", author:"Jennifer Mann Therapy", date:"2026-07-07", source:"jobsheet", sourceLabel:"Job Board Intake", url:"mailto:jennifer@jennifermanntherapy.com" },
+        { title:"DTC Growth Director at Mingle Mocktails", snippet:"Part-time (20 hrs/week) remote growth director role owning paid media and Shopify performance during a DTC infrastructure rebuild.", author:"Mingle Mocktails", date:"2026-06-30", source:"jobsheet", sourceLabel:"Job Board Intake", url:"mailto:Ltaylor@minglemocktails.com" },
+        { title:"Social Media Strategist & Content Creator at Golden Steer", snippet:"Own video storytelling end-to-end for a seasonings line and two NYC/Vegas restaurants &mdash; mostly iPhone-shot content.", author:"Golden Steer", date:"2026-06-24", source:"jobsheet", sourceLabel:"Job Board Intake", url:"https://www.linkedin.com/jobs/view/4431864175/", idea:"Golden Steer's video-storytelling hire is a fun add for the Job Board roundup &mdash; mostly-iPhone shot content is an easy hook for a hiring carousel." }
       ] },
     { key:"resource", label:"Resource Library", color:"#d58e32",
       desc:"Tools, templates, and recommendations members share or request.",
       timing:"Evergreen &mdash; batch into Resource Library roundups.",
       items:[
-        { title:"Recommended Resources", snippet:"The power of community truly lies in the space where you share resources that help with efficiency, saving money, and getting things done.", author:"Carli Roth", date:"2023-05-23", source:"circle", sourceLabel:"Circle · Resource Library", url:"https://community.the10thhouse.co/c/community-resources/recommended-resources" },
-        { title:"Miri downloaded a Resource lead magnet", snippet:"\"Building a Brand That Drives Demand (Not Just Traffic)\" playbook opt-in.", author:"Miri", date:"2026-08-03", source:"hubspot", sourceLabel:"HubSpot · Resource", idea:"Fresh opt-in today &mdash; good sign this brand/PR playbook resource is resonating; consider a Resource Library post pointing back to it." },
-        { title:"Cheyanne Skogen downloaded a Resource lead magnet", snippet:"\"Scaling DTC — From First Sale to Sustainable Growth\" opt-in.", author:"Cheyanne Skogen", date:"2026-08-01", source:"hubspot", sourceLabel:"HubSpot · Resource" }
+        { title:"Miri downloaded a Resource lead magnet", snippet:"\"Building a Brand That Drives Demand (Not Just Traffic)\" playbook opt-in.", author:"Miri", date:"2026-08-03", source:"hubspot", sourceLabel:"HubSpot · Resource", idea:"Fresh opt-in from today &mdash; good sign this brand/PR playbook resource is resonating; consider a Resource Library post pointing back to it." },
+        { title:"Cheyanne Skogen downloaded a Resource lead magnet", snippet:"\"Scaling DTC — From First Sale to Sustainable Growth\" opt-in.", author:"Cheyanne Skogen", date:"2026-08-01", source:"hubspot", sourceLabel:"HubSpot · Resource" },
+        { title:"ashley Kang downloaded a Resource lead magnet", snippet:"\"Building Your Role As The Founder\" (Founders Operating Manual) opt-in.", author:"ashley Kang", date:"2026-07-29", source:"hubspot", sourceLabel:"HubSpot · Resource" },
+        { title:"Purvi Jain downloaded a Resource lead magnet", snippet:"\"Building a Brand That Drives Demand (Not Just Traffic)\" playbook opt-in.", author:"Purvi Jain", date:"2026-07-27", source:"hubspot", sourceLabel:"HubSpot · Resource" },
+        { title:"Top Resources Needed", snippet:"Compiling a list of top resources for branding, accounting, marketing, legal, and accelerators for newer founders.", author:"Meredith McAllister", date:"2025-12-19", source:"circle", sourceLabel:"Circle · Resource Library", url:"https://community.the10thhouse.co/c/community-resources/top-resources-needed" }
       ] },
     { key:"engagement", label:"Engagement Series", color:"#3f0213",
       desc:"Giveaways and always-on engagement plays, e.g. the Summer CEO Giveaway.",
       timing:"Recurring series &mdash; keep a running tally of entries for reposts/winner picks.",
       gapNote:"No dedicated HubSpot form for giveaway entries &mdash; entries are tracked via Instagram/LinkedIn comments and DMs, not a form.",
-      calendarNote:"\"This is my office GIVEAWAY\" (CEO Club Giveaway) already posted to Instagram + LinkedIn Jul 16, 2026 (Katryna) &mdash; runs through Jul 31.",
+      calendarNote:"\"This is my office GIVEAWAY\" (CEO Club Giveaway) posted to Instagram + LinkedIn Jul 16, 2026 (Katryna) &mdash; ran through Jul 31, so it just wrapped; a winner-announcement post is due.",
       items:[
-        { title:"Wellness Giveaway — 100+ prizes worth ~$15,000", snippet:"Nearly 30 member entrepreneurs bundled together for a wellness giveaway to celebrate a platform launch.", author:"Alenka Kyslik", date:"2024-12-05", source:"circle", sourceLabel:"Circle · Member Offers", url:"https://community.the10thhouse.co/c/special-discounts/when-women-collaborate-incredible-things-happen-wellness-giveaway-over-100-prizes-worth-almost-15-000", idea:"Great model for a future multi-member giveaway collab — worth referencing when planning the next Engagement Series push after the Summer CEO Giveaway wraps." },
+        { title:"Wellness Giveaway — 100+ prizes worth ~$15,000", snippet:"Nearly 30 member entrepreneurs bundled together for a wellness giveaway to celebrate a platform launch.", author:"Alenka Kyslik", date:"2024-12-05", source:"circle", sourceLabel:"Circle · Member Offers", url:"https://community.the10thhouse.co/c/special-discounts/when-women-collaborate-incredible-things-happen-wellness-giveaway-over-100-prizes-worth-almost-15-000", idea:"Great model for a future multi-member giveaway collab &mdash; worth referencing when planning the next Engagement Series push now that the Summer CEO Giveaway has wrapped." },
+        { title:"IG Fall Home Spa Giveaway", snippet:"Two-member collab giveaway between Scentille and Gilly's Organics for a fall home spa bundle.", author:"NimmiChainani", date:"2024-10-25", source:"circle", sourceLabel:"Circle · Member Offers", url:"https://community.the10thhouse.co/c/special-discounts/ig-fall-home-spa-giveaway-scentille-x-gilly-s-organics-collab" },
+        { title:"Digital Advent Calendar for Your Business Growth", snippet:"24 days of curated tools and strategies as a holiday giveaway to close out the year.", author:"Ari Krzyzek", date:"2024-12-01", source:"circle", sourceLabel:"Circle · Member Offers", url:"https://community.the10thhouse.co/c/special-discounts/digital-advent-calendar-for-your-business-growth" },
         { title:"Website Giveaway", snippet:"Giving away a premium Showit website template (worth $450) to one lucky winner.", author:"Aubre Walther", date:"2023-11-08", source:"circle", sourceLabel:"Circle · Member Offers", url:"https://community.the10thhouse.co/c/special-discounts/website-giveaway-time" }
       ] },
     { key:"revenue", label:"Revenue Milestones", color:"#4a4f16",
       desc:"Member wins, revenue milestones, and spotlight-worthy moments &mdash; also feeds the newsletter's Member Spotlight and Member Milestones sections.",
       timing:"Evergreen &mdash; schedule to align with campaigns; also route to the newsletter team.",
       items:[
-        { title:"A Shining Moment", snippet:"Moving through the Nasdaq Entrepreneurial Center's Milestone Makers summer cohort — their first all-female cohort.", author:"Kelly Barnett", date:"2023-07-19", source:"circle", sourceLabel:"Circle · Celebrate Your Wins", url:"https://community.the10thhouse.co/c/news-room/a-shining-moment" },
+        { title:"After 18 months of work, Bloomest™ is finally live", snippet:"A multilingual postpartum companion app launched after 18 months of building &mdash; now available in 30 languages across 175+ countries.", author:"Natacha Lacroix", date:"2026-06-07", source:"circle", sourceLabel:"Circle · Celebrate Your Wins", url:"https://community.the10thhouse.co/c/news-room/after-18-months-of-work-bloomest-is-finally-live", idea:"Natacha's Bloomest launch (18 months, 30 languages, 175+ countries) is a strong Member Spotlight story &mdash; pull a line from her post for a milestone feed post." },
         { title:"Kait Fontenot submitted a Member Spotlight", snippet:"Submitted the Member Spotlight Form (hi@lovekait.com).", author:"Kait Fontenot", date:"2026-04-20", source:"hubspot", sourceLabel:"HubSpot · Member Spotlight Form", idea:"Route to the newsletter team for the Member Spotlight section, and pull one line for a social spotlight post too." },
         { title:"Celia Fern submitted Share your Wins", snippet:"Submitted the \"Share your Wins\" form (celiafern17@gmail.com).", author:"Celia Fern", date:"2026-04-19", source:"hubspot", sourceLabel:"HubSpot · Share your Wins" },
-        { title:"Keri O'Brien-Wytrwal submitted Share your Wins", snippet:"Submitted the \"Share your Wins\" form (keri@shipologyus...).", author:"Keri O'Brien-Wytrwal", date:"2025-09-04", source:"hubspot", sourceLabel:"HubSpot · Share your Wins" }
+        { title:"Studio Variously — 50+ 5-star reviews on 1stDibs", snippet:"Custom contemporary textiles brand hits 50+ 5-star reviews on 1stDibs in its 7th year retailing on the platform.", author:"Anjali Purohit", date:"2025-10-24", source:"circle", sourceLabel:"Circle · Celebrate Your Wins", url:"https://community.the10thhouse.co/c/news-room/what-started-with-a-small-yet-strong-collection-in-custom-designed-contemporary-textiles-for-home-decor-fashion-accessories-humbled-to-have-50-5-star-reviews-on-1stdibs-where-my-co-studio-variously-has-been-retailing-collections-7th-year-now" },
+        { title:"Ariel Brooks Benz submitted a Member Spotlight", snippet:"Submitted the Member Spotlight Form (ariel@bb3advertising.com).", author:"Ariel Brooks Benz", date:"2026-01-24", source:"hubspot", sourceLabel:"HubSpot · Member Spotlight Form" }
       ] },
     { key:"support", label:"Beta Requests & Member Support", color:"#a33920",
       desc:"Member-to-member help requests and beta/product feedback asks.",
       timing:"Group into roundup content or Stories unless there's a strong reason for a dedicated post.",
       items:[
-        { title:"eBook Help", snippet:"Trying to write an SEO ebook and need help — has anyone had experience writing one or know someone who could help?", author:"Stephanie Long", date:"2024-02-18", source:"circle", sourceLabel:"Circle · Ask the Community", url:"https://community.the10thhouse.co/c/ask-a-question/ebook-help" },
-        { title:"Angela Acosta submitted a Community Conversation", snippet:"Submitted \"Submit a Community Conversation\" (info@angelaatelier.com).", author:"Angela Acosta", date:"2026-06-28", source:"hubspot", sourceLabel:"HubSpot · Community Conversation" },
-        { title:"Ana Maria Moreno submitted a Community Conversation", snippet:"Submitted \"Submit a Community Conversation.\"", author:"Ana Maria Moreno", date:"2026-03-02", source:"hubspot", sourceLabel:"HubSpot · Community Conversation", idea:"Good candidate for a member-to-member support roundup or a Story quote — batch with the other Community Conversation submissions this month." }
+        { title:"Angela Acosta submitted a Community Conversation", snippet:"Submitted \"Submit a Community Conversation\" (info@angelaatelier.com).", author:"Angela Acosta", date:"2026-06-28", source:"hubspot", sourceLabel:"HubSpot · Community Conversation", idea:"Good candidate for a member-to-member support roundup or a Story quote &mdash; batch with the other Community Conversation submissions this month." },
+        { title:"Emily Fleming submitted a Community Conversation", snippet:"Submitted \"Submit a Community Conversation\" (emily@yogainclassroomsandschools.com).", author:"Emily Fleming", date:"2026-06-09", source:"hubspot", sourceLabel:"HubSpot · Community Conversation" },
+        { title:"Samantha Fackler submitted a Community Conversation", snippet:"Submitted \"Submit a Community Conversation\" (hi@samanthafackler.com).", author:"Samantha Fackler", date:"2026-04-27", source:"hubspot", sourceLabel:"HubSpot · Community Conversation" },
+        { title:"Meta help!", snippet:"Two years of going in circles trying to get a Meta account unbanned &mdash; asking for referrals or help.", author:"Gita Vellanki", date:"2025-03-07", source:"circle", sourceLabel:"Circle · Ask the Community", url:"https://community.the10thhouse.co/c/ask-a-question/meta-help" },
+        { title:"Legal help", snippet:"Looking for help drafting a simple agreement with a non-US startup founder for business development services.", author:"Mahathi Choudhry", date:"2024-08-18", source:"circle", sourceLabel:"Circle · Ask the Community", url:"https://community.the10thhouse.co/c/ask-a-question/legal-help" }
       ] },
     { key:"events", label:"Community Experiences & Events", color:"#d58e32",
       desc:"City Sessions, huddles, and virtual/in-person event highlights &mdash; launches, reminders, spotlights, and recaps.",
       timing:"Promote at key milestones: launch announcement, reminder, speaker/member spotlight, post-event recap.",
-      calendarNote:"\"City Session Series\" already posted to Instagram Jul 2, 2026 (Katryna); a Chapter Leads x Posting Guidelines asset for City Sessions is in progress in Canva.",
+      calendarNote:"\"City Session Series\" already posted to Instagram Jul 2, 2026 (Katryna); a Chapter Leads x Posting Guidelines asset for City Sessions is in progress in Canva. This pull's \"session\" keyword search against the Events space returned zero live Circle matches again &mdash; event highlights are coming through Huddle submissions instead.",
       items:[
-        { title:"No new live Circle event-space matches this pull", snippet:"The 10th House Events space had no fresh keyword matches on this pull — event highlights are currently coming through Huddle submissions instead.", author:"", date:"", source:"circle", sourceLabel:"Circle · 10th House Events", url:"" },
-        { title:"Anna Anisin submitted a Huddle", snippet:"Submitted a Huddle Submission (anna@formulatedby.com).", author:"Anna Anisin", date:"2026-07-31", source:"hubspot", sourceLabel:"HubSpot · Huddle Submission", idea:"Newest huddle submission — confirm topic/date with Anna, then plan a launch-announcement post per the events timing rule." },
-        { title:"Melaina Balbo submitted a Huddle", snippet:"Submitted a Huddle Submission (melaina@eatbis.com).", author:"Melaina Balbo", date:"2026-07-09", source:"hubspot", sourceLabel:"HubSpot · Huddle Submission" }
+        { title:"Anna Anisin submitted a Huddle", snippet:"Submitted a Huddle Submission (anna@formulatedby.com).", author:"Anna Anisin", date:"2026-07-31", source:"hubspot", sourceLabel:"HubSpot · Huddle Submission", idea:"Newest huddle submission &mdash; confirm topic/date with Anna, then plan a launch-announcement post per the events timing rule." },
+        { title:"Melaina Balbo submitted a Huddle", snippet:"Submitted a Huddle Submission (melaina@eatbis.com).", author:"Melaina Balbo", date:"2026-07-09", source:"hubspot", sourceLabel:"HubSpot · Huddle Submission" },
+        { title:"Jennifer Smiga submitted a Huddle", snippet:"Submitted a Huddle Submission (jen@ultravioletagency.com).", author:"Jennifer Smiga", date:"2026-07-02", source:"hubspot", sourceLabel:"HubSpot · Huddle Submission" },
+        { title:"Amore Philip submitted a Huddle", snippet:"Submitted a Huddle Submission (amore@aoprllc.com).", author:"Amore Philip", date:"2026-06-11", source:"hubspot", sourceLabel:"HubSpot · Huddle Submission" },
+        { title:"Diana B Danford submitted a Huddle", snippet:"Submitted a Huddle Submission (dcdanford@kur-health.com).", author:"Diana B Danford", date:"2026-06-10", source:"hubspot", sourceLabel:"HubSpot · Huddle Submission" }
       ] }
   ],
   calendarHighlights: [
@@ -205,7 +218,7 @@ var DATA = {
 
 function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 function fmtDate(iso){ if(!iso) return "&mdash;"; var d=new Date(iso); if(isNaN(d)) return iso; return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-function isNew(iso){ if(!iso) return false; var d=new Date(iso); if(isNaN(d)) return false; return (new Date('2026-08-03').getTime()-d.getTime()) < 7*24*3600*1000; }
+function isNew(iso){ if(!iso) return false; var d=new Date(iso); if(isNaN(d)) return false; return (new Date('2026-08-04').getTime()-d.getTime()) < 7*24*3600*1000; }
 
 function statusPill(status){
   var cls = /posted|live/i.test(status||'') ? 'calendar' : '';
@@ -252,7 +265,7 @@ function renderCategory(cat){
   if (cat.calendarNote) html += '<div class="gap-box" style="background:rgba(106,156,31,0.1);border-left-color:#6a9c1f;"><strong>Already on the calendar</strong>'+cat.calendarNote+'</div>';
   html += '<div class="fb-section-head"><h2>Items to review</h2><span class="fb-count-badge">'+cat.items.length+'</span></div>';
   html += '<div class="fb-stack">' + cat.items.map(cardHtml).join('') + '</div>';
-  html += '<div class="footer-note">Snapshot captured Aug 3, 2026 from the live Circle feed, HubSpot form-submission contacts, and Job Board intake sheet. Pink "Post idea" lines are Claude-suggested starting points — review and edit before publishing.</div>';
+  html += '<div class="footer-note">Snapshot captured Aug 4, 2026 from the live Circle feed, HubSpot form-submission contacts, and Job Board intake sheet. Pink "Post idea" lines are Claude-suggested starting points — review and edit before publishing.</div>';
   document.getElementById('panel_'+cat.key).innerHTML = html;
 }
 
@@ -267,7 +280,7 @@ function renderDigest(){
     '<div class="stat-card"><div class="num">'+s.gapCount+'</div><div class="label">Categories missing a form</div></div>' +
     '</div>';
 
-  html += '<div class="quick-take"><h2>Highlights from this snapshot</h2><div class="fb-sub">Pulled Aug 3, 2026 across all 8 categories &mdash; vet these first before drafting the Monday recap.</div><div class="fb-stack">';
+  html += '<div class="quick-take"><h2>Highlights from this snapshot</h2><div class="fb-sub">Pulled Aug 4, 2026 across all 8 categories &mdash; vet these first before drafting the Monday recap.</div><div class="fb-stack">';
   allItems.filter(function(i){return i.idea;}).slice(0,6).forEach(function(i){
     html += '<div class="cc-card" style="border-left-color:'+i.categoryColor+';"><div class="cc-title">'+esc(i.title)+' <span class="cc-cat-tag">'+esc(i.categoryLabel)+'</span></div>' +
       (i.snippet ? '<div class="cc-snippet">'+esc(i.snippet)+'</div>' : '') +
@@ -296,7 +309,7 @@ function renderDigest(){
     '<div class="timing-item"><strong>Form submissions</strong>Group into roundups or Stories unless there&#39;s a strong reason for a dedicated post.</div>' +
     '</div></div>';
 
-  html += '<div class="footer-note">This is a static, point-in-time snapshot generated from the live Cowork dashboard on Aug 3, 2026. For a version that re-checks Circle, HubSpot, and the calendar every time you open it, use the live "Community Social Content Hub" artifact in Cowork.</div>';
+  html += '<div class="footer-note">This is a static, point-in-time snapshot generated from the live Cowork dashboard on Aug 4, 2026. For a version that re-checks Circle, HubSpot, and the calendar every time you open it, use the live "Community Social Content Hub" artifact in Cowork.</div>';
 
   document.getElementById('panel_digest').innerHTML = html;
 }
