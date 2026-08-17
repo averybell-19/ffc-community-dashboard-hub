@@ -11,241 +11,217 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FFC Community Hub</title>
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0; padding: 32px 24px 60px;
-    background: #fcf3ed; color: #1a1a1a;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  }
-  .wrap { max-width: 960px; margin: 0 auto; }
-  h1 { font-size: 24px; margin: 0 0 6px; font-weight: 800; color: #3f0213; letter-spacing: -0.01em; }
-  .subtitle { color: #6b573a; font-size: 13.5px; margin-bottom: 16px; line-height: 1.5; max-width: 680px; }
-
-  /* ---- jump nav ---- */
-  .subnav {
-    display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 28px;
-    position: sticky; top: 0; padding: 10px 0; background: #fcf3ed; z-index: 10;
-    border-bottom: 1px solid #e2cec3;
-  }
-  .subnav a {
-    font-size: 11.5px; font-weight: 700; color: #3f0213; background: #fff;
-    border: 1px solid #e2cec3; border-radius: 20px; padding: 6px 13px; text-decoration: none;
-    white-space: nowrap;
-  }
-  .subnav a:hover { background: #f5daf3; border-color: #eab8e9; }
-  .subnav a.dash-pill { background: linear-gradient(135deg, #eab8e9, #d58e32); color: #3f0213; border-color: #d58e32; }
-  .subnav a.dash-pill:hover { opacity: 0.88; }
-
-  /* ---- link legend ---- */
-  .link-legend {
-    display: flex; align-items: center; gap: 8px; background: #ece6fc; border: 1px solid #cfc2f5;
-    border-radius: 10px; padding: 9px 14px; font-size: 12px; color: #33265c; margin-bottom: 22px; line-height: 1.5;
-  }
-  .link-legend .lg-icon { font-size: 14px; }
-
-  /* ---- section shell ---- */
-  .section { margin-bottom: 36px; scroll-margin-top: 56px; }
-  .section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
-  .section-head h2 { font-size: 18px; margin: 0; color: #3f0213; font-weight: 800; display: flex; align-items: center; gap: 9px; }
-  .sec-num {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 50%; background: #3f0213; color: #fcf3ed;
-    font-size: 11px; font-weight: 800; flex-shrink: 0;
-  }
-  .section-sub { font-size: 12px; color: #8a7a5c; margin-bottom: 14px; }
-  .refresh-pill {
-    display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px;
-    border-radius: 20px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
-    background: #e7ecd6; color: #4a4f16; white-space: nowrap;
-  }
-
-  /* ---- overview grid (Q&A cards) ---- */
-  .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-  .overview-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-  @media (max-width: 800px) { .overview-grid, .overview-grid.cols-3 { grid-template-columns: 1fr; } }
-  .ov-card {
-    background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px;
-    padding: 16px 18px; box-shadow: 0 1px 4px rgba(85,61,1,0.05);
-    display: flex; flex-direction: column;
-  }
-  .ov-card.full { grid-column: 1 / -1; }
-  .ov-card h3 { font-size: 13px; margin: 0 0 8px; color: #3f0213; font-weight: 800; }
-  .ov-card p, .ov-card li { font-size: 12.5px; color: #4a4a52; line-height: 1.55; margin: 0 0 6px; }
-  .ov-card ol, .ov-card ul { margin: 0; padding-left: 18px; }
-  .punch-list { padding-left: 20px !important; }
-  .punch-list li { margin-bottom: 9px; }
-  .punch-list li strong { color: #3f0213; }
-  .ov-card .cap { font-size: 11px; color: #8a7a5c; margin-top: 6px; }
-  .ov-card > *:last-child { margin-bottom: 0; }
-
-  /* ---- source links ---- */
-  .src-row {
-    margin-top: auto; padding-top: 10px; border-top: 1px dashed #e2cec3;
-    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
-  }
-  .src-label { font-size: 10px; color: #8a7a5c; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-right: 2px; }
-  .src-link {
-    font-size: 11.5px; color: #6b3a66; background: #f5daf3; border-radius: 12px;
-    padding: 3px 10px; text-decoration: none; font-weight: 700; white-space: nowrap;
-    display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(107,58,102,0.25);
-  }
-  .src-link::before { content: "🔗"; font-size: 0.85em; }
-  .src-link:hover { background: #eab8e9; color: #3f0213; text-decoration: underline; }
-  .src-link.alt { background: #e7ecd6; color: #3d4211; border-color: rgba(61,66,17,0.25); }
-  .src-link.alt:hover { background: #cbd6a3; }
-
-  /* ---- exec visibility ---- */
-  .quote-block {
-    background: #f5daf3; border-left: 4px solid #eab8e9; border-radius: 8px;
-    padding: 10px 14px; font-size: 12.5px; color: #3f0213; line-height: 1.5; margin-bottom: 10px;
-    display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap;
-  }
-  .quote-block .qtext { flex: 1; min-width: 200px; }
-  .quote-block .who { display: block; font-size: 11px; font-weight: 700; color: #6b3a66; margin-top: 4px; }
-  .quote-block .q-link {
-    font-size: 11px; font-weight: 700; color: #6b3a66; text-decoration: none;
-    background: rgba(255,255,255,0.55); border-radius: 12px; padding: 4px 10px; white-space: nowrap;
-    border: 1px solid rgba(107,58,102,0.3);
-  }
-  .quote-block .q-link::before { content: "🔗 "; }
-  .quote-block .q-link:hover { background: #fff; color: #3f0213; text-decoration: underline; }
-  .rp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 4px; }
-  @media (max-width: 700px) { .rp-grid { grid-template-columns: 1fr; } }
-  .rp-card { border-radius: 12px; padding: 14px 16px; font-size: 12.5px; line-height: 1.55; display: flex; flex-direction: column; }
-  .rp-card.risk { background: #f6ddd2; border: 1px solid #e2b7a3; color: #6b2c12; }
-  .rp-card.opp { background: #e7ecd6; border: 1px solid #cbd6a3; color: #3d4211; }
-  .rp-card h4 { margin: 0 0 6px; font-size: 12px; font-weight: 800; }
-  .rp-card .src-row { border-top-color: rgba(0,0,0,0.12); }
-  .rp-card.risk .src-link { background: #fff; color: #6b2c12; }
-  .rp-card.opp .src-link { background: #fff; color: #3d4211; }
-  .stat-line { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-  .stat-chip {
-    background: #e7ecd6; border-radius: 8px; padding: 6px 12px;
-    font-size: 12px; color: #4a4f16; font-weight: 700;
-  }
-  .stat-chip span { font-weight: 400; opacity: 0.8; margin-left: 4px; }
-
-  /* ---- cross-functional ---- */
-  .highlight-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
-  .highlight-row {
-    display: flex; flex-direction: column; gap: 6px; background: #fffef7;
-    border: 1px solid #e2cec3; border-radius: 10px; padding: 12px 16px; font-size: 12.5px;
-  }
-  .hl-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  .highlight-row .name { font-weight: 800; color: #3f0213; white-space: nowrap; font-size: 13.5px; }
-  .hl-meta { font-size: 11px; font-weight: 700; color: #a3672f; text-transform: uppercase; letter-spacing: 0.03em; }
-  .highlight-row .why { color: #4a4a52; line-height: 1.5; }
-  .highlight-row .src-link { align-self: flex-start; }
-  .cat-tag {
-    font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
-    padding: 3px 8px; border-radius: 10px; white-space: nowrap;
-  }
-  .cat-tag.cat-fund { background: #3f0213; color: #fcf3ed; }
-  .cat-tag.cat-partner { background: #f5daf3; color: #6b3a66; }
-  .cat-tag.cat-event { background: #e7ecd6; color: #3d4211; }
-  .loop-box {
-    background: #f6ecdd; border: 1px solid #e2cec3; border-radius: 10px;
-    padding: 12px 16px; font-size: 12.5px; color: #4a4f16; line-height: 1.6;
-  }
-  .loop-box strong { color: #3f0213; }
-  .loop-box .example { display: block; margin-top: 6px; font-style: italic; color: #6b573a; }
-
-  /* ---- bottom dashboard cards (unchanged design) ---- */
-  .cards { display: flex; flex-direction: column; gap: 16px; }
-  .card {
-    background: #fffef7; border: 1px solid #e2cec3; border-radius: 14px;
-    padding: 20px 22px; box-shadow: 0 1px 4px rgba(85,61,1,0.06);
-    border-left: 4px solid #4a4f16;
-  }
-  .card.pink { border-left-color: #eab8e9; }
-  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
-  .card-head h2 { font-size: 16.5px; margin: 0; color: #3f0213; font-weight: 800; }
-  .status-pill {
-    display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px;
-    border-radius: 20px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
-  }
-  .status-pill.snapshot { background: #f5daf3; color: #3f0213; }
-  .status-pill.pending { background: #f3e2c2; color: #6b4a12; }
-  .card-desc { font-size: 13px; color: #4a4a52; line-height: 1.55; margin-bottom: 14px; }
-  .card-desc-list { font-size: 13px; color: #4a4a52; line-height: 1.55; margin: 0 0 14px; padding-left: 18px; }
-  .card-desc-list li { margin-bottom: 3px; }
-  .card-desc-list .soon { color: #8a7a5c; font-style: italic; }
-  .stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
-  .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-  .open-btn {
-    display: inline-block; background: linear-gradient(135deg, #eab8e9, #d58e32);
-    color: #3f0213; text-decoration: none; font-size: 13px; font-weight: 700;
-    padding: 9px 18px; border-radius: 8px; box-shadow: 0 1px 3px rgba(234,184,233,0.4);
-  }
-  .open-btn:hover { opacity: 0.92; }
-  .updated { font-size: 11.5px; color: #8a7a5c; }
-  .note-box {
-    background: #f6ecdd; border: 1px solid #e2cec3; border-radius: 10px;
-    padding: 12px 16px; font-size: 12.5px; color: #4a4f16; line-height: 1.55; margin-top: 24px;
-  }
-  .note-box strong { color: #3f0213; }
-  .footer-note { font-size: 11px; color: #8a7a5c; margin-top: 18px; text-align: center; }
-  .divider { border: none; border-top: 1px solid #e2cec3; margin: 8px 0 32px; }
-
-  /* ---- dashboards banner (stands apart from monthly briefing above) ---- */
-  .dash-banner {
-    background: linear-gradient(180deg, #fffaf2, #f8ecda);
-    border: 2px solid #d58e32; border-radius: 22px; padding: 26px 26px 24px;
-    box-shadow: 0 4px 18px rgba(213,142,50,0.16);
-  }
-  .dash-kicker {
-    display: inline-flex; align-items: center; gap: 6px; background: #3f0213; color: #fcf3ed;
-    font-size: 10.5px; font-weight: 800; letter-spacing: 0.08em; padding: 4px 11px; border-radius: 20px;
-    margin-bottom: 10px;
-  }
-  .dash-banner .section-head h2 { font-size: 20px; }
-  .dash-banner .sec-num { background: #d58e32; }
-  .dash-banner .section-sub { font-size: 12.5px; color: #6b573a; }
-  .dash-banner .cards { margin-top: 18px; }
-  .dash-banner .card { border-width: 1.5px; box-shadow: 0 2px 8px rgba(85,61,1,0.09); }
-  .dash-banner .card-head h2 { font-size: 17.5px; }
-  .live-dot {
-    display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #4a4f16;
-    margin-right: 5px; box-shadow: 0 0 0 2px rgba(74,79,22,0.15);
-  }
-
-  /* ---- page guide (orientation grid, shown once at top) ---- */
-  .page-guide {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px;
-  }
-  @media (max-width: 800px) { .page-guide { grid-template-columns: 1fr 1fr; } }
-  .guide-cell {
-    background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px; padding: 13px 14px;
-    text-decoration: none; display: block; box-shadow: 0 1px 4px rgba(85,61,1,0.05);
-  }
-  .guide-cell:hover { border-color: #d58e32; }
-  .guide-num {
-    display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px;
-    border-radius: 50%; background: #3f0213; color: #fcf3ed; font-size: 10.5px; font-weight: 800; margin-bottom: 7px;
-  }
-  .guide-title { font-size: 12.5px; font-weight: 800; color: #3f0213; margin-bottom: 4px; }
-  .guide-desc { font-size: 11px; color: #6b573a; line-height: 1.45; }
-  .guide-cell.gold { background: linear-gradient(180deg, #fffaf2, #f8ecda); border: 1.5px solid #d58e32; }
-  .guide-cell.gold .guide-num { background: #d58e32; }
-
-  /* ---- subsection dividers within a main section ---- */
-  .subsec { margin: 20px 0 12px; padding-top: 16px; border-top: 1px dashed #e2cec3; }
-  .subsec:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
-  .subsec-label {
-    font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
-    color: #a3672f; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
-  }
-
-  /* ---- floating jump-to-dashboards button ---- */
-  .jump-fab {
-    position: fixed; bottom: 22px; right: 22px; z-index: 500;
-    background: linear-gradient(135deg, #eab8e9, #d58e32); color: #3f0213; text-decoration: none;
-    font-size: 12.5px; font-weight: 800; padding: 11px 18px; border-radius: 30px;
-    box-shadow: 0 4px 14px rgba(63,2,19,0.25); display: flex; align-items: center; gap: 6px;
-  }
-  .jump-fab:hover { opacity: 0.92; }
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; padding: 32px 24px 60px;
+  background: #fcf3ed; color: #1a1a1a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+.wrap { max-width: 960px; margin: 0 auto; }
+h1 { font-size: 24px; margin: 0 0 6px; font-weight: 800; color: #3f0213; letter-spacing: -0.01em; }
+.subtitle { color: #6b573a; font-size: 13.5px; margin-bottom: 16px; line-height: 1.5; max-width: 680px; }
+.subnav {
+  display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 28px;
+  position: sticky; top: 0; padding: 10px 0; background: #fcf3ed; z-index: 10;
+  border-bottom: 1px solid #e2cec3;
+}
+.subnav a {
+  font-size: 11.5px; font-weight: 700; color: #3f0213; background: #fff;
+  border: 1px solid #e2cec3; border-radius: 20px; padding: 6px 13px; text-decoration: none;
+  white-space: nowrap;
+}
+.subnav a:hover { background: #f5daf3; border-color: #eab8e9; }
+.subnav a.dash-pill { background: linear-gradient(135deg, #eab8e9, #d58e32); color: #3f0213; border-color: #d58e32; }
+.subnav a.dash-pill:hover { opacity: 0.88; }
+.link-legend {
+  display: flex; align-items: center; gap: 8px; background: #ece6fc; border: 1px solid #cfc2f5;
+  border-radius: 10px; padding: 9px 14px; font-size: 12px; color: #33265c; margin-bottom: 22px; line-height: 1.5;
+}
+.link-legend .lg-icon { font-size: 14px; }
+.section { margin-bottom: 36px; scroll-margin-top: 56px; }
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.section-head h2 { font-size: 18px; margin: 0; color: #3f0213; font-weight: 800; display: flex; align-items: center; gap: 9px; }
+.sec-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%; background: #3f0213; color: #fcf3ed;
+  font-size: 11px; font-weight: 800; flex-shrink: 0;
+}
+.section-sub { font-size: 12px; color: #8a7a5c; margin-bottom: 14px; }
+.refresh-pill {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px;
+  border-radius: 20px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
+  background: #e7ecd6; color: #4a4f16; white-space: nowrap;
+}
+.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.overview-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 800px) { .overview-grid, .overview-grid.cols-3 { grid-template-columns: 1fr; } }
+.ov-card {
+  background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px;
+  padding: 16px 18px; box-shadow: 0 1px 4px rgba(85,61,1,0.05);
+  display: flex; flex-direction: column;
+}
+.ov-card.full { grid-column: 1 / -1; }
+.ov-card h3 { font-size: 13px; margin: 0 0 8px; color: #3f0213; font-weight: 800; }
+.ov-card p, .ov-card li { font-size: 12.5px; color: #4a4a52; line-height: 1.55; margin: 0 0 6px; }
+.ov-card ol, .ov-card ul { margin: 0; padding-left: 18px; }
+.punch-list { padding-left: 20px !important; }
+.punch-list li { margin-bottom: 9px; }
+.punch-list li strong { color: #3f0213; }
+.ov-card .cap { font-size: 11px; color: #8a7a5c; margin-top: 6px; }
+.ov-card > *:last-child { margin-bottom: 0; }
+.src-row {
+  margin-top: auto; padding-top: 10px; border-top: 1px dashed #e2cec3;
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+}
+.src-label { font-size: 10px; color: #8a7a5c; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-right: 2px; }
+.src-link {
+  font-size: 11.5px; color: #6b3a66; background: #f5daf3; border-radius: 12px;
+  padding: 3px 10px; text-decoration: none; font-weight: 700; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(107,58,102,0.25);
+}
+.src-link::before { content: "🔗"; font-size: 0.85em; }
+.src-link:hover { background: #eab8e9; color: #3f0213; text-decoration: underline; }
+.src-link.alt { background: #e7ecd6; color: #3d4211; border-color: rgba(61,66,17,0.25); }
+.src-link.alt:hover { background: #cbd6a3; }
+.quote-block {
+  background: #f5daf3; border-left: 4px solid #eab8e9; border-radius: 8px;
+  padding: 10px 14px; font-size: 12.5px; color: #3f0213; line-height: 1.5; margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap;
+}
+.quote-block .qtext { flex: 1; min-width: 200px; }
+.quote-block .who { display: block; font-size: 11px; font-weight: 700; color: #6b3a66; margin-top: 4px; }
+.quote-block .q-link {
+  font-size: 11px; font-weight: 700; color: #6b3a66; text-decoration: none;
+  background: rgba(255,255,255,0.55); border-radius: 12px; padding: 4px 10px; white-space: nowrap;
+  border: 1px solid rgba(107,58,102,0.3);
+}
+.quote-block .q-link::before { content: "🔗 "; }
+.quote-block .q-link:hover { background: #fff; color: #3f0213; text-decoration: underline; }
+.rp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 4px; }
+@media (max-width: 700px) { .rp-grid { grid-template-columns: 1fr; } }
+.rp-card { border-radius: 12px; padding: 14px 16px; font-size: 12.5px; line-height: 1.55; display: flex; flex-direction: column; }
+.rp-card.risk { background: #f6ddd2; border: 1px solid #e2b7a3; color: #6b2c12; }
+.rp-card.opp { background: #e7ecd6; border: 1px solid #cbd6a3; color: #3d4211; }
+.rp-card h4 { margin: 0 0 6px; font-size: 12px; font-weight: 800; }
+.rp-card .src-row { border-top-color: rgba(0,0,0,0.12); }
+.rp-card.risk .src-link { background: #fff; color: #6b2c12; }
+.rp-card.opp .src-link { background: #fff; color: #3d4211; }
+.stat-line { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.stat-chip {
+  background: #e7ecd6; border-radius: 8px; padding: 6px 12px;
+  font-size: 12px; color: #4a4f16; font-weight: 700;
+}
+.stat-chip span { font-weight: 400; opacity: 0.8; margin-left: 4px; }
+.highlight-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.highlight-row {
+  display: flex; flex-direction: column; gap: 6px; background: #fffef7;
+  border: 1px solid #e2cec3; border-radius: 10px; padding: 12px 16px; font-size: 12.5px;
+}
+.hl-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.highlight-row .name { font-weight: 800; color: #3f0213; white-space: nowrap; font-size: 13.5px; }
+.hl-meta { font-size: 11px; font-weight: 700; color: #a3672f; text-transform: uppercase; letter-spacing: 0.03em; }
+.highlight-row .why { color: #4a4a52; line-height: 1.5; }
+.highlight-row .src-link { align-self: flex-start; }
+.cat-tag {
+  font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: 10px; white-space: nowrap;
+}
+.cat-tag.cat-fund { background: #3f0213; color: #fcf3ed; }
+.cat-tag.cat-partner { background: #f5daf3; color: #6b3a66; }
+.cat-tag.cat-event { background: #e7ecd6; color: #3d4211; }
+.loop-box {
+  background: #f6ecdd; border: 1px solid #e2cec3; border-radius: 10px;
+  padding: 12px 16px; font-size: 12.5px; color: #4a4f16; line-height: 1.6;
+}
+.loop-box strong { color: #3f0213; }
+.loop-box .example { display: block; margin-top: 6px; font-style: italic; color: #6b573a; }
+.cards { display: flex; flex-direction: column; gap: 16px; }
+.card {
+  background: #fffef7; border: 1px solid #e2cec3; border-radius: 14px;
+  padding: 20px 22px; box-shadow: 0 1px 4px rgba(85,61,1,0.06);
+  border-left: 4px solid #4a4f16;
+}
+.card.pink { border-left-color: #eab8e9; }
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.card-head h2 { font-size: 16.5px; margin: 0; color: #3f0213; font-weight: 800; }
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px;
+  border-radius: 20px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
+}
+.status-pill.snapshot { background: #f5daf3; color: #3f0213; }
+.status-pill.pending { background: #f3e2c2; color: #6b4a12; }
+.card-desc { font-size: 13px; color: #4a4a52; line-height: 1.55; margin-bottom: 14px; }
+.card-desc-list { font-size: 13px; color: #4a4a52; line-height: 1.55; margin: 0 0 14px; padding-left: 18px; }
+.card-desc-list li { margin-bottom: 3px; }
+.card-desc-list .soon { color: #8a7a5c; font-style: italic; }
+.stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.open-btn {
+  display: inline-block; background: linear-gradient(135deg, #eab8e9, #d58e32);
+  color: #3f0213; text-decoration: none; font-size: 13px; font-weight: 700;
+  padding: 9px 18px; border-radius: 8px; box-shadow: 0 1px 3px rgba(234,184,233,0.4);
+}
+.open-btn:hover { opacity: 0.92; }
+.updated { font-size: 11.5px; color: #8a7a5c; }
+.note-box {
+  background: #f6ecdd; border: 1px solid #e2cec3; border-radius: 10px;
+  padding: 12px 16px; font-size: 12.5px; color: #4a4f16; line-height: 1.55; margin-top: 24px;
+}
+.note-box strong { color: #3f0213; }
+.footer-note { font-size: 11px; color: #8a7a5c; margin-top: 18px; text-align: center; }
+.divider { border: none; border-top: 1px solid #e2cec3; margin: 8px 0 32px; }
+.dash-banner {
+  background: linear-gradient(180deg, #fffaf2, #f8ecda);
+  border: 2px solid #d58e32; border-radius: 22px; padding: 26px 26px 24px;
+  box-shadow: 0 4px 18px rgba(213,142,50,0.16);
+}
+.dash-kicker {
+  display: inline-flex; align-items: center; gap: 6px; background: #3f0213; color: #fcf3ed;
+  font-size: 10.5px; font-weight: 800; letter-spacing: 0.08em; padding: 4px 11px; border-radius: 20px;
+  margin-bottom: 10px;
+}
+.dash-banner .section-head h2 { font-size: 20px; }
+.dash-banner .sec-num { background: #d58e32; }
+.dash-banner .section-sub { font-size: 12.5px; color: #6b573a; }
+.dash-banner .cards { margin-top: 18px; }
+.dash-banner .card { border-width: 1.5px; box-shadow: 0 2px 8px rgba(85,61,1,0.09); }
+.dash-banner .card-head h2 { font-size: 17.5px; }
+.live-dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #4a4f16;
+  margin-right: 5px; box-shadow: 0 0 0 2px rgba(74,79,22,0.15);
+}
+.page-guide {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px;
+}
+@media (max-width: 800px) { .page-guide { grid-template-columns: 1fr 1fr; } }
+.guide-cell {
+  background: #fffef7; border: 1px solid #e2cec3; border-radius: 12px; padding: 13px 14px;
+  text-decoration: none; display: block; box-shadow: 0 1px 4px rgba(85,61,1,0.05);
+}
+.guide-cell:hover { border-color: #d58e32; }
+.guide-num {
+  display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px;
+  border-radius: 50%; background: #3f0213; color: #fcf3ed; font-size: 10.5px; font-weight: 800; margin-bottom: 7px;
+}
+.guide-title { font-size: 12.5px; font-weight: 800; color: #3f0213; margin-bottom: 4px; }
+.guide-desc { font-size: 11px; color: #6b573a; line-height: 1.45; }
+.guide-cell.gold { background: linear-gradient(180deg, #fffaf2, #f8ecda); border: 1.5px solid #d58e32; }
+.guide-cell.gold .guide-num { background: #d58e32; }
+.subsec { margin: 20px 0 12px; padding-top: 16px; border-top: 1px dashed #e2cec3; }
+.subsec:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+.subsec-label {
+  font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+  color: #a3672f; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.jump-fab {
+  position: fixed; bottom: 22px; right: 22px; z-index: 500;
+  background: linear-gradient(135deg, #eab8e9, #d58e32); color: #3f0213; text-decoration: none;
+  font-size: 12.5px; font-weight: 800; padding: 11px 18px; border-radius: 30px;
+  box-shadow: 0 4px 14px rgba(63,2,19,0.25); display: flex; align-items: center; gap: 6px;
+}
+.jump-fab:hover { opacity: 0.92; }
 </style>
 </head>
 <body>
@@ -281,348 +257,339 @@
 })();
 </script>
 <div class="wrap">
-  <h1>FFC Community Hub</h1>
-  <div class="subtitle">Monthly community briefing, up top — plus quick links to the 4 pinned live dashboards below.</div>
+<h1>FFC Community Hub</h1>
+<div class="subtitle">Monthly community briefing, up top — plus quick links to the 4 pinned live dashboards below.</div>
 
-  <div class="link-legend"><span class="lg-icon">🔗</span> Every pink pill marked with a <strong>🔗</strong> is a live link — click it to open the original Circle post in a new tab and read the full conversation.</div>
+<div class="link-legend"><span class="lg-icon">🔗</span> Every pink pill marked with a <strong>🔗</strong> is a live link — click it to open the original Circle post in a new tab and read the full conversation.</div>
+<div class="page-guide">
+  <a class="guide-cell" href="#community-overview">
+    <div class="guide-num">1</div>
+    <div class="guide-title">Community Overview</div>
+    <div class="guide-desc">What members are talking about, and what each team should take from it.</div>
+  </a>
+  <a class="guide-cell" href="#executive-visibility">
+    <div class="guide-num">2</div>
+    <div class="guide-title">Executive Visibility</div>
+    <div class="guide-desc">The strongest fundraising, partnership, and event-hosting moves this month.</div>
+  </a>
+  <a class="guide-cell" href="#cross-functional">
+    <div class="guide-num">3</div>
+    <div class="guide-title">Cross-Functional</div>
+    <div class="guide-desc">Members to spotlight — fundraising, partnerships, and event hosting.</div>
+  </a>
+  <a class="guide-cell gold" href="#dashboards">
+    <div class="guide-num">4</div>
+    <div class="guide-title">⭐ Full Dashboards</div>
+    <div class="guide-desc">The 4 live, daily-refreshed tools — start here if you only have 2 minutes.</div>
+  </a>
+</div>
 
-  <!-- ============ PAGE GUIDE (orientation — what's where) ============ -->
-  <div class="page-guide">
-    <a class="guide-cell" href="#community-overview">
-      <div class="guide-num">1</div>
-      <div class="guide-title">Community Overview</div>
-      <div class="guide-desc">What members are talking about, and what each team should take from it.</div>
-    </a>
-    <a class="guide-cell" href="#executive-visibility">
-      <div class="guide-num">2</div>
-      <div class="guide-title">Executive Visibility</div>
-      <div class="guide-desc">The strongest fundraising, partnership, and event-hosting moves this month.</div>
-    </a>
-    <a class="guide-cell" href="#cross-functional">
-      <div class="guide-num">3</div>
-      <div class="guide-title">Cross-Functional</div>
-      <div class="guide-desc">Members to spotlight — fundraising, partnerships, and event hosting.</div>
-    </a>
-    <a class="guide-cell gold" href="#dashboards">
-      <div class="guide-num">4</div>
-      <div class="guide-title">⭐ Full Dashboards</div>
-      <div class="guide-desc">The 4 live, daily-refreshed tools — start here if you only have 2 minutes.</div>
-    </a>
+<div class="subnav">
+  <a href="#community-overview">① Community Overview</a>
+  <a href="#executive-visibility">② Executive Visibility</a>
+  <a href="#cross-functional">③ Cross-Functional</a>
+  <a href="#dashboards" class="dash-pill">④ Full Dashboards ↓</a>
+</div>
+
+<div class="section" id="community-overview">
+  <div class="section-head">
+    <h2><span class="sec-num">1</span>Community Overview</h2>
+    <span class="refresh-pill">REFRESHED MONTHLY · JUL 28, 2026</span>
   </div>
+  <div class="section-sub">Rolling last 30 days · Circle main discussion spaces (Ask the Community, 10th House Hub, Partnerships &amp; Collabs, Hiring &amp; Talent, Fundraising &amp; Investors, Local Founders, Fashion) + HubSpot cancellation data · 86 posts analyzed · re-verified against source data Jul 28 (SeedHer had zero posts this cycle — excluded until active again)</div>
 
-  <div class="subnav">
-    <a href="#community-overview">① Community Overview</a>
-    <a href="#executive-visibility">② Executive Visibility</a>
-    <a href="#cross-functional">③ Cross-Functional</a>
-    <a href="#dashboards" class="dash-pill">④ Full Dashboards ↓</a>
-  </div>
-
-  <!-- ============ COMMUNITY OVERVIEW ============ -->
-  <div class="section" id="community-overview">
-    <div class="section-head">
-      <h2><span class="sec-num">1</span>Community Overview</h2>
-      <span class="refresh-pill">REFRESHED MONTHLY · JUL 28, 2026</span>
-    </div>
-    <div class="section-sub">Rolling last 30 days · Circle main discussion spaces (Ask the Community, 10th House Hub, Partnerships &amp; Collabs, Hiring &amp; Talent, Fundraising &amp; Investors, Local Founders, Fashion) + HubSpot cancellation data · 86 posts analyzed · re-verified against source data Jul 28 (SeedHer had zero posts this cycle — excluded until active again)</div>
-
-    <div class="subsec">
-      <div class="subsec-label">🗣️ What the community is talking about</div>
-      <div class="overview-grid">
-        <div class="ov-card">
-          <h3>Top 5 themes members are talking about</h3>
-          <ol>
-            <li>Vendor &amp; service-provider referrals (packaging/MOQ, manufacturing, 3PL, legal, PR, dev, trademark)</li>
-            <li>Partnership &amp; collab requests (brand collabs, swag bags, event co-hosting)</li>
-            <li>Founder visibility &amp; mindset (self-promotion discomfort, burnout, community-as-support)</li>
-            <li>AI tools entering daily workflows (site-building, agentic brand systems, AI search shift) — still early/low-volume, worth watching rather than acting on yet</li>
-            <li>Fundraising &amp; alternative capital (crowdfunding, angel investment, creator equity)</li>
-          </ol>
-          <div class="src-row">
-            <span class="src-label">Linked posts:</span>
-            <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/us-apparel-factory-and-or-patternmaker-needed" target="_blank">Factory recco needed</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/trademark-attorney-recco-needed-flat-fee" target="_blank">Trademark attorney recco</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">Collab request</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/fashion/fashion-huddle-building-agentically-friday-7-9-12pm-pst" target="_blank">Building agentically</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/deal-flow/the-mindful-wardrobe-fundraising" target="_blank">Fundraising post</a>
-          </div>
-        </div>
-        <div class="ov-card">
-          <h3>What's changing</h3>
-          <ul class="punch-list">
-            <li>AI adoption is visibly entering member workflows — website building, agentic brand systems, SEO/search shifts. This wasn't a visible thread a few months ago.</li>
-            <li>Members are reframing "visibility" from a marketing/content problem to a support/community problem.</li>
-            <li>Staff-run summer engagement campaigns (Founder Fuel, CEO Club) are driving some of the highest comment counts in recent history.</li>
-            <li><strong>Newly flagged:</strong> the single highest-engagement post this cycle wasn't a staff campaign — it's an organic peer "let's grow our Instagrams together" thread (16 comments). Peer-to-peer growth support is resonating more than any top-down content right now.</li>
-          </ul>
-          <div class="src-row">
-            <span class="src-label">Linked posts:</span>
-            <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state/an-honest-converation-about-visibility" target="_blank">Visibility as support</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/founder-fuel-giveaway-3-make-5-founder-connections" target="_blank">Founder Fuel #3</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/ceo-club-giveaway-is-here-share-to-win" target="_blank">CEO Club giveaway</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/engagement-tips/help-my-instagram-is-stuck" target="_blank">"My Instagram is stuck"</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="overview-grid">
-        <div class="ov-card full">
-          <h3>Objections we're hearing</h3>
-          <ul class="punch-list">
-            <li><strong>Not Paid</strong> (billing/payment failure) is the single largest cancellation reason — ~37.5% of a ~500-record sample. That's a dunning problem, not a dissatisfaction signal.</li>
-            <li><strong>"No longer a fit"</strong> (~19-24%, drifting down) and <strong>"financial reasons"</strong> (~9%) are the top qualitative objections.</li>
-            <li>Smaller but direct: "outgrown content/community" and "product/service unsatisfactory."</li>
-          </ul>
-          <p class="cap">Caveat: 34 of the last 43 cancellations (79%) have no reason logged — a data-capture gap worth closing. Source: HubSpot subscription cancellation-reason field (not Circle — no post links here).</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="subsec">
-      <div class="subsec-label">🧭 What each team should take away</div>
-      <div class="overview-grid cols-3">
-        <div class="ov-card">
-          <h3>What Marketing should know</h3>
-          <ul class="punch-list">
-            <li><strong>"Visibility is infrastructure, not vanity"</strong> — the reframe members are actually using in conversation this month. Steal it for copy.</li>
-            <li><strong>Peer conversation beats produced content:</strong> an organic member thread on feeling stuck growing their following pulled more real engagement (16 comments) than anything staff posted — people are talking to each other about this, not waiting for our content.</li>
-            <li><strong>Content cue:</strong> lean the next campaign into peer stories and real member exchanges, not more "expert tips."</li>
-          </ul>
-          <div class="src-row">
-            <span class="src-label">Evidence:</span>
-            <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state/an-honest-converation-about-visibility" target="_blank">Visibility post</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/engagement-tips/help-my-instagram-is-stuck" target="_blank">Instagram growth thread</a>
-          </div>
-        </div>
-        <div class="ov-card">
-          <h3>What Programming should know</h3>
-          <ul class="punch-list">
-            <li><strong>Fashion + Beauty &amp; Personal Care are our most engaged communities</strong> — program there first, every time budget is tight.</li>
-            <li><strong>The #1 unmet need isn't content, it's operators:</strong> legal/trademark, sourcing, fulfillment, and fractional exec support keep coming up across every industry.</li>
-            <li><strong>Big swing:</strong> a recurring "Ops Clinic" would answer a demand that's been showing up for months, not just this cycle.</li>
-          </ul>
-          <div class="src-row">
-            <span class="src-label">Evidence:</span>
-            <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/trademark-attorney-recco-needed-flat-fee" target="_blank">Trademark attorney recco</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/dtc-ecomm-founders-3pl-question" target="_blank">3PL question</a>
-          </div>
-        </div>
-        <div class="ov-card">
-          <h3>What Growth should know</h3>
-          <ul class="punch-list">
-            <li><strong>Organic beats programmed:</strong> "Ask the Community" out-drives every campaign we run — 36 of 86 recent posts (42%).</li>
-            <li><strong>Members are growing us themselves:</strong> regional chapters keep generating real, self-initiated meetup demand — a growth lever we're not fully funding yet.</li>
-            <li><strong>Move:</strong> protect the organic engine, and put real budget behind chapter organizers before adding another national program.</li>
-          </ul>
-          <div class="src-row">
-            <span class="src-label">Evidence:</span>
-            <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question" target="_blank">Ask the Community</a>
-            <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state" target="_blank">NY/Tri-State chapter</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ EXECUTIVE VISIBILITY ============ -->
-  <div class="section" id="executive-visibility">
-    <div class="section-head">
-      <h2><span class="sec-num">2</span>Executive Visibility</h2>
-      <span class="refresh-pill">REFRESHED MONTHLY · JUL 28, 2026</span>
-    </div>
-    <div class="section-sub">The strongest fundraising, partnerships, and event-hosting moves happening in the community right now</div>
-
-    <div class="subsec">
-      <div class="subsec-label">💬 Fundraising, partnerships &amp; events this month</div>
+  <div class="subsec">
+    <div class="subsec-label">🗣️ What the community is talking about</div>
+    <div class="overview-grid">
       <div class="ov-card">
-        <h3>Top movement this month</h3>
-        <div class="quote-block">
-          <div class="qtext">"We've launched a crowdfunding campaign to help us build momentum on making the future of Sex Education!"<span class="who">— Jenna Scherma, Learn Mobo (Fundraising)</span></div>
-          <a class="q-link" href="https://community.the10thhouse.co/c/deal-flow/sex-education-crowdfunding" target="_blank">View post →</a>
+        <h3>Top 5 themes members are talking about</h3>
+        <ol>
+          <li>Vendor &amp; service-provider referrals (packaging/MOQ, manufacturing, 3PL, legal, PR, dev, trademark)</li>
+          <li>Partnership &amp; collab requests (brand collabs, swag bags, event co-hosting)</li>
+          <li>Founder visibility &amp; mindset (self-promotion discomfort, burnout, community-as-support)</li>
+          <li>AI tools entering daily workflows (site-building, agentic brand systems, AI search shift) — still early/low-volume, worth watching rather than acting on yet</li>
+          <li>Fundraising &amp; alternative capital (crowdfunding, angel investment, creator equity)</li>
+        </ol>
+        <div class="src-row">
+          <span class="src-label">Linked posts:</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/us-apparel-factory-and-or-patternmaker-needed" target="_blank">Factory recco needed</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/trademark-attorney-recco-needed-flat-fee" target="_blank">Trademark attorney recco</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">Collab request</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/fashion/fashion-huddle-building-agentically-friday-7-9-12pm-pst" target="_blank">Building agentically</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/deal-flow/the-mindful-wardrobe-fundraising" target="_blank">Fundraising post</a>
         </div>
-        <div class="quote-block">
-          <div class="qtext">"We just launched the first-ever safety subscription box for women, built around one simple idea: safety shouldn't come from fear, it should come from confidence and preparedness that actually fits your life."<span class="who">— Kelly Sayre, The Diamond Arrow Group / SHARP Women (Partnership)</span></div>
-          <a class="q-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">View post →</a>
+      </div>
+      <div class="ov-card">
+        <h3>What's changing</h3>
+        <ul class="punch-list">
+          <li>AI adoption is visibly entering member workflows — website building, agentic brand systems, SEO/search shifts. This wasn't a visible thread a few months ago.</li>
+          <li>Members are reframing "visibility" from a marketing/content problem to a support/community problem.</li>
+          <li>Staff-run summer engagement campaigns (Founder Fuel, CEO Club) are driving some of the highest comment counts in recent history.</li>
+          <li><strong>Newly flagged:</strong> the single highest-engagement post this cycle wasn't a staff campaign — it's an organic peer "let's grow our Instagrams together" thread (16 comments). Peer-to-peer growth support is resonating more than any top-down content right now.</li>
+        </ul>
+        <div class="src-row">
+          <span class="src-label">Linked posts:</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state/an-honest-converation-about-visibility" target="_blank">Visibility as support</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/founder-fuel-giveaway-3-make-5-founder-connections" target="_blank">Founder Fuel #3</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/front-desk/ceo-club-giveaway-is-here-share-to-win" target="_blank">CEO Club giveaway</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/engagement-tips/help-my-instagram-is-stuck" target="_blank">"My Instagram is stuck"</a>
         </div>
-        <div class="quote-block">
-          <div class="qtext">Hosted this month's Fashion Huddle, "Future-Proofing Your Brand with AI" — pivoting community programming toward where members are already headed.<span class="who">— Elizabeth Welborn, Fashion Huddle Host (Event Hosting)</span></div>
-          <a class="q-link" href="https://community.the10thhouse.co/c/all-events/fashion-huddle-d72884" target="_blank">View post →</a>
+      </div>
+    </div>
+
+    <div class="overview-grid">
+      <div class="ov-card full">
+        <h3>Objections we're hearing</h3>
+        <ul class="punch-list">
+          <li><strong>Not Paid</strong> (billing/payment failure) is the single largest cancellation reason — ~37.5% of a ~500-record sample. That's a dunning problem, not a dissatisfaction signal.</li>
+          <li><strong>"No longer a fit"</strong> (~19-24%, drifting down) and <strong>"financial reasons"</strong> (~9%) are the top qualitative objections.</li>
+          <li>Smaller but direct: "outgrown content/community" and "product/service unsatisfactory."</li>
+        </ul>
+        <p class="cap">Caveat: 34 of the last 43 cancellations (79%) have no reason logged — a data-capture gap worth closing. Source: HubSpot subscription cancellation-reason field (not Circle — no post links here).</p>
+      </div>
+    </div>
+  </div>
+  <div class="subsec">
+    <div class="subsec-label">🧭 What each team should take away</div>
+    <div class="overview-grid cols-3">
+      <div class="ov-card">
+        <h3>What Marketing should know</h3>
+        <ul class="punch-list">
+          <li><strong>"Visibility is infrastructure, not vanity"</strong> — the reframe members are actually using in conversation this month. Steal it for copy.</li>
+          <li><strong>Peer conversation beats produced content:</strong> an organic member thread on feeling stuck growing their following pulled more real engagement (16 comments) than anything staff posted — people are talking to each other about this, not waiting for our content.</li>
+          <li><strong>Content cue:</strong> lean the next campaign into peer stories and real member exchanges, not more "expert tips."</li>
+        </ul>
+        <div class="src-row">
+          <span class="src-label">Evidence:</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state/an-honest-converation-about-visibility" target="_blank">Visibility post</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/engagement-tips/help-my-instagram-is-stuck" target="_blank">Instagram growth thread</a>
+        </div>
+      </div>
+      <div class="ov-card">
+        <h3>What Programming should know</h3>
+        <ul class="punch-list">
+          <li><strong>Fashion + Beauty &amp; Personal Care are our most engaged communities</strong> — program there first, every time budget is tight.</li>
+          <li><strong>The #1 unmet need isn't content, it's operators:</strong> legal/trademark, sourcing, fulfillment, and fractional exec support keep coming up across every industry.</li>
+          <li><strong>Big swing:</strong> a recurring "Ops Clinic" would answer a demand that's been showing up for months, not just this cycle.</li>
+        </ul>
+        <div class="src-row">
+          <span class="src-label">Evidence:</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/trademark-attorney-recco-needed-flat-fee" target="_blank">Trademark attorney recco</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question/dtc-ecomm-founders-3pl-question" target="_blank">3PL question</a>
+        </div>
+      </div>
+      <div class="ov-card">
+        <h3>What Growth should know</h3>
+        <ul class="punch-list">
+          <li><strong>Organic beats programmed:</strong> "Ask the Community" out-drives every campaign we run — 36 of 86 recent posts (42%).</li>
+          <li><strong>Members are growing us themselves:</strong> regional chapters keep generating real, self-initiated meetup demand — a growth lever we're not fully funding yet.</li>
+          <li><strong>Move:</strong> protect the organic engine, and put real budget behind chapter organizers before adding another national program.</li>
+        </ul>
+        <div class="src-row">
+          <span class="src-label">Evidence:</span>
+          <a class="src-link" href="https://community.the10thhouse.co/c/ask-a-question" target="_blank">Ask the Community</a>
+          <a class="src-link" href="https://community.the10thhouse.co/c/new-york-tri-state" target="_blank">NY/Tri-State chapter</a>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ============ CROSS-FUNCTIONAL ============ -->
-  <div class="section" id="cross-functional">
-    <div class="section-head">
-      <h2><span class="sec-num">3</span>Cross-Functional Leadership &amp; Communications</h2>
-      <span class="refresh-pill">REFRESHED MONTHLY · JUL 28, 2026</span>
-    </div>
-    <div class="section-sub">Members to highlight this month — prioritized by fundraising (top priority), then partnerships, then event hosting</div>
-
-    <div class="subsec">
-      <div class="subsec-label">🌟 Members to spotlight</div>
-      <div class="highlight-list">
-        <div class="highlight-row">
-          <div class="hl-head">
-            <span class="cat-tag cat-fund">Fundraising</span>
-            <span class="name">Jenna Scherma</span>
-          </div>
-          <div class="hl-meta">Learn Mobo · EdTech / Sex Education</div>
-          <span class="why">Why picked: launched a live Kickstarter campaign after years of fully bootstrapping — real proof fundraising is happening organically inside our community, not just being discussed.</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/deal-flow/sex-education-crowdfunding" target="_blank">View post →</a>
-        </div>
-        <div class="highlight-row">
-          <div class="hl-head">
-            <span class="cat-tag cat-fund">Fundraising</span>
-            <span class="name">Cristina Garcia</span>
-          </div>
-          <div class="hl-meta">787 Social · Creator Economy</div>
-          <span class="why">Why picked: opening an angel-investment round and standing up a creator advisory board in the same cycle — a founder actively building out her cap table and governance at once.</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/deal-flow/creator-angel-investments" target="_blank">View post →</a>
-        </div>
-        <div class="highlight-row">
-          <div class="hl-head">
-            <span class="cat-tag cat-partner">Partnership</span>
-            <span class="name">Kelly Sayre</span>
-          </div>
-          <div class="hl-meta">The Diamond Arrow Group (SHARP Women) · Safety &amp; Wellness</div>
-          <span class="why">Why picked: launched a brand-new subscription box and is directly sourcing editorial, podcast, gift-guide, and influencer partners in the same post — a ready-made partnership pipeline.</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">View post →</a>
-        </div>
-        <div class="highlight-row">
-          <div class="hl-head">
-            <span class="cat-tag cat-partner">Partnership</span>
-            <span class="name">Sydney de Arenas Sherman</span>
-          </div>
-          <div class="hl-meta">The Hive · Founder Coaching &amp; Leadership Development</div>
-          <span class="why">Why picked: just launched a co-branded initiative with "The Collective" and is offering her whole team for podcasts, webinars, and speaking collabs — a partnership-ready team, not just a solo founder.</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/my-team-and-i-want-to-collaborate" target="_blank">View post →</a>
-        </div>
-        <div class="highlight-row">
-          <div class="hl-head">
-            <span class="cat-tag cat-event">Event Host</span>
-            <span class="name">Elizabeth Welborn</span>
-          </div>
-          <div class="hl-meta">Fashion Huddle Host · Fashion</div>
-          <span class="why">Why picked: hosted this month's Fashion Huddle, "Future-Proofing Your Brand with AI" — steering our recurring programming toward where members are already headed.</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/all-events/fashion-huddle-d72884" target="_blank">View post →</a>
-        </div>
-        <div class="highlight-row">
-          <div class="hl-head">
-            <span class="cat-tag cat-event">Event Host</span>
-            <span class="name">Molly Godfrey</span>
-          </div>
-          <div class="hl-meta">NYC Chapter Host · Community / Local Chapters</div>
-          <span class="why">Why picked: hosted the NYC Member Mingle (City Session) co-hosted with Female Founder Collective — a regional chapter organizer converting local demand into a real, attended event.</span>
-          <a class="src-link" href="https://community.the10thhouse.co/c/all-events/new-york-ny-member-mingle-7666ad" target="_blank">View post →</a>
-        </div>
-      </div>
-      <p class="cap" style="margin-top:10px;">Fundraising activity this cycle skews toward active asks/raises rather than confirmed closed rounds — still the strongest fundraising-specific signal available, and treated as top priority per team direction.</p>
-    </div>
+<div class="section" id="executive-visibility">
+  <div class="section-head">
+    <h2><span class="sec-num">2</span>Executive Visibility</h2>
+    <span class="refresh-pill">REFRESHED MONTHLY · JUL 28, 2026</span>
   </div>
+  <div class="section-sub">The strongest fundraising, partnerships, and event-hosting moves happening in the community right now</div>
 
-  <hr class="divider">
-
-  <!-- ============ DASHBOARD LINKS (moved to bottom) ============ -->
-  <div class="section dash-banner" id="dashboards">
-    <span class="dash-kicker">📊 LIVE TOOLS — NOT PART OF THE MONTHLY BRIEFING · ⭐ START HERE IF YOU ONLY HAVE 2 MINUTES</span>
-    <div class="section-head">
-      <h2><span class="sec-num">4</span>Full Dashboards</h2>
-    </div>
-    <div class="section-sub">Quick links to the 4 pinned live dashboards for the 10th House / FFC team. These update daily on their own — separate from the briefing above.</div>
-    <div class="cards">
-      <div class="card">
-        <div class="card-head">
-          <h2>10th House · Community Growth</h2>
-          <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
-        </div>
-        <ul class="card-desc-list">
-          <li>18-month member and engagement trends</li>
-          <li>Year-over-year comparison</li>
-          <li>All-time records</li>
-          <li>Member-type only (admin/bot accounts excluded)</li>
-        </ul>
-        <div class="stat-row">
-          <div class="stat-chip">1,239 <span>total members</span></div>
-          <div class="stat-chip">254 <span>active (MAU)</span></div>
-          <div class="stat-chip">20.5% <span>MAU rate</span></div>
-        </div>
-        <div class="card-footer">
-          <a class="open-btn" href="./10th-house-community-analytics.html" target="_blank">Open dashboard →</a>
-          <span class="updated">Data as of Aug 5, 2026</span>
-        </div>
+  <div class="subsec">
+    <div class="subsec-label">💬 Fundraising, partnerships &amp; events this month</div>
+    <div class="ov-card">
+      <h3>Top movement this month</h3>
+      <div class="quote-block">
+        <div class="qtext">"We've launched a crowdfunding campaign to help us build momentum on making the future of Sex Education!"<span class="who">— Jenna Scherma, Learn Mobo (Fundraising)</span></div>
+        <a class="q-link" href="https://community.the10thhouse.co/c/deal-flow/sex-education-crowdfunding" target="_blank">View post →</a>
       </div>
-      <div class="card pink">
-        <div class="card-head">
-          <h2>Community Host Tracker</h2>
-          <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
-        </div>
-        <ul class="card-desc-list">
-          <li>Top cities</li>
-          <li>Top huddle categories</li>
-          <li>2025 vs. 2026 host comparison</li>
-          <li class="soon">Coming soon: industry breakdown + RSVP leaderboards</li>
-        </ul>
-        <div class="stat-row">
-          <div class="stat-chip">27 <span>city sessions '26</span></div>
-          <div class="stat-chip">103 <span>huddles hosted</span></div>
-          <div class="stat-chip">42 <span>unique hosts '26</span></div>
-        </div>
-        <div class="card-footer">
-          <a class="open-btn" href="./host-tracker-dashboard.html" target="_blank">Open dashboard →</a>
-          <span class="updated">Data as of Aug 4, 2026</span>
-        </div>
+      <div class="quote-block">
+        <div class="qtext">"We just launched the first-ever safety subscription box for women, built around one simple idea: safety shouldn't come from fear, it should come from confidence and preparedness that actually fits your life."<span class="who">— Kelly Sayre, The Diamond Arrow Group / SHARP Women (Partnership)</span></div>
+        <a class="q-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">View post →</a>
       </div>
-      <div class="card">
-        <div class="card-head">
-          <h2>FFC Member Insights Hub</h2>
-          <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
-        </div>
-        <ul class="card-desc-list">
-          <li>Curated testimonials for LPs/social/newsletters</li>
-          <li>Member feedback themes</li>
-          <li>Event-activity leaderboard</li>
-          <li>Industry "go-to" members</li>
-        </ul>
-        <div class="stat-row">
-          <div class="stat-chip">Testimonials <span>tab</span></div>
-          <div class="stat-chip">Member Feedback <span>tab</span></div>
-          <div class="stat-chip">Event Activity <span>tab</span></div>
-          <div class="stat-chip">Industry Go-Tos <span>tab</span></div>
-        </div>
-        <div class="card-footer">
-          <a class="open-btn" href="./10th-house-testimonials-dashboard.html" target="_blank">Open dashboard →</a>
-          <span class="updated">Data as of Jul 28, 2026</span>
-        </div>
-      </div>
-      <div class="card pink">
-        <div class="card-head">
-          <h2>Community x Social Content Hub</h2>
-          <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
-        </div>
-        <ul class="card-desc-list">
-          <li>Batches new Circle + HubSpot submissions into 8 content categories</li>
-          <li>Fundraising, Press, Hiring, Resources, Engagement, Revenue, Support, Events</li>
-          <li>AI-suggested post ideas per submission</li>
-          <li>Weekly digest for the Monday recap to Katryna</li>
-        </ul>
-        <div class="stat-row">
-          <div class="stat-chip">8 <span>categories</span></div>
-          <div class="stat-chip">40 <span>items this snapshot</span></div>
-          <div class="stat-chip">13 <span>new in 7 days</span></div>
-        </div>
-        <div class="card-footer">
-          <a class="open-btn" href="./community-social-content-hub.html" target="_blank">Open dashboard →</a>
-          <span class="updated">Data as of Aug 17, 2026</span>
-        </div>
+      <div class="quote-block">
+        <div class="qtext">Hosted this month's Fashion Huddle, "Future-Proofing Your Brand with AI" — pivoting community programming toward where members are already headed.<span class="who">— Elizabeth Welborn, Fashion Huddle Host (Event Hosting)</span></div>
+        <a class="q-link" href="https://community.the10thhouse.co/c/all-events/fashion-huddle-d72884" target="_blank">View post →</a>
       </div>
     </div>
   </div>
-
-  <div class="note-box">
-    <strong>Note:</strong> the Community Overview / Executive Visibility / Cross-Functional sections above refresh monthly. The 4 dashboards below refresh daily. This page won't auto-update on its own — re-deploy when there's new data.
+</div>
+<div class="section" id="cross-functional">
+  <div class="section-head">
+    <h2><span class="sec-num">3</span>Cross-Functional Leadership &amp; Communications</h2>
+    <span class="refresh-pill">REFRESHED MONTHLY · JUL 28, 2026</span>
   </div>
-  <div class="footer-note">FFC Community Hub · Female Founder Collective</div>
+  <div class="section-sub">Members to highlight this month — prioritized by fundraising (top priority), then partnerships, then event hosting</div>
+
+  <div class="subsec">
+    <div class="subsec-label">🌟 Members to spotlight</div>
+    <div class="highlight-list">
+      <div class="highlight-row">
+        <div class="hl-head">
+          <span class="cat-tag cat-fund">Fundraising</span>
+          <span class="name">Jenna Scherma</span>
+        </div>
+        <div class="hl-meta">Learn Mobo · EdTech / Sex Education</div>
+        <span class="why">Why picked: launched a live Kickstarter campaign after years of fully bootstrapping — real proof fundraising is happening organically inside our community, not just being discussed.</span>
+        <a class="src-link" href="https://community.the10thhouse.co/c/deal-flow/sex-education-crowdfunding" target="_blank">View post →</a>
+      </div>
+      <div class="highlight-row">
+        <div class="hl-head">
+          <span class="cat-tag cat-fund">Fundraising</span>
+          <span class="name">Cristina Garcia</span>
+        </div>
+        <div class="hl-meta">787 Social · Creator Economy</div>
+        <span class="why">Why picked: opening an angel-investment round and standing up a creator advisory board in the same cycle — a founder actively building out her cap table and governance at once.</span>
+        <a class="src-link" href="https://community.the10thhouse.co/c/deal-flow/creator-angel-investments" target="_blank">View post →</a>
+      </div>
+      <div class="highlight-row">
+        <div class="hl-head">
+          <span class="cat-tag cat-partner">Partnership</span>
+          <span class="name">Kelly Sayre</span>
+        </div>
+        <div class="hl-meta">The Diamond Arrow Group (SHARP Women) · Safety &amp; Wellness</div>
+        <span class="why">Why picked: launched a brand-new subscription box and is directly sourcing editorial, podcast, gift-guide, and influencer partners in the same post — a ready-made partnership pipeline.</span>
+        <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/new-product-launch-looking-to-collaborate" target="_blank">View post →</a>
+      </div>
+      <div class="highlight-row">
+        <div class="hl-head">
+          <span class="cat-tag cat-partner">Partnership</span>
+          <span class="name">Sydney de Arenas Sherman</span>
+        </div>
+        <div class="hl-meta">The Hive · Founder Coaching &amp; Leadership Development</div>
+        <span class="why">Why picked: just launched a co-branded initiative with "The Collective" and is offering her whole team for podcasts, webinars, and speaking collabs — a partnership-ready team, not just a solo founder.</span>
+        <a class="src-link" href="https://community.the10thhouse.co/c/partnerships-collabs-gifting/my-team-and-i-want-to-collaborate" target="_blank">View post →</a>
+      </div>
+      <div class="highlight-row">
+        <div class="hl-head">
+          <span class="cat-tag cat-event">Event Host</span>
+          <span class="name">Elizabeth Welborn</span>
+        </div>
+        <div class="hl-meta">Fashion Huddle Host · Fashion</div>
+        <span class="why">Why picked: hosted this month's Fashion Huddle, "Future-Proofing Your Brand with AI" — steering our recurring programming toward where members are already headed.</span>
+        <a class="src-link" href="https://community.the10thhouse.co/c/all-events/fashion-huddle-d72884" target="_blank">View post →</a>
+      </div>
+      <div class="highlight-row">
+        <div class="hl-head">
+          <span class="cat-tag cat-event">Event Host</span>
+          <span class="name">Molly Godfrey</span>
+        </div>
+        <div class="hl-meta">NYC Chapter Host · Community / Local Chapters</div>
+        <span class="why">Why picked: hosted the NYC Member Mingle (City Session) co-hosted with Female Founder Collective — a regional chapter organizer converting local demand into a real, attended event.</span>
+        <a class="src-link" href="https://community.the10thhouse.co/c/all-events/new-york-ny-member-mingle-7666ad" target="_blank">View post →</a>
+      </div>
+    </div>
+    <p class="cap" style="margin-top:10px;">Fundraising activity this cycle skews toward active asks/raises rather than confirmed closed rounds — still the strongest fundraising-specific signal available, and treated as top priority per team direction.</p>
+  </div>
+</div>
+
+<hr class="divider">
+<div class="section dash-banner" id="dashboards">
+  <span class="dash-kicker">📊 LIVE TOOLS — NOT PART OF THE MONTHLY BRIEFING · ⭐ START HERE IF YOU ONLY HAVE 2 MINUTES</span>
+  <div class="section-head">
+    <h2><span class="sec-num">4</span>Full Dashboards</h2>
+  </div>
+  <div class="section-sub">Quick links to the 4 pinned live dashboards for the 10th House / FFC team. These update daily on their own — separate from the briefing above.</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-head">
+        <h2>10th House · Community Growth</h2>
+        <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
+      </div>
+      <ul class="card-desc-list">
+        <li>18-month member and engagement trends</li>
+        <li>Year-over-year comparison</li>
+        <li>All-time records</li>
+        <li>Member-type only (admin/bot accounts excluded)</li>
+      </ul>
+      <div class="stat-row">
+        <div class="stat-chip">1,239 <span>total members</span></div>
+        <div class="stat-chip">254 <span>active (MAU)</span></div>
+        <div class="stat-chip">20.5% <span>MAU rate</span></div>
+      </div>
+      <div class="card-footer">
+        <a class="open-btn" href="./10th-house-community-analytics.html" target="_blank">Open dashboard →</a>
+        <span class="updated">Data as of Aug 5, 2026</span>
+      </div>
+    </div>
+    <div class="card pink">
+      <div class="card-head">
+        <h2>Community Host Tracker</h2>
+        <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
+      </div>
+      <ul class="card-desc-list">
+        <li>Top cities</li>
+        <li>Top huddle categories</li>
+        <li>2025 vs. 2026 host comparison</li>
+        <li class="soon">Coming soon: industry breakdown + RSVP leaderboards</li>
+      </ul>
+      <div class="stat-row">
+        <div class="stat-chip">27 <span>city sessions '26</span></div>
+        <div class="stat-chip">103 <span>huddles hosted</span></div>
+        <div class="stat-chip">42 <span>unique hosts '26</span></div>
+      </div>
+      <div class="card-footer">
+        <a class="open-btn" href="./host-tracker-dashboard.html" target="_blank">Open dashboard →</a>
+        <span class="updated">Data as of Aug 4, 2026</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h2>FFC Member Insights Hub</h2>
+        <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
+      </div>
+      <ul class="card-desc-list">
+        <li>Curated testimonials for LPs/social/newsletters</li>
+        <li>Member feedback themes</li>
+        <li>Event-activity leaderboard</li>
+        <li>Industry "go-to" members</li>
+      </ul>
+      <div class="stat-row">
+        <div class="stat-chip">Testimonials <span>tab</span></div>
+        <div class="stat-chip">Member Feedback <span>tab</span></div>
+        <div class="stat-chip">Event Activity <span>tab</span></div>
+        <div class="stat-chip">Industry Go-Tos <span>tab</span></div>
+      </div>
+      <div class="card-footer">
+        <a class="open-btn" href="./10th-house-testimonials-dashboard.html" target="_blank">Open dashboard →</a>
+        <span class="updated">Data as of Jul 28, 2026</span>
+      </div>
+    </div>
+    <div class="card pink">
+      <div class="card-head">
+        <h2>Community x Social Content Hub</h2>
+        <span class="status-pill snapshot"><span class="live-dot"></span>AUTO-REFRESHED DAILY</span>
+      </div>
+      <ul class="card-desc-list">
+        <li>Batches new Circle + HubSpot submissions into 8 content categories</li>
+        <li>Fundraising, Press, Hiring, Resources, Engagement, Revenue, Support, Events</li>
+        <li>AI-suggested post ideas per submission</li>
+        <li>Weekly digest for the Monday recap to Katryna</li>
+      </ul>
+      <div class="stat-row">
+        <div class="stat-chip">8 <span>categories</span></div>
+        <div class="stat-chip">38 <span>items this snapshot</span></div>
+        <div class="stat-chip">8 <span>new in 7 days</span></div>
+      </div>
+      <div class="card-footer">
+        <a class="open-btn" href="./community-social-content-hub.html" target="_blank">Open dashboard →</a>
+        <span class="updated">Data as of Aug 12, 2026</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="note-box">
+  <strong>Note:</strong> the Community Overview / Executive Visibility / Cross-Functional sections above refresh monthly. The 4 dashboards below refresh daily. This page won't auto-update on its own — re-deploy when there's new data.
+</div>
+<div class="footer-note">FFC Community Hub · Female Founder Collective</div>
 </div>
 <a class="jump-fab" href="#dashboards">📊 Dashboards ↓</a>
 </body>
